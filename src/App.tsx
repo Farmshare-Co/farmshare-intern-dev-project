@@ -30,7 +30,7 @@ function App() {
     "beef",
   ]);
   const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
-    {} as Record<EAnimalSpecies, string>,
+    {} as Record<EAnimalSpecies, string>
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
@@ -55,7 +55,7 @@ function App() {
         const savings = calculateLaborValue(
           heads,
           parseFloat(timePerAnimal),
-          parseFloat(hourlyWage),
+          parseFloat(hourlyWage)
         );
         return total + savings;
       }
