@@ -16,6 +16,7 @@ import {
   OutlinedInput,
   Chip,
 } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
 import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { EAnimalSpecies } from "./types";
@@ -26,9 +27,7 @@ import "./App.css";
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([
-    "beef",
-  ]);
+  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
   const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
     {} as Record<EAnimalSpecies, string>
   );
@@ -79,7 +78,12 @@ function App() {
   return (
     <Container>
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          onClick={() => console.log("")}
+        >
           Meat Processor Value Calculator
         </Typography>
 
@@ -97,6 +101,21 @@ function App() {
                     <Chip
                       key={value}
                       label={value.charAt(0).toUpperCase() + value.slice(1)}
+                      onDelete={() => {
+                        setSelectedSpecies(
+                          selectedSpecies.filter((spec) => spec !== value)
+                        );
+                      }}
+                      deleteIcon={
+                        <div
+                          role="button"
+                          aria-label="Remove"
+                          onMouseDown={(e) => e.stopPropagation()}
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <CancelIcon />
+                        </div>
+                      }
                     />
                   ))}
                 </Box>

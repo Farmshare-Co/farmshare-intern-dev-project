@@ -6,7 +6,7 @@ describe("Meat Processor Value Calculator", () => {
   it("renders the calculator title", () => {
     render(<App />);
     expect(
-      screen.getByText("Meat Processor Value Calculator"),
+      screen.getByText("Meat Processor Value Calculator")
     ).toBeInTheDocument();
   });
 
@@ -14,7 +14,7 @@ describe("Meat Processor Value Calculator", () => {
     render(<App />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByText("Annual Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Monthly Savings:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
   });
 
@@ -33,7 +33,7 @@ describe("Meat Processor Value Calculator", () => {
 
     // Check if volume input appears
     expect(
-      screen.getByText(/Monthly Processing Volume by Species/i), // Wrong text!
+      screen.getByText(/Annual Processing Volume by Species/i) // Wrong text!
     ).toBeInTheDocument();
   });
 
@@ -49,12 +49,12 @@ describe("Meat Processor Value Calculator", () => {
 
     // Enter volume for beef
     const volumeInput = screen.getByLabelText(
-      /Total Annual Hanging Weight \(lbs\)/i,
+      /Total Annual Hanging Weight \(lbs\)/i
     );
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Total Processing Volume:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Volume:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Net Annual Benefit:")).toBeInTheDocument();
   });
 
@@ -63,7 +63,7 @@ describe("Meat Processor Value Calculator", () => {
 
     // Advanced settings should be hidden initially
     expect(
-      screen.queryByLabelText(/Time Savings per Animal/i),
+      screen.queryByLabelText(/Time Savings per Animal/i)
     ).not.toBeVisible();
 
     // Click the expand button
@@ -93,10 +93,10 @@ describe("Meat Processor Value Calculator", () => {
 
     // Check if chips are displayed for both species
     expect(
-      screen.getByText("Beef", { selector: ".MuiChip-label" }),
+      screen.getByText("Beef", { selector: ".MuiChip-label" })
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Hog", { selector: ".MuiChip-label" }),
+      screen.getByText("Hog", { selector: ".MuiChip-label" })
     ).toBeInTheDocument();
   });
 
@@ -110,13 +110,14 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.mouseDown(selectElement);
     const beefOption = screen.getByRole("option", { name: /Beef/i });
     fireEvent.click(beefOption);
+    fireEvent.keyDown(screen.getByRole("listbox"), { key: "Escape" });
 
     // This delete/remove button doesn't exist yet - interns need to add it
     const deleteButton = screen.getByRole("button", { name: /remove|delete/i });
     fireEvent.click(deleteButton);
 
     expect(
-      screen.queryByText("Beef", { selector: ".MuiChip-label" }),
+      screen.queryByText("Beef", { selector: ".MuiChip-label" })
     ).not.toBeInTheDocument();
   });
 });
