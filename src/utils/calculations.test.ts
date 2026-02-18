@@ -138,23 +138,28 @@ describe("calculations utils", () => {
           species: EAnimalSpecies.beef,
           totalHangingWeight: 2000,
           avgHangingWeight: 500,
-        }, // 3 heads (bug)
+        }, // 3 heads (bug) , // 4 heads (after calculateHeads bug fix)
         {
           species: EAnimalSpecies.hog,
           totalHangingWeight: 800,
           avgHangingWeight: 200,
-        }, // 3 heads (bug)
+        }, // 3 heads (bug) , // 4 heads (after calculateHeads bug fix)
         {
           species: EAnimalSpecies.lamb,
           totalHangingWeight: 300,
           avgHangingWeight: 100,
-        }, // 2 heads (bug)
+        }, // 2 heads (bug) , // 3 heads (after calculateHeads bug fix)
       ];
       // 3 heads * 30 min = 1.5 hrs * $25 = $37.50
       // 3 heads * 30 min = 1.5 hrs * $25 = $37.50
       // 2 heads * 30 min = 1 hr * $25 = $25
       // Total = $100
-      expect(calculateTotalLaborValue(animals, 30, 25)).toBe(100);
+
+      // 4 heads * 30 min = 2 hrs * $25 = $50
+      // 4 heads * 30 min = 2 hrs * $25 = $50
+      // 3 heads * 30 min = 1.5 hr * $25 = $37.50
+      // Total = $137.50
+      expect(calculateTotalLaborValue(animals, 30, 25)).toBe(137.5);
     });
   });
 });
