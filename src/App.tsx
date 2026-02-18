@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Container,
   TextField,
@@ -15,6 +15,7 @@ import {
   IconButton,
   OutlinedInput,
   Chip,
+  Button,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { SelectChangeEvent } from "@mui/material";
@@ -75,19 +76,20 @@ function App() {
     }, 0);
   };
 
+  const handleClearAll = () => {
+    setSelectedSpecies([]);
+    setVolumes({} as Record<EAnimalSpecies, string>);
+  };
+
   return (
     <Container>
       <Box sx={{ my: 4 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          onClick={() => console.log("")}
-        >
+        <Typography variant="h4" component="h1" gutterBottom>
           Meat Processor Value Calculator
         </Typography>
 
         <Paper sx={{ p: 2, mb: 3 }}>
+          <Button onClick={handleClearAll}>Clear All</Button>
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Animal Species</InputLabel>
             <Select
