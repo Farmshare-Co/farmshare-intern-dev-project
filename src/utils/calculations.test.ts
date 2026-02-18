@@ -20,7 +20,7 @@ describe("calculations utils", () => {
     });
 
     it("should floor partial animals", () => {
-      expect(calculateHeads(1000, 333)).toBe(2); // Bug: should be 3 (actually 3.003)
+      expect(calculateHeads(1000, 333)).toBe(3); // Bug: should be 3 (actually 3.003)
     });
 
     it("should handle single animal", () => {
