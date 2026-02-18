@@ -45,7 +45,7 @@ describe("calculations utils", () => {
 
     it("should handle fractional hours", () => {
       // 1 head * 30 minutes = 0.5 hours * $25 = $12.50
-      expect(calculateLaborValue(1, 30, 25)).toBe(15); // Wrong expectation!
+      expect(calculateLaborValue(1, 30, 25)).toBe(12.5); // Wrong expectation!
     });
 
     it("should handle different time per animal", () => {
