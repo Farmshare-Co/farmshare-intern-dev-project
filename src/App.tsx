@@ -16,6 +16,7 @@ import {
   OutlinedInput,
   Chip,
   Button,
+  InputAdornment,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { SelectChangeEvent } from "@mui/material";
@@ -81,6 +82,18 @@ function App() {
     setVolumes({} as Record<EAnimalSpecies, string>);
   };
 
+  const isAnnualHangingInvalid = (species: EAnimalSpecies) => {
+    if (+volumes[species] < 0 || +volumes[species] > 10000000) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isHourlyWageValid = +hourlyWage < 1 || +hourlyWage > 200;
+
+  const isTimePerAnimalValid = +timePerAnimal < 1 || +timePerAnimal > 480;
+
   return (
     <Container>
       <Box sx={{ my: 4 }}>
@@ -88,7 +101,7 @@ function App() {
           Meat Processor Value Calculator
         </Typography>
 
-        <Paper sx={{ p: 2, mb: 3 }}>
+        <Paper sx={{ p: 2, mb: 3, width: "525px" }}>
           <Button onClick={handleClearAll}>Clear All</Button>
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Animal Species</InputLabel>
@@ -158,7 +171,20 @@ function App() {
                       onChange={(e) =>
                         handleVolumeChange(species, e.target.value)
                       }
-                      inputProps={{ min: 0 }}
+                      slotProps={{
+                        htmlInput: { min: 0, max: 10000000 },
+                        input: {
+                          endAdornment: (
+                            <InputAdornment position="end">lbs</InputAdornment>
+                          ),
+                        },
+                      }}
+                      error={isAnnualHangingInvalid(species)}
+                      helperText={
+                        isAnnualHangingInvalid(species)
+                          ? "Enter a value between 0 and 10,000,000"
+                          : " "
+                      }
                     />
                   </CardContent>
                 </Card>
@@ -188,7 +214,21 @@ function App() {
               type="number"
               value={timePerAnimal}
               onChange={(e) => setTimePerAnimal(e.target.value)}
+              slotProps={{
+                htmlInput: { min: 0 },
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">mins</InputAdornment>
+                  ),
+                },
+              }}
               sx={{ mb: 2 }}
+              error={isTimePerAnimalValid}
+              helperText={
+                isTimePerAnimalValid
+                  ? "Enter a value between 1 minute and 480 minutes"
+                  : " "
+              }
             />
             <TextField
               fullWidth
@@ -196,7 +236,19 @@ function App() {
               type="number"
               value={hourlyWage}
               onChange={(e) => setHourlyWage(e.target.value)}
+              slotProps={{
+                htmlInput: { min: 0 },
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="start">&nbsp;$</InputAdornment>
+                  ),
+                },
+              }}
               sx={{ mb: 2 }}
+              error={isHourlyWageValid}
+              helperText={
+                isHourlyWageValid ? "Enter a value between $7.25 and $200" : " "
+              }
             />
           </Collapse>
         </Paper>
