@@ -1,17 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
+import FarmProvider from "./context/FarmContext";
 
 describe("Meat Processor Value Calculator", () => {
   it("renders the calculator title", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
     expect(
       screen.getByText("Meat Processor Value Calculator")
     ).toBeInTheDocument();
   });
 
   it("displays the multi-select dropdown and summary", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByText("Annual Summary")).toBeInTheDocument();
     expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument(); // Wrong text!
@@ -19,7 +20,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("shows volume inputs when species are selected", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
 
     // Find the select by its role
     const selectElement = screen.getByRole("combobox");
@@ -38,7 +39,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("calculates annual savings and cost correctly", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
 
     const selectElement = screen.getByRole("combobox");
 
@@ -59,7 +60,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("shows advanced settings when clicked", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
 
     // Advanced settings should be hidden initially
     expect(
@@ -76,7 +77,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("can select multiple species", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
 
     const selectElement = screen.getByRole("combobox");
 
@@ -102,7 +103,7 @@ describe("Meat Processor Value Calculator", () => {
 
   // FAILING TEST - Interns need to add delete/remove functionality
   it("should allow removing a selected species", () => {
-    render(<App />);
+    render(<FarmProvider><App /></FarmProvider>);
 
     const selectElement = screen.getByRole("combobox");
 

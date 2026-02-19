@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useContext } from "react";
 import {
   Container,
   TextField,
@@ -23,19 +23,27 @@ import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { EAnimalSpecies } from "./types";
 import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
-import { calculateHeads, calculateLaborValue } from "./utils/calculations";
+import { exportCSV } from "./utils/exportCSV";
+import { exportPDF } from "./utils/exportPDF";
 import "./App.css";
-
-const COST_PER_LB = 0.02;
+import { FarmContext } from "./context/FarmContext";
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
-  const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
-    {} as Record<EAnimalSpecies, string>
-  );
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
-  const [hourlyWage, setHourlyWage] = useState("25"); // dollars
+  const {
+    selectedSpecies,
+    setSelectedSpecies,
+    volumes,
+    setVolumes,
+    showAdvanced,
+    setShowAdvanced,
+    timePerAnimal,
+    setTimePerAnimal,
+    hourlyWage,
+    setHourlyWage,
+    getTotalVolume,
+    calculateTotalAnnualSavings,
+    calculateTotalAnnualCost,
+  } = useContext(FarmContext);
 
   const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
     const value = event.target.value;
@@ -47,39 +55,33 @@ function App() {
     setVolumes((prev) => ({ ...prev, [species]: value }));
   };
 
-  const calculateTotalAnnualSavings = () => {
-    return selectedSpecies.reduce((total, species) => {
-      const volume = parseFloat(volumes[species] || "0");
-      if (volume > 0) {
-        const avgWeight = AVG_HANGING_WEIGHTS[species];
-        const heads = calculateHeads(volume, avgWeight);
-        const savings = calculateLaborValue(
-          heads,
-          parseFloat(timePerAnimal),
-          parseFloat(hourlyWage)
-        );
-        return total + savings;
-      }
-      return total;
-    }, 0);
-  };
-
-  const calculateTotalAnnualCost = () => {
-    return selectedSpecies.reduce((total, species) => {
-      const volume = parseFloat(volumes[species] || "0");
-      return total + volume * COST_PER_LB;
-    }, 0);
-  };
-
-  const getTotalVolume = () => {
-    return selectedSpecies.reduce((total, species) => {
-      return total + parseFloat(volumes[species] || "0");
-    }, 0);
-  };
-
   const handleClearAll = () => {
     setSelectedSpecies([]);
     setVolumes({} as Record<EAnimalSpecies, string>);
+  };
+
+  const handleExportCSV = () => {
+    exportCSV({
+      selectedSpecies,
+      volumes,
+      timePerAnimal,
+      hourlyWage,
+      getTotalVolume,
+      calculateTotalAnnualSavings,
+      calculateTotalAnnualCost,
+    });
+  };
+
+  const handleExportPDF = () => {
+    exportPDF({
+      selectedSpecies,
+      volumes,
+      timePerAnimal,
+      hourlyWage,
+      getTotalVolume,
+      calculateTotalAnnualSavings,
+      calculateTotalAnnualCost,
+    });
   };
 
   const isAnnualHangingInvalid = (species: EAnimalSpecies) => {
@@ -254,9 +256,24 @@ function App() {
         </Paper>
 
         <Paper sx={{ p: 3 }}>
-          <Typography variant="h5" gutterBottom>
-            Annual Summary
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h5">Annual Summary</Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button variant="outlined" size="small" onClick={handleExportCSV}>
+                Export CSV
+              </Button>
+              <Button variant="outlined" size="small" onClick={handleExportPDF}>
+                Export PDF
+              </Button>
+            </Box>
+          </Box>
           <Box sx={{ mt: 2 }}>
             <Box
               sx={{
