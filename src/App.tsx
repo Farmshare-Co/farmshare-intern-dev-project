@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Container,
   TextField,
@@ -34,6 +34,7 @@ import { exportCSV } from "./utils/exportCSV";
 import { exportPDF } from "./utils/exportPDF";
 import "./App.css";
 import { FarmContext } from "./context/FarmContext";
+import SavingsChart from "./components/SavingsChart";
 
 function App() {
   const {
@@ -467,6 +468,15 @@ function App() {
             </Box>
           </Box>
         </Paper>
+        <SavingsChart
+          selectedSpecies={selectedSpecies}
+          volumes={volumes}
+          timePerAnimal={timePerAnimal}
+          hourlyWage={hourlyWage}
+          savings={calculateTotalAnnualSavings()}
+          cost={calculateTotalAnnualCost()}
+          netBenefit={calculateTotalAnnualSavings() - calculateTotalAnnualCost()}
+        />
       </Box>
       <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
         <DialogTitle>Clear All Data?</DialogTitle>
