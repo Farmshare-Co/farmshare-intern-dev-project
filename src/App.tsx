@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Container,
   TextField,
@@ -52,6 +52,17 @@ function App() {
     calculateTotalAnnualCost,
   } = useContext(FarmContext);
 
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+
   const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
     const value = event.target.value;
     const species = typeof value === "string" ? value.split(",") : value;
@@ -83,18 +94,6 @@ function App() {
 
     return hasInvalidVolume || hasInvalidWage || hasInvalidTime;
   };
-
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    severity: "success" | "error";
-  }>({
-    open: false,
-    message: "",
-    severity: "success",
-  });
-
-  const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
   const handleClearAll = () => {
     setClearDialogOpen(true);

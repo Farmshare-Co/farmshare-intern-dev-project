@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { AVG_HANGING_WEIGHTS, type EAnimalSpecies } from "../types";
 import { calculateHeads, calculateLaborValue } from "../utils/calculations";
 import { COST_PER_LB } from "../utils/statics";
@@ -26,13 +26,32 @@ export const FarmContext = createContext<FarmContextType>(
 );
 
 const FarmProvider = ({ children }: { children: React.ReactNode }) => {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
-  const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
-    {} as Record<EAnimalSpecies, string>
+  // loading initial state from localStorage
+  const getInitialState = () => {
+    const saved = localStorage.getItem("farmshare-state");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return null;
+  };
+
+  const initialState = getInitialState();
+
+  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>(
+    initialState?.selectedSpecies || []
   );
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
-  const [hourlyWage, setHourlyWage] = useState("25"); // dollars
+  const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
+    initialState?.volumes || ({} as Record<EAnimalSpecies, string>)
+  );
+  const [showAdvanced, setShowAdvanced] = useState(
+    initialState?.showAdvanced || false
+  );
+  const [timePerAnimal, setTimePerAnimal] = useState(
+    initialState?.timePerAnimal || "45"
+  );
+  const [hourlyWage, setHourlyWage] = useState(
+    initialState?.hourlyWage || "25"
+  );
 
   const getTotalVolume = () => {
     return selectedSpecies.reduce((total, species) => {
@@ -63,6 +82,18 @@ const FarmProvider = ({ children }: { children: React.ReactNode }) => {
       return total + volume * COST_PER_LB;
     }, 0);
   };
+
+  // on state change - save data
+  useEffect(() => {
+    const state = {
+      selectedSpecies,
+      volumes,
+      timePerAnimal,
+      hourlyWage,
+      showAdvanced,
+    };
+    localStorage.setItem("farmshare-state", JSON.stringify(state));
+  }, [selectedSpecies, volumes, timePerAnimal, hourlyWage, showAdvanced]);
 
   return (
     <FarmContext.Provider
