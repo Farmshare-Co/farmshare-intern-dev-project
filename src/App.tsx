@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import {
   Container,
   TextField,
@@ -17,11 +17,18 @@ import {
   Chip,
   Button,
   InputAdornment,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import type { EAnimalSpecies } from "./types";
+import { EAnimalSpecies } from "./types";
 import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
 import { exportCSV } from "./utils/exportCSV";
 import { exportPDF } from "./utils/exportPDF";
@@ -55,12 +62,83 @@ function App() {
     setVolumes((prev) => ({ ...prev, [species]: value }));
   };
 
+  const hasEmptyVolumes = () => {
+    return selectedSpecies.some(
+      (species) => !volumes[species] || volumes[species].trim() === ""
+    );
+  };
+
+  const handleValidationErrors = () => {
+    // check for invalid volume
+    const hasInvalidVolume = selectedSpecies.some((species) => {
+      const volume = +volumes[species];
+      return volume < 0 || volume > 10000000;
+    });
+
+    // check if hourly wage isn't valid
+    const hasInvalidWage = +hourlyWage < 1 || +hourlyWage > 200;
+
+    // check for invalid timeForAnimal
+    const hasInvalidTime = +timePerAnimal < 1 || +timePerAnimal > 480;
+
+    return hasInvalidVolume || hasInvalidWage || hasInvalidTime;
+  };
+
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+
   const handleClearAll = () => {
+    setClearDialogOpen(true);
+  };
+
+  const confirmClearAll = () => {
     setSelectedSpecies([]);
     setVolumes({} as Record<EAnimalSpecies, string>);
+    setClearDialogOpen(false);
+    setSnackbar({
+      open: true,
+      message: "All data cleared",
+      severity: "success",
+    });
   };
 
   const handleExportCSV = () => {
+    if (selectedSpecies.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "Please select at least one species before exporting.",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (hasEmptyVolumes()) {
+      setSnackbar({
+        open: true,
+        message: "Volume data can't be empty.",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (handleValidationErrors()) {
+      setSnackbar({
+        open: true,
+        message: "Please fix vaildation errors.",
+        severity: "error",
+      });
+      return;
+    }
+
     exportCSV({
       selectedSpecies,
       volumes,
@@ -70,10 +148,43 @@ function App() {
       calculateTotalAnnualSavings,
       calculateTotalAnnualCost,
     });
+
+    setSnackbar({
+      open: true,
+      message: "CSV exported successfully!",
+      severity: "success",
+    });
   };
 
-  const handleExportPDF = () => {
-    exportPDF({
+  const handleExportPDF = async () => {
+    if (selectedSpecies.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "Please select at least one species before exporting.",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (hasEmptyVolumes()) {
+      setSnackbar({
+        open: true,
+        message: "Volume data can't be empty.",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (handleValidationErrors()) {
+      setSnackbar({
+        open: true,
+        message: "Please fix validation errors.",
+        severity: "error",
+      });
+      return;
+    }
+
+    await exportPDF({
       selectedSpecies,
       volumes,
       timePerAnimal,
@@ -81,6 +192,12 @@ function App() {
       getTotalVolume,
       calculateTotalAnnualSavings,
       calculateTotalAnnualCost,
+    });
+
+    setSnackbar({
+      open: true,
+      message: "PDF exported successfully!",
+      severity: "success",
     });
   };
 
@@ -352,6 +469,34 @@ function App() {
           </Box>
         </Paper>
       </Box>
+      <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
+        <DialogTitle>Clear All Data?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to clear all selected species and volume data?
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setClearDialogOpen(false)}>Cancel</Button>
+          <Button onClick={confirmClearAll} color="error" variant="contained">
+            Clear All
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
