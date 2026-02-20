@@ -18,7 +18,7 @@ describe("Meat Processor Value Calculator", () => {
 
   it("displays the multi-select dropdown and summary", () => {
     render(<FarmProvider><App /></FarmProvider>);
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(screen.getAllByRole("combobox")[0]).toBeInTheDocument();
     expect(screen.getByText("Annual Summary")).toBeInTheDocument();
     expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
@@ -27,8 +27,8 @@ describe("Meat Processor Value Calculator", () => {
   it("shows volume inputs when species are selected", () => {
     render(<FarmProvider><App /></FarmProvider>);
 
-    // Find the select by its role
-    const selectElement = screen.getByRole("combobox");
+    // Find the select by its role (get first one - main calculator)
+    const selectElement = screen.getAllByRole("combobox")[0];
 
     // Open the dropdown
     fireEvent.mouseDown(selectElement);
@@ -46,7 +46,7 @@ describe("Meat Processor Value Calculator", () => {
   it("calculates annual savings and cost correctly", () => {
     render(<FarmProvider><App /></FarmProvider>);
 
-    const selectElement = screen.getByRole("combobox");
+    const selectElement = screen.getAllByRole("combobox")[0];
 
     // Open the dropdown and select Beef
     fireEvent.mouseDown(selectElement);
@@ -84,7 +84,7 @@ describe("Meat Processor Value Calculator", () => {
   it("can select multiple species", () => {
     render(<FarmProvider><App /></FarmProvider>);
 
-    const selectElement = screen.getByRole("combobox");
+    const selectElement = screen.getAllByRole("combobox")[0];
 
     // Open the dropdown
     fireEvent.mouseDown(selectElement);
@@ -110,7 +110,7 @@ describe("Meat Processor Value Calculator", () => {
   it("should allow removing a selected species", () => {
     render(<FarmProvider><App /></FarmProvider>);
 
-    const selectElement = screen.getByRole("combobox");
+    const selectElement = screen.getAllByRole("combobox")[0];
 
     // Select Beef
     fireEvent.mouseDown(selectElement);
