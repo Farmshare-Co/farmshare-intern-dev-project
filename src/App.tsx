@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  TextField,
   Typography,
   Box,
   Paper,
@@ -8,8 +7,6 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Collapse,
-  IconButton,
   OutlinedInput,
   Chip,
   CssBaseline,
@@ -17,10 +14,10 @@ import {
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 
+import AnnualSummary from "./components/AnnualSummary"
 import AdvancedSettings from "./components/AdvancedSettings";
 import SpeciesCard from "./components/SpeciesCard";
 import farmshareTheme from "./theme";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { EAnimalSpecies } from "./types";
 import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
@@ -52,36 +49,21 @@ function App() {
   const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
     setVolumes((prev) => ({ ...prev, [species]: value }));
   };
+  
+  const totalSavings: number = selectedSpecies.reduce((acc, species) => {
+    const vol = parseFloat(volumes[species] || "0");
+    if (vol <= 0) return acc;
+    const heads = calculateHeads(vol, AVG_HANGING_WEIGHTS[species]);
+    return acc + calculateLaborValue(heads, parseFloat(timePerAnimal), parseFloat(hourlyWage));
+  }, 0);
 
-  const calculateTotalAnnualSavings = () => {
-    return selectedSpecies.reduce((total, species) => {
-      const volume = parseFloat(volumes[species] || "0");
-      if (volume > 0) {
-        const avgWeight = AVG_HANGING_WEIGHTS[species];
-        const heads = calculateHeads(volume, avgWeight);
-        const savings = calculateLaborValue(
-          heads,
-          parseFloat(timePerAnimal),
-          parseFloat(hourlyWage),
-        );
-        return total + savings;
-      }
-      return total;
-    }, 0);
-  };
+  const totalCost: number = selectedSpecies.reduce((acc, species) => {
+    return acc + parseFloat(volumes[species] || "0") * COST_PER_LB;
+  }, 0);
 
-  const calculateTotalAnnualCost = () => {
-    return selectedSpecies.reduce((total, species) => {
-      const volume = parseFloat(volumes[species] || "0");
-      return total + volume * COST_PER_LB;
-    }, 0);
-  };
-
-  const getTotalVolume = () => {
-    return selectedSpecies.reduce((total, species) => {
-      return total + parseFloat(volumes[species] || "0");
-    }, 0);
-  };
+  const totalVolume: number = selectedSpecies.reduce((acc, species) => {
+    return acc + parseFloat(volumes[species] || "0");
+  }, 0);
 
   return (
     <ThemeProvider theme={farmshareTheme}>
@@ -165,90 +147,17 @@ function App() {
             onTimeChange={setTimePerAnimal}
             onWageChange={setHourlyWage}          
           />
-          
+
+        </Paper>
+        <Paper sx={{ p: 3 }}>
+          <AnnualSummary
+            totalVolume={totalVolume}
+            totalSavings={totalSavings}
+            totalCost={totalCost}
+          />
         </Paper>
 
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h5" gutterBottom>
-            Annual Summary
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1">Total Annual Volume:</Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {getTotalVolume().toLocaleString()} lbs
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1" color="success.main">
-                Total Annual Savings:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="success.main">
-                $
-                {calculateTotalAnnualSavings().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Typography variant="body1" color="error.main">
-                Total Annual Cost:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="error.main">
-                $
-                {calculateTotalAnnualCost().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                pt: 2,
-                borderTop: 2,
-                borderColor: "primary.main",
-              }}
-            >
-              <Typography variant="h6">Net Annual Benefit:</Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary">
-                $
-                {(
-                  calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-                ).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-          </Box>
-        </Paper>
+      
       </Box>
     </ThemeProvider>
   );
