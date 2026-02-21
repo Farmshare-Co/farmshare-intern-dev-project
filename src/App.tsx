@@ -26,6 +26,8 @@ import {
   DialogActions,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import SaveIcon from "@mui/icons-material/Save";
+import DeleteIcon from "@mui/icons-material/Delete";
 import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { EAnimalSpecies } from "./types";
@@ -65,6 +67,24 @@ function App() {
     severity: "success",
   });
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [savePresetDialogOpen, setSavePresetDialogOpen] = useState(false);
+  const [presetName, setPresetName] = useState("");
+
+  // custom presets state are loaded from localStorage
+  interface CustomPreset {
+    name: string;
+    species: EAnimalSpecies[];
+    volumes: Record<EAnimalSpecies, string>;
+  }
+
+  const getCustomPresets = (): CustomPreset[] => {
+    const saved = localStorage.getItem("farmshare-custom-presets");
+    return saved ? JSON.parse(saved) : [];
+  };
+
+  const [customPresets, setCustomPresets] = useState<CustomPreset[]>(
+    getCustomPresets()
+  );
 
   // State for species mix comparison
   const [scenarioASpecies, setScenarioASpecies] = useState<EAnimalSpecies[]>(
@@ -114,6 +134,136 @@ function App() {
 
   const handleClearAll = () => {
     setClearDialogOpen(true);
+  };
+
+  // preset config
+  const presets = {
+    none: { species: [], volumes: {} },
+    beefFocused: {
+      species: ["beef" as EAnimalSpecies],
+      volumes: { beef: "10000" },
+    },
+    mixedOperation: {
+      species: [
+        "beef" as EAnimalSpecies,
+        "lamb" as EAnimalSpecies,
+        "hog" as EAnimalSpecies,
+      ],
+      volumes: { beef: "5000", lamb: "2000", hog: "1500" },
+    },
+    smallFarm: {
+      species: ["lamb" as EAnimalSpecies, "goat" as EAnimalSpecies],
+      volumes: { lamb: "500", goat: "300" },
+    },
+    largeCommercial: {
+      species: [
+        "beef" as EAnimalSpecies,
+        "hog" as EAnimalSpecies,
+        "veal" as EAnimalSpecies,
+      ],
+      volumes: { beef: "20000", hog: "15000", veal: "5000" },
+    },
+  };
+
+  const handlePresetChange = (event: SelectChangeEvent<string>) => {
+    const value = event.target.value;
+
+    // check if its custom preset (starts with "custom-")
+    if (value.startsWith("custom-")) {
+      const customPresetName = value.replace("custom-", "");
+      const customPreset = customPresets.find(
+        (p) => p.name === customPresetName
+      );
+      if (customPreset) {
+        setSelectedSpecies(customPreset.species);
+        setVolumes(customPreset.volumes);
+        setSnackbar({
+          open: true,
+          message: `Preset "${customPreset.name}" applied successfully!`,
+          severity: "success",
+        });
+      }
+    } else {
+      // handle default presets
+      const presetKey = value as keyof typeof presets;
+      if (presetKey && presetKey !== "none") {
+        const preset = presets[presetKey];
+        setSelectedSpecies(preset.species);
+        setVolumes(preset.volumes as Record<EAnimalSpecies, string>);
+        setSnackbar({
+          open: true,
+          message: "Preset applied successfully!",
+          severity: "success",
+        });
+      }
+    }
+  };
+
+  const handleSavePreset = () => {
+    if (selectedSpecies.length === 0) {
+      setSnackbar({
+        open: true,
+        message: "Please select at least one species before saving a preset.",
+        severity: "error",
+      });
+      return;
+    }
+
+    if (!presetName.trim()) {
+      setSnackbar({
+        open: true,
+        message: "Please enter a preset name.",
+        severity: "error",
+      });
+      return;
+    }
+
+    // check if preset name already exists
+    if (customPresets.some((p) => p.name === presetName.trim())) {
+      setSnackbar({
+        open: true,
+        message: "A preset with this name already exists.",
+        severity: "error",
+      });
+      return;
+    }
+
+    const newPreset: CustomPreset = {
+      name: presetName.trim(),
+      species: selectedSpecies,
+      volumes: volumes,
+    };
+
+    const updatedPresets = [...customPresets, newPreset];
+    setCustomPresets(updatedPresets);
+    localStorage.setItem(
+      "farmshare-custom-presets",
+      JSON.stringify(updatedPresets)
+    );
+
+    setSnackbar({
+      open: true,
+      message: `Preset "${presetName.trim()}" saved successfully!`,
+      severity: "success",
+    });
+
+    setSavePresetDialogOpen(false);
+    setPresetName("");
+  };
+
+  const handleDeleteCustomPreset = (presetName: string) => {
+    const updatedPresets = customPresets.filter((p) => p.name !== presetName);
+    setCustomPresets(updatedPresets);
+    localStorage.setItem(
+      "farmshare-custom-presets",
+      JSON.stringify(updatedPresets)
+    );
+
+    setSnackbar({
+      open: true,
+      message: `Preset "${presetName}" deleted successfully!`,
+      severity: "success",
+    });
   };
 
   const confirmClearAll = () => {
@@ -237,7 +387,79 @@ function App() {
         </Typography>
 
         <Paper sx={{ p: 2, mb: 3, width: "525px" }}>
-          <Button onClick={handleClearAll}>Clear All</Button>
+          <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
+            <FormControl sx={{ flex: 1 }}>
+              <InputLabel>Load Preset</InputLabel>
+              <Select
+                defaultValue="none"
+                label="Load Preset"
+                onChange={handlePresetChange}
+              >
+                <MenuItem value="none">
+                  <em>None - Start from scratch</em>
+                </MenuItem>
+                <MenuItem
+                  disabled
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                    color: "text.secondary",
+                  }}
+                >
+                  Default Presets
+                </MenuItem>
+                <MenuItem value="beefFocused">Beef-Focused Processor</MenuItem>
+                <MenuItem value="mixedOperation">Mixed Operation</MenuItem>
+                <MenuItem value="smallFarm">Small Farm Processor</MenuItem>
+                <MenuItem value="largeCommercial">Large Commercial</MenuItem>
+
+                {customPresets.length > 0 && (
+                  <MenuItem
+                    disabled
+                    sx={{
+                      fontSize: "0.85rem",
+                      fontWeight: "bold",
+                      color: "text.secondary",
+                    }}
+                  >
+                    Custom Presets
+                  </MenuItem>
+                )}
+                {customPresets.map((preset) => (
+                  <MenuItem key={preset.name} value={`custom-${preset.name}`}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <span>{preset.name}</span>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteCustomPreset(preset.name);
+                        }}
+                        sx={{ ml: 1 }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              startIcon={<SaveIcon />}
+              onClick={() => setSavePresetDialogOpen(true)}
+            >
+              Save
+            </Button>
+            <Button onClick={handleClearAll}>Clear All</Button>
+          </Box>
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Animal Species</InputLabel>
             <Select
@@ -668,6 +890,50 @@ function App() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={savePresetDialogOpen}
+        onClose={() => setSavePresetDialogOpen(false)}
+      >
+        <DialogTitle>Save Custom Preset</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            Save your current calculator settings as a custom preset for quick
+            access later.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Preset Name"
+            value={presetName}
+            onChange={(e) => setPresetName(e.target.value)}
+            placeholder="e.g., My Farm Mix"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSavePreset();
+              }
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setSavePresetDialogOpen(false);
+              setPresetName("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSavePreset}
+            variant="contained"
+            startIcon={<SaveIcon />}
+          >
+            Save Preset
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
