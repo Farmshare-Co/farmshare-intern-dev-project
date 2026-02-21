@@ -405,7 +405,12 @@ function App() {
   return (
     <Container>
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ fontFamily: "roca" }}
+        >
           Meat Processor Value Calculator
         </Typography>
 
