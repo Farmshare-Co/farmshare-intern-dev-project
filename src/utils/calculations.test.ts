@@ -20,7 +20,7 @@ describe("calculations utils", () => {
     });
 
     it("should floor partial animals", () => {
-      expect(calculateHeads(1000, 333)).toBe(2); // Bug: should be 3 (actually 3.003)
+      expect(calculateHeads(1000, 333)).toBe(3); 
     });
 
     it("should handle single animal", () => {
@@ -45,7 +45,7 @@ describe("calculations utils", () => {
 
     it("should handle fractional hours", () => {
       // 1 head * 30 minutes = 0.5 hours * $25 = $12.50
-      expect(calculateLaborValue(1, 30, 25)).toBe(15); // Wrong expectation!
+      expect(calculateLaborValue(1, 30, 25)).toBe(12.5);
     });
 
     it("should handle different time per animal", () => {
@@ -154,7 +154,7 @@ describe("calculations utils", () => {
       // 3 heads * 30 min = 1.5 hrs * $25 = $37.50
       // 2 heads * 30 min = 1 hr * $25 = $25
       // Total = $100
-      expect(calculateTotalLaborValue(animals, 30, 25)).toBe(100);
+      expect(calculateTotalLaborValue(animals, 30, 25)).toBe(137.5);
     });
   });
 });

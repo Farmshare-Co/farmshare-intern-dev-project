@@ -26,9 +26,7 @@ import "./App.css";
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([
-    "beef",
-  ]);
+  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
   const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
     {} as Record<EAnimalSpecies, string>,
   );
@@ -41,6 +39,9 @@ function App() {
     const species = typeof value === "string" ? value.split(",") : value;
     setSelectedSpecies(species as EAnimalSpecies[]);
   };
+const handleDelete = (speciesToDelete: EAnimalSpecies) => {
+  setSelectedSpecies((prev) => prev.filter((s) => s !== speciesToDelete));
+};
 
   const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
     setVolumes((prev) => ({ ...prev, [species]: value }));
@@ -87,27 +88,30 @@ function App() {
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Animal Species</InputLabel>
             <Select
-              multiple
-              value={selectedSpecies}
-              onChange={handleSpeciesChange}
-              input={<OutlinedInput label="Select Animal Species" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip
-                      key={value}
-                      label={value.charAt(0).toUpperCase() + value.slice(1)}
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {Object.values(AnimalSpecies).map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
+  multiple
+  value={selectedSpecies}
+  onChange={handleSpeciesChange}
+  input={<OutlinedInput label="Select Animal Species" />}
+  renderValue={(selected) => (
+    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+      {selected.map((value) => (
+        <Chip
+          key={value}
+          label={value.charAt(0).toUpperCase() + value.slice(1)}
+          onDelete={() => handleDelete(value)}
+          onMouseDown={(e) => e.stopPropagation()}
+        />
+      ))}
+    </Box>
+  )}
+>
+  {Object.values(AnimalSpecies).map((s) => (
+    <MenuItem key={s} value={s}>
+      {s.charAt(0).toUpperCase() + s.slice(1)}
+    </MenuItem>
+  ))}
+</Select>
+
           </FormControl>
 
           {selectedSpecies.length > 0 && (
