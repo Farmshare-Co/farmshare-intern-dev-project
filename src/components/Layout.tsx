@@ -139,6 +139,9 @@ export default function Layout({ children }: LayoutProps) {
             py: 2,
             borderBottom: "2px solid #e0e0e0",
             backgroundColor: "#fff",
+            position: "sticky",
+            top: 0,
+            zIndex: 1000,
           }}
         >
           <Breadcrumbs aria-label="breadcrumb" sx={{ fontSize: "12px" }}>

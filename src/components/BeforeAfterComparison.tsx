@@ -39,14 +39,14 @@ export default function BeforeAfterComparison({
   const benefitDiff = withPlatformBenefit - beforeBenefit;
 
   return (
-    <Paper sx={{ p: 3, mt: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Before vs After Farmshare Comparison
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        See the financial impact of using FarmShare platform
-      </Typography>
-
+    <Paper
+      sx={{
+        p: 3,
+        borderRadius: 3,
+        boxShadow: "none",
+        border: "2px solid #e0e0e0",
+      }}
+    >
       <TableContainer>
         <Table>
           <TableHead>

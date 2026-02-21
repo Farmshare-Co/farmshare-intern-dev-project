@@ -23,8 +23,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  ToggleButton,
-  ToggleButtonGroup,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SaveIcon from "@mui/icons-material/Save";
@@ -386,16 +384,65 @@ export default function Calculator() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography
-        variant="h4"
-        component="h1"
-        gutterBottom
-        sx={{ fontFamily: "roca" }}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
       >
-        Meat Processor Value Calculator
-      </Typography>
+        <Box>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ fontWeight: 600, mb: 1, fontFamily: "roca" }}
+          >
+            Value Calculator
+          </Typography>
+          <Typography
+            color="text.secondary"
+            sx={{ fontWeight: 500, fontSize: "14px" }}
+          >
+            Calculate annual savings and costs for your meat processing
+            operation
+          </Typography>
+        </Box>
+        <Box sx={{ display: "flex", gap: 1.5 }}>
+          <Button
+            variant="outlined"
+            onClick={handleExportCSV}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              fontWeight: 600,
+            }}
+          >
+            Export CSV
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleExportPDF}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              fontWeight: 600,
+            }}
+          >
+            Export PDF
+          </Button>
+        </Box>
+      </Box>
 
-      <Paper sx={{ p: 2, mb: 3, width: "525px" }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: 3,
+          boxShadow: "none",
+          border: "2px solid #e0e0e0",
+        }}
+      >
         <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
           <FormControl sx={{ flex: 1 }}>
             <InputLabel>Load Preset</InputLabel>
@@ -464,10 +511,24 @@ export default function Calculator() {
             variant="outlined"
             startIcon={<SaveIcon />}
             onClick={() => setSavePresetDialogOpen(true)}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              fontWeight: 600,
+            }}
           >
             Save
           </Button>
-          <Button onClick={handleClearAll}>Clear All</Button>
+          <Button
+            onClick={handleClearAll}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              fontWeight: 600,
+            }}
+          >
+            Clear All
+          </Button>
         </Box>
         <FormControl fullWidth sx={{ mb: 3 }}>
           <InputLabel>Select Animal Species</InputLabel>
@@ -512,11 +573,23 @@ export default function Calculator() {
 
         {selectedSpecies.length > 0 && (
           <Box sx={{ mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{ fontWeight: 600, fontFamily: "roca", mb: 2 }}
+            >
               Annual Processing Volume by Species
             </Typography>
             {selectedSpecies.map((species) => (
-              <Card key={species} sx={{ mb: 2 }}>
+              <Card
+                key={species}
+                sx={{
+                  mb: 2,
+                  borderRadius: 3,
+                  boxShadow: "none",
+                  border: "2px solid #e0e0e0",
+                }}
+              >
                 <CardContent>
                   <Typography variant="subtitle1" gutterBottom>
                     {species.charAt(0).toUpperCase() + species.slice(1)}
@@ -559,7 +632,10 @@ export default function Calculator() {
         )}
 
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Typography variant="body2" sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h5"
+            sx={{ flexGrow: 1, fontWeight: 600, fontFamily: "roca" }}
+          >
             Advanced Settings
           </Typography>
           <IconButton
@@ -619,37 +695,71 @@ export default function Calculator() {
         </Collapse>
       </Paper>
 
-      <Paper sx={{ p: 3 }}>
+      <Paper
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          boxShadow: "none",
+          border: "2px solid #e0e0e0",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
-            mb: 2,
+            gap: 2,
+            mb: 3,
+            justifyContent: "space-between",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography variant="h5">Summary</Typography>
-            <ToggleButtonGroup
-              value={viewMode}
-              exclusive
-              onChange={(_, newMode) => {
-                if (newMode !== null) {
-                  setViewMode(newMode);
-                }
+          <Typography variant="h5" sx={{ fontWeight: 600, fontFamily: "roca" }}>
+            Summary
+          </Typography>
+
+          <Box sx={{ display: "flex", gap: 1.5 }}>
+            <Button
+              variant="contained"
+              onClick={() => setViewMode("annual")}
+              sx={{
+                backgroundColor: "farmGreen.main",
+                color: "#fff",
+                paddingX: 3,
+                paddingY: 1,
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: "none",
+                boxShadow: "none",
+                opacity: viewMode === "annual" ? 1 : 0.6,
+                "&:hover": {
+                  backgroundColor: "farmGreen.main",
+                  boxShadow: "none",
+                  opacity: 1,
+                },
               }}
-              size="small"
             >
-              <ToggleButton value="annual">Annual</ToggleButton>
-              <ToggleButton value="monthly">Monthly</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button variant="outlined" size="small" onClick={handleExportCSV}>
-              Export CSV
+              Annual
             </Button>
-            <Button variant="outlined" size="small" onClick={handleExportPDF}>
-              Export PDF
+            <Button
+              variant="contained"
+              onClick={() => setViewMode("monthly")}
+              sx={{
+                backgroundColor: "farmOrange.main",
+                color: "#fff",
+                paddingX: 3,
+                paddingY: 1,
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: "none",
+                boxShadow: "none",
+                opacity: viewMode === "monthly" ? 1 : 0.6,
+                "&:hover": {
+                  backgroundColor: "farmOrange.main",
+                  boxShadow: "none",
+                  opacity: 1,
+                },
+              }}
+            >
+              Monthly
             </Button>
           </Box>
         </Box>
@@ -664,10 +774,10 @@ export default function Calculator() {
               borderColor: "divider",
             }}
           >
-            <Typography variant="body1">
-              Total {viewMode === "annual" ? "Annual" : "Monthly"} Volume:
+            <Typography variant="body2">
+              Total {viewMode === "annual" ? "Annual" : "Monthly"} Volume
             </Typography>
-            <Typography variant="body1" fontWeight="bold">
+            <Typography fontWeight="bold" sx={{ fontSize: "16px" }}>
               {getDisplayVolume().toLocaleString(undefined, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
@@ -685,10 +795,14 @@ export default function Calculator() {
               borderColor: "divider",
             }}
           >
-            <Typography variant="body1" color="success.main">
-              Total {viewMode === "annual" ? "Annual" : "Monthly"} Savings:
+            <Typography variant="body2" color="success.main">
+              Total {viewMode === "annual" ? "Annual" : "Monthly"} Savings
             </Typography>
-            <Typography variant="h6" fontWeight="bold" color="success.main">
+            <Typography
+              fontWeight="bold"
+              sx={{ fontSize: "16px" }}
+              color="success.main"
+            >
               $
               {getDisplaySavings().toLocaleString(undefined, {
                 minimumFractionDigits: 2,
@@ -703,10 +817,15 @@ export default function Calculator() {
               mb: 2,
             }}
           >
-            <Typography variant="body1" color="error.main">
-              Total {viewMode === "annual" ? "Annual" : "Monthly"} Cost:
+            <Typography variant="body2" color="error.main">
+              Total {viewMode === "annual" ? "Annual" : "Monthly"} Cost
             </Typography>
-            <Typography variant="h6" fontWeight="bold" color="error.main">
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              sx={{ fontSize: "16px" }}
+              color="error.main"
+            >
               $
               {getDisplayCost().toLocaleString(undefined, {
                 minimumFractionDigits: 2,
@@ -720,13 +839,13 @@ export default function Calculator() {
               justifyContent: "space-between",
               pt: 2,
               borderTop: 2,
-              borderColor: "primary.main",
+              borderColor: "#e0e0e0",
             }}
           >
-            <Typography variant="h6">
+            <Typography fontWeight="bold" sx={{ fontSize: "18px" }}>
               Net {viewMode === "annual" ? "Annual" : "Monthly"} Benefit:
             </Typography>
-            <Typography variant="h5" fontWeight="bold" color="primary">
+            <Typography variant="h6" fontWeight="bold" color="primary">
               $
               {getDisplayBenefit().toLocaleString(undefined, {
                 minimumFractionDigits: 2,
@@ -737,6 +856,7 @@ export default function Calculator() {
         </Box>
       </Paper>
 
+      {/* 
       <BeforeAfterComparison
         selectedSpecies={selectedSpecies}
         withPlatformSavings={calculateTotalAnnualSavings()}
@@ -744,7 +864,7 @@ export default function Calculator() {
         withPlatformBenefit={
           calculateTotalAnnualSavings() - calculateTotalAnnualCost()
         }
-      />
+      /> */}
 
       <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
         <DialogTitle>Clear All Data?</DialogTitle>

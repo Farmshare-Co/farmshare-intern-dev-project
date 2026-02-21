@@ -9,14 +9,28 @@ import {
   OutlinedInput,
   Chip,
   TextField,
+  Button,
 } from "@mui/material";
 import { EAnimalSpecies as AnimalSpecies } from "../types";
 import type { EAnimalSpecies } from "../types";
 import { FarmContext } from "../context/FarmContext";
 import SpeciesMixComparison from "../components/SpeciesMixComparison";
+import BeforeAfterComparison from "../components/BeforeAfterComparison";
 
 export default function Comparisons() {
-  const { timePerAnimal, hourlyWage } = useContext(FarmContext);
+  const {
+    timePerAnimal,
+    hourlyWage,
+    selectedSpecies,
+    volumes,
+    calculateTotalAnnualSavings,
+    calculateTotalAnnualCost,
+  } = useContext(FarmContext);
+
+  // State for comparison type
+  const [comparisonType, setComparisonType] = useState<
+    "speciesMix" | "beforeAfter"
+  >("speciesMix");
 
   // State for species mix comparison
   const [scenarioASpecies, setScenarioASpecies] = useState<EAnimalSpecies[]>(
@@ -34,34 +48,85 @@ export default function Comparisons() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography
-        variant="h4"
-        gutterBottom
-        sx={{ fontWeight: 600, mb: 1, fontFamily: "roca" }}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
       >
-        Species Mix Comparison
-      </Typography>
-      <Typography
-        color="text.secondary"
-        sx={{ mb: 4, fontWeight: 500, fontSize: "14px" }}
-      >
-        Compare different species combinations to optimize profitability and
-        make data-driven decisions for your meat processing operation.
-      </Typography>
+        <Box>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{ fontWeight: 600, mb: 1, fontFamily: "roca" }}
+          >
+            {comparisonType === "speciesMix"
+              ? "Species Mix Comparison"
+              : "Before vs After Comparison"}
+          </Typography>
+          <Typography
+            color="text.secondary"
+            sx={{ fontWeight: 500, fontSize: "14px" }}
+          >
+            {comparisonType === "speciesMix"
+              ? "Compare different species combinations to optimize profitability"
+              : "See the financial impact of using FarmShare platform"}
+          </Typography>
+        </Box>
 
-      <Box sx={{ mb: 4 }}>
-        {/* <Typography
-          variant="h5"
-          gutterBottom
-          sx={{ fontWeight: 600, mb: 1, color: "farmGray.main" }}
-        >
-          Input Scenarios
-        </Typography> */}
-        {/* <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Configure two different scenarios to compare profitability
-        </Typography> */}
+        <Box sx={{ display: "flex", gap: 1.5 }}>
+          <Button
+            variant="contained"
+            onClick={() => setComparisonType("speciesMix")}
+            sx={{
+              backgroundColor: "farmGreen.main",
+              color: "#fff",
+              paddingX: 3,
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              opacity: comparisonType === "speciesMix" ? 1 : 0.6,
+              "&:hover": {
+                backgroundColor: "farmGreen.main",
+                boxShadow: "none",
+                opacity: 1,
+              },
+            }}
+          >
+            Species Mix
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => setComparisonType("beforeAfter")}
+            sx={{
+              backgroundColor: "farmOrange.main",
+              color: "#fff",
+              paddingX: 3,
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              opacity: comparisonType === "beforeAfter" ? 1 : 0.6,
+              "&:hover": {
+                backgroundColor: "farmOrange.main",
+                boxShadow: "none",
+                opacity: 1,
+              },
+            }}
+          >
+            Before/After
+          </Button>
+        </Box>
+      </Box>
 
-        <Box sx={{ display: "flex", gap: 3 }}>
+      {comparisonType === "speciesMix" && (
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: "flex", gap: 3 }}>
           {/* Scenario A */}
           <Box
             sx={{
@@ -212,24 +277,36 @@ export default function Comparisons() {
             ))}
           </Box>
         </Box>
-      </Box>
 
-      <SpeciesMixComparison
-        scenarioA={{
-          name: "Species A",
-          selectedSpecies: scenarioASpecies,
-          volumes: scenarioAVolumes,
-          timePerAnimal,
-          hourlyWage,
-        }}
-        scenarioB={{
-          name: "Species B",
-          selectedSpecies: scenarioBSpecies,
-          volumes: scenarioBVolumes,
-          timePerAnimal,
-          hourlyWage,
-        }}
-      />
+        <SpeciesMixComparison
+          scenarioA={{
+            name: "Species A",
+            selectedSpecies: scenarioASpecies,
+            volumes: scenarioAVolumes,
+            timePerAnimal,
+            hourlyWage,
+          }}
+          scenarioB={{
+            name: "Species B",
+            selectedSpecies: scenarioBSpecies,
+            volumes: scenarioBVolumes,
+            timePerAnimal,
+            hourlyWage,
+          }}
+        />
+      </Box>
+      )}
+
+      {comparisonType === "beforeAfter" && (
+        <BeforeAfterComparison
+          selectedSpecies={selectedSpecies}
+          withPlatformSavings={calculateTotalAnnualSavings()}
+          withPlatformCost={calculateTotalAnnualCost()}
+          withPlatformBenefit={
+            calculateTotalAnnualSavings() - calculateTotalAnnualCost()
+          }
+        />
+      )}
     </Box>
   );
 }
