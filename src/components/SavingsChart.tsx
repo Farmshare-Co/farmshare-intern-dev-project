@@ -71,7 +71,15 @@ export default function SavingsChart({
   });
 
   return (
-    <Paper sx={{ p: 3, mt: 3 }}>
+    <Paper
+      sx={{
+        p: 3,
+        mt: 3,
+        borderRadius: 3,
+        boxShadow: "none",
+        border: "2px solid #e0e0e0",
+      }}
+    >
       <Box
         sx={{
           display: "flex",
@@ -80,18 +88,25 @@ export default function SavingsChart({
           mb: 2,
         }}
       >
-        <Typography variant="h6">
-          Savings vs Costs Comparison ({viewMode === "annual" ? "Annual" : "Monthly"})
+        <Typography variant="h5" sx={{ fontFamily: "roca" }}>
+          Savings vs Costs Comparison
         </Typography>
         <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Chart Type</InputLabel>
+          <InputLabel sx={{ fontSize: "12px", mt: "4px" }}>
+            Chart Type
+          </InputLabel>
           <Select
             value={chartType}
             label="Chart Type"
             onChange={handleChartTypeChange}
+            sx={{ fontSize: "12px", fontWeight: 500 }}
           >
-            <MenuItem value="bar">Bar Chart</MenuItem>
-            <MenuItem value="line">Line Chart</MenuItem>
+            <MenuItem value="bar" sx={{ fontSize: "14px", fontWeight: 500 }}>
+              Bar Chart
+            </MenuItem>
+            <MenuItem value="line" sx={{ fontSize: "14px", fontWeight: 500 }}>
+              Line Chart
+            </MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -102,7 +117,11 @@ export default function SavingsChart({
             xAxis={[
               {
                 scaleType: "band",
-                data: [viewMode === "annual" ? "Annual Comparison" : "Monthly Comparison"],
+                data: [
+                  viewMode === "annual"
+                    ? "Annual Comparison"
+                    : "Monthly Comparison",
+                ],
               },
             ]}
             series={[

@@ -36,7 +36,6 @@ import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "../types";
 import { exportCSV } from "../utils/exportCSV";
 import { exportPDF } from "../utils/exportPDF";
 import { FarmContext } from "../context/FarmContext";
-import SavingsChart from "../components/SavingsChart";
 import BeforeAfterComparison from "../components/BeforeAfterComparison";
 
 export default function Calculator() {
@@ -386,28 +385,44 @@ export default function Calculator() {
   };
 
   return (
-    <Box>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ fontFamily: "roca" }}
-        >
-          Meat Processor Value Calculator
-        </Typography>
+    <Box sx={{ p: 3 }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        sx={{ fontFamily: "roca" }}
+      >
+        Meat Processor Value Calculator
+      </Typography>
 
-        <Paper sx={{ p: 2, mb: 3, width: "525px" }}>
-          <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
-            <FormControl sx={{ flex: 1 }}>
-              <InputLabel>Load Preset</InputLabel>
-              <Select
-                defaultValue="none"
-                label="Load Preset"
-                onChange={handlePresetChange}
+      <Paper sx={{ p: 2, mb: 3, width: "525px" }}>
+        <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
+          <FormControl sx={{ flex: 1 }}>
+            <InputLabel>Load Preset</InputLabel>
+            <Select
+              defaultValue="none"
+              label="Load Preset"
+              onChange={handlePresetChange}
+            >
+              <MenuItem value="none">
+                <em>None - Start from scratch</em>
+              </MenuItem>
+              <MenuItem
+                disabled
+                sx={{
+                  fontSize: "0.85rem",
+                  fontWeight: "bold",
+                  color: "text.secondary",
+                }}
               >
-                <MenuItem value="none">
-                  <em>None - Start from scratch</em>
-                </MenuItem>
+                Default Presets
+              </MenuItem>
+              <MenuItem value="beefFocused">Beef-Focused Processor</MenuItem>
+              <MenuItem value="mixedOperation">Mixed Operation</MenuItem>
+              <MenuItem value="smallFarm">Small Farm Processor</MenuItem>
+              <MenuItem value="largeCommercial">Large Commercial</MenuItem>
+
+              {customPresets.length > 0 && (
                 <MenuItem
                   disabled
                   sx={{
@@ -416,345 +431,320 @@ export default function Calculator() {
                     color: "text.secondary",
                   }}
                 >
-                  Default Presets
+                  Custom Presets
                 </MenuItem>
-                <MenuItem value="beefFocused">Beef-Focused Processor</MenuItem>
-                <MenuItem value="mixedOperation">Mixed Operation</MenuItem>
-                <MenuItem value="smallFarm">Small Farm Processor</MenuItem>
-                <MenuItem value="largeCommercial">Large Commercial</MenuItem>
-
-                {customPresets.length > 0 && (
-                  <MenuItem
-                    disabled
+              )}
+              {customPresets.map((preset) => (
+                <MenuItem key={preset.name} value={`custom-${preset.name}`}>
+                  <Box
                     sx={{
-                      fontSize: "0.85rem",
-                      fontWeight: "bold",
-                      color: "text.secondary",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
                     }}
                   >
-                    Custom Presets
-                  </MenuItem>
-                )}
-                {customPresets.map((preset) => (
-                  <MenuItem key={preset.name} value={`custom-${preset.name}`}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "100%",
+                    <span>{preset.name}</span>
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteCustomPreset(preset.name);
                       }}
+                      sx={{ ml: 1 }}
                     >
-                      <span>{preset.name}</span>
-                      <IconButton
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteCustomPreset(preset.name);
-                        }}
-                        sx={{ ml: 1 }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              variant="outlined"
-              startIcon={<SaveIcon />}
-              onClick={() => setSavePresetDialogOpen(true)}
-            >
-              Save
-            </Button>
-            <Button onClick={handleClearAll}>Clear All</Button>
-          </Box>
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel>Select Animal Species</InputLabel>
-            <Select
-              multiple
-              value={selectedSpecies}
-              onChange={handleSpeciesChange}
-              input={<OutlinedInput label="Select Animal Species" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip
-                      key={value}
-                      label={value.charAt(0).toUpperCase() + value.slice(1)}
-                      onDelete={() => {
-                        setSelectedSpecies(
-                          selectedSpecies.filter((spec) => spec !== value)
-                        );
-                      }}
-                      deleteIcon={
-                        <div
-                          role="button"
-                          aria-label="Remove"
-                          onMouseDown={(e) => e.stopPropagation()}
-                          style={{ display: "flex", alignItems: "center" }}
-                        >
-                          <CancelIcon />
-                        </div>
-                      }
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {Object.values(AnimalSpecies).map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-
-          {selectedSpecies.length > 0 && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Annual Processing Volume by Species
-              </Typography>
-              {selectedSpecies.map((species) => (
-                <Card key={species} sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {species.charAt(0).toUpperCase() + species.slice(1)}
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ ml: 1 }}
+          <Button
+            variant="outlined"
+            startIcon={<SaveIcon />}
+            onClick={() => setSavePresetDialogOpen(true)}
+          >
+            Save
+          </Button>
+          <Button onClick={handleClearAll}>Clear All</Button>
+        </Box>
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <InputLabel>Select Animal Species</InputLabel>
+          <Select
+            multiple
+            value={selectedSpecies}
+            onChange={handleSpeciesChange}
+            input={<OutlinedInput label="Select Animal Species" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip
+                    key={value}
+                    label={value.charAt(0).toUpperCase() + value.slice(1)}
+                    onDelete={() => {
+                      setSelectedSpecies(
+                        selectedSpecies.filter((spec) => spec !== value)
+                      );
+                    }}
+                    deleteIcon={
+                      <div
+                        role="button"
+                        aria-label="Remove"
+                        onMouseDown={(e) => e.stopPropagation()}
+                        style={{ display: "flex", alignItems: "center" }}
                       >
-                        (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
-                      </Typography>
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Total Annual Hanging Weight (lbs)"
-                      type="number"
-                      value={volumes[species] || ""}
-                      onChange={(e) =>
-                        handleVolumeChange(species, e.target.value)
-                      }
-                      slotProps={{
-                        htmlInput: { min: 0, max: 10000000 },
-                        input: {
-                          endAdornment: (
-                            <InputAdornment position="end">lbs</InputAdornment>
-                          ),
-                        },
-                      }}
-                      error={isAnnualHangingInvalid(species)}
-                      helperText={
-                        isAnnualHangingInvalid(species)
-                          ? "Enter a value between 0 and 10,000,000"
-                          : " "
-                      }
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          )}
+                        <CancelIcon />
+                      </div>
+                    }
+                  />
+                ))}
+              </Box>
+            )}
+          >
+            {Object.values(AnimalSpecies).map((s) => (
+              <MenuItem key={s} value={s}>
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography variant="body2" sx={{ flexGrow: 1 }}>
-              Advanced Settings
+        {selectedSpecies.length > 0 && (
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Annual Processing Volume by Species
             </Typography>
-            <IconButton
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              sx={{
-                transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s",
-              }}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
+            {selectedSpecies.map((species) => (
+              <Card key={species} sx={{ mb: 2 }}>
+                <CardContent>
+                  <Typography variant="subtitle1" gutterBottom>
+                    {species.charAt(0).toUpperCase() + species.slice(1)}
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ ml: 1 }}
+                    >
+                      (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
+                    </Typography>
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Total Annual Hanging Weight (lbs)"
+                    type="number"
+                    value={volumes[species] || ""}
+                    onChange={(e) =>
+                      handleVolumeChange(species, e.target.value)
+                    }
+                    slotProps={{
+                      htmlInput: { min: 0, max: 10000000 },
+                      input: {
+                        endAdornment: (
+                          <InputAdornment position="end">lbs</InputAdornment>
+                        ),
+                      },
+                    }}
+                    error={isAnnualHangingInvalid(species)}
+                    helperText={
+                      isAnnualHangingInvalid(species)
+                        ? "Enter a value between 0 and 10,000,000"
+                        : " "
+                    }
+                  />
+                </CardContent>
+              </Card>
+            ))}
           </Box>
+        )}
 
-          <Collapse in={showAdvanced}>
-            <TextField
-              fullWidth
-              label="Time Savings per Animal (minutes)"
-              type="number"
-              value={timePerAnimal}
-              onChange={(e) => setTimePerAnimal(e.target.value)}
-              slotProps={{
-                htmlInput: { min: 0 },
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">mins</InputAdornment>
-                  ),
-                },
-              }}
-              sx={{ mb: 2 }}
-              error={isTimePerAnimalValid}
-              helperText={
-                isTimePerAnimalValid
-                  ? "Enter a value between 1 minute and 480 minutes"
-                  : " "
-              }
-            />
-            <TextField
-              fullWidth
-              label="Average Hourly Wage ($)"
-              type="number"
-              value={hourlyWage}
-              onChange={(e) => setHourlyWage(e.target.value)}
-              slotProps={{
-                htmlInput: { min: 0 },
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="start">&nbsp;$</InputAdornment>
-                  ),
-                },
-              }}
-              sx={{ mb: 2 }}
-              error={isHourlyWageValid}
-              helperText={
-                isHourlyWageValid ? "Enter a value between $7.25 and $200" : " "
-              }
-            />
-          </Collapse>
-        </Paper>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Typography variant="body2" sx={{ flexGrow: 1 }}>
+            Advanced Settings
+          </Typography>
+          <IconButton
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            sx={{
+              transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.3s",
+            }}
+          >
+            <ExpandMoreIcon />
+          </IconButton>
+        </Box>
 
-        <Paper sx={{ p: 3 }}>
+        <Collapse in={showAdvanced}>
+          <TextField
+            fullWidth
+            label="Time Savings per Animal (minutes)"
+            type="number"
+            value={timePerAnimal}
+            onChange={(e) => setTimePerAnimal(e.target.value)}
+            slotProps={{
+              htmlInput: { min: 0 },
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">mins</InputAdornment>
+                ),
+              },
+            }}
+            sx={{ mb: 2 }}
+            error={isTimePerAnimalValid}
+            helperText={
+              isTimePerAnimalValid
+                ? "Enter a value between 1 minute and 480 minutes"
+                : " "
+            }
+          />
+          <TextField
+            fullWidth
+            label="Average Hourly Wage ($)"
+            type="number"
+            value={hourlyWage}
+            onChange={(e) => setHourlyWage(e.target.value)}
+            slotProps={{
+              htmlInput: { min: 0 },
+              input: {
+                endAdornment: (
+                  <InputAdornment position="start">&nbsp;$</InputAdornment>
+                ),
+              },
+            }}
+            sx={{ mb: 2 }}
+            error={isHourlyWageValid}
+            helperText={
+              isHourlyWageValid ? "Enter a value between $7.25 and $200" : " "
+            }
+          />
+        </Collapse>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Typography variant="h5">Summary</Typography>
+            <ToggleButtonGroup
+              value={viewMode}
+              exclusive
+              onChange={(_, newMode) => {
+                if (newMode !== null) {
+                  setViewMode(newMode);
+                }
+              }}
+              size="small"
+            >
+              <ToggleButton value="annual">Annual</ToggleButton>
+              <ToggleButton value="monthly">Monthly</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button variant="outlined" size="small" onClick={handleExportCSV}>
+              Export CSV
+            </Button>
+            <Button variant="outlined" size="small" onClick={handleExportPDF}>
+              Export PDF
+            </Button>
+          </Box>
+        </Box>
+        <Box sx={{ mt: 2 }}>
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
+              mb: 2,
+              pb: 1,
+              borderBottom: 1,
+              borderColor: "divider",
+            }}
+          >
+            <Typography variant="body1">
+              Total {viewMode === "annual" ? "Annual" : "Monthly"} Volume:
+            </Typography>
+            <Typography variant="body1" fontWeight="bold">
+              {getDisplayVolume().toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              })}{" "}
+              lbs
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              mb: 2,
+              pb: 1,
+              borderBottom: 1,
+              borderColor: "divider",
+            }}
+          >
+            <Typography variant="body1" color="success.main">
+              Total {viewMode === "annual" ? "Annual" : "Monthly"} Savings:
+            </Typography>
+            <Typography variant="h6" fontWeight="bold" color="success.main">
+              $
+              {getDisplaySavings().toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
               mb: 2,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography variant="h5">Summary</Typography>
-              <ToggleButtonGroup
-                value={viewMode}
-                exclusive
-                onChange={(_, newMode) => {
-                  if (newMode !== null) {
-                    setViewMode(newMode);
-                  }
-                }}
-                size="small"
-              >
-                <ToggleButton value="annual">Annual</ToggleButton>
-                <ToggleButton value="monthly">Monthly</ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button variant="outlined" size="small" onClick={handleExportCSV}>
-                Export CSV
-              </Button>
-              <Button variant="outlined" size="small" onClick={handleExportPDF}>
-                Export PDF
-              </Button>
-            </Box>
+            <Typography variant="body1" color="error.main">
+              Total {viewMode === "annual" ? "Annual" : "Monthly"} Cost:
+            </Typography>
+            <Typography variant="h6" fontWeight="bold" color="error.main">
+              $
+              {getDisplayCost().toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
           </Box>
-          <Box sx={{ mt: 2 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1">
-                Total {viewMode === "annual" ? "Annual" : "Monthly"} Volume:
-              </Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {getDisplayVolume().toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })}{" "}
-                lbs
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1" color="success.main">
-                Total {viewMode === "annual" ? "Annual" : "Monthly"} Savings:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="success.main">
-                $
-                {getDisplaySavings().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Typography variant="body1" color="error.main">
-                Total {viewMode === "annual" ? "Annual" : "Monthly"} Cost:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="error.main">
-                $
-                {getDisplayCost().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                pt: 2,
-                borderTop: 2,
-                borderColor: "primary.main",
-              }}
-            >
-              <Typography variant="h6">
-                Net {viewMode === "annual" ? "Annual" : "Monthly"} Benefit:
-              </Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary">
-                $
-                {getDisplayBenefit().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              pt: 2,
+              borderTop: 2,
+              borderColor: "primary.main",
+            }}
+          >
+            <Typography variant="h6">
+              Net {viewMode === "annual" ? "Annual" : "Monthly"} Benefit:
+            </Typography>
+            <Typography variant="h5" fontWeight="bold" color="primary">
+              $
+              {getDisplayBenefit().toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
           </Box>
-        </Paper>
-        <SavingsChart
-          selectedSpecies={selectedSpecies}
-          volumes={volumes}
-          timePerAnimal={timePerAnimal}
-          hourlyWage={hourlyWage}
-          savings={getDisplaySavings()}
-          cost={getDisplayCost()}
-          netBenefit={getDisplayBenefit()}
-          viewMode={viewMode}
-        />
-        <BeforeAfterComparison
-          selectedSpecies={selectedSpecies}
-          withPlatformSavings={calculateTotalAnnualSavings()}
-          withPlatformCost={calculateTotalAnnualCost()}
-          withPlatformBenefit={
-            calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-          }
-        />
+        </Box>
+      </Paper>
+
+      <BeforeAfterComparison
+        selectedSpecies={selectedSpecies}
+        withPlatformSavings={calculateTotalAnnualSavings()}
+        withPlatformCost={calculateTotalAnnualCost()}
+        withPlatformBenefit={
+          calculateTotalAnnualSavings() - calculateTotalAnnualCost()
+        }
+      />
 
       <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
         <DialogTitle>Clear All Data?</DialogTitle>
