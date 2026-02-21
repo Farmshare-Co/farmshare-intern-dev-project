@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 
+import AdvancedSettings from "./components/AdvancedSettings";
 import SpeciesCard from "./components/SpeciesCard";
 import farmshareTheme from "./theme";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -157,39 +158,14 @@ function App() {
             </Box>
           )}
 
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography variant="body2" sx={{ flexGrow: 1 }}>
-              Advanced Settings
-            </Typography>
-            <IconButton
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              sx={{
-                transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s",
-              }}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </Box>
 
-          <Collapse in={showAdvanced}>
-            <TextField
-              fullWidth
-              label="Time Savings per Animal (minutes)"
-              type="number"
-              value={timePerAnimal}
-              onChange={(e) => setTimePerAnimal(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Average Hourly Wage ($)"
-              type="number"
-              value={hourlyWage}
-              onChange={(e) => setHourlyWage(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-          </Collapse>
+          <AdvancedSettings 
+            timePerAnimal={timePerAnimal}
+            hourlyWage={hourlyWage}
+            onTimeChange={setTimePerAnimal}
+            onWageChange={setHourlyWage}          
+          />
+          
         </Paper>
 
         <Paper sx={{ p: 3 }}>
