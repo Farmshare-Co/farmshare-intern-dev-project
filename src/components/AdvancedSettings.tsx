@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { TextField, Paper, Typography, Box, IconButton, Collapse } from "@mui/material";
+import { TextField, Box, IconButton, Collapse } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 
 interface AdvancedSettingsProps {
     timePerAnimal: string;
@@ -16,46 +15,56 @@ export default function AdvancedSettings({
     onTimeChange,
     onWageChange,
 }: AdvancedSettingsProps) {
-    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [open, setOpen] = useState(false);
 
     return (
-        <main>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <Typography variant="body2" sx={{ flexGrow: 1 }}>
-                    Advanced Settings
-                </Typography>
-                <IconButton
-                    onClick={() => setShowAdvanced(!showAdvanced)}
-                    sx={{
-                        transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.3s",
-                    }}
-                >
-                    <ExpandMoreIcon />
-                </IconButton>
-            </Box>
+        <div className="card">
+            <div className="card__body" style={{ paddingBottom: open ? 24 : 4 }}>
+                <div className="advanced-toggle" onClick={() => setOpen((prev) => !prev)}>
+                    <span className="advanced-toggle__label">
+                        Advanced Settings — Labor &amp; Wage
+                    </span>
+                    <IconButton
+                        size="small"
+                        sx={{
+                            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "transform 0.25s ease",
+                        }}
+                    >
+                        <ExpandMoreIcon fontSize="small" />
+                    </IconButton>
+                </div>
 
-            <Paper>
-                <Collapse in={showAdvanced}>
-                    <TextField
-                        fullWidth
-                        label="Time Savings per Animal (minutes)"
-                        type="number"
-                        value={timePerAnimal}
-                        onChange={(e) => onTimeChange(e.target.value)}
-                        sx={{ mb: 2 }}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Average Hourly Wage ($)"
-                        type="number"
-                        value={hourlyWage}
-                        onChange={(e) => onWageChange(e.target.value)}
-                        sx={{ mb: 2 }}
-                    />
+                <Collapse in={open}>
+                    <div className="advanced-divider" />
+                    <Box
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                            gap: 2,
+                        }}
+                    >
+                        <TextField
+                            fullWidth
+                            label="Time Savings per Animal (minutes)"
+                            type="number"
+                            value={timePerAnimal}
+                            onChange={(e) => onTimeChange(e.target.value)}
+                            size="small"
+                            helperText="Time saved per animal using Farmshare"
+                        />
+                        <TextField
+                            fullWidth
+                            label="Average Hourly Wage ($)"
+                            type="number"
+                            value={hourlyWage}
+                            onChange={(e) => onWageChange(e.target.value)}
+                            size="small"
+                            helperText="Staff hourly wage at your facility"
+                        />
+                    </Box>
                 </Collapse>
-            </Paper>
-
-        </main >
-    )
+            </div>
+        </div>
+    );
 }

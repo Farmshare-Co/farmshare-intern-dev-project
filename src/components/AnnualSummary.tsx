@@ -1,87 +1,51 @@
-import { Paper, Box, Typography } from "@mui/material";
 
 interface AnnualSummaryProps {
-    totalVolume: number;
-    totalSavings: number;
-    totalCost: number;
+  totalVolume: number;
+  totalSavings: number;
+  totalCost: number;
 }
 
 export default function AnnualSummary({
-    totalVolume,
-    totalSavings,
-    totalCost,
+  totalVolume,
+  totalSavings,
+  totalCost,
 }: AnnualSummaryProps) {
-    const netBenefit = totalSavings - totalCost;
-    const netIsNegative = netBenefit < 0;
-    return (
-        <Paper sx={{ p: 3 }}>
-            <Typography variant="h5" gutterBottom>
-                Annual Summary
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mb: 2,
-                        pb: 1,
-                        borderBottom: 1,
-                        borderColor: "divider",
-                    }}
-                >
-                    <Typography variant="body1">Total Annual Volume:</Typography>
-                    <Typography variant="body1" fontWeight="bold">
-                        {totalVolume.toLocaleString()} lbs
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mb: 2,
-                        pb: 1,
-                        borderBottom: 1,
-                        borderColor: "divider",
-                    }}
-                >
-                    <Typography variant="body1" color="success.main">
-                        Total Annual Savings:
-                    </Typography>
-                    <Typography variant="h6" fontWeight="bold" color="success.main">
-                        $
-                        {totalSavings.toLocaleString()}
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mb: 2,
-                    }}
-                >
-                    <Typography variant="body1" color="error.main">
-                        Total Annual Cost:
-                    </Typography>
-                    <Typography variant="h6" fontWeight="bold" color="error.main">
-                        $
-                        {totalCost.toLocaleString()}
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        pt: 2,
-                        borderTop: 2,
-                        borderColor: "primary.main",
-                    }}
-                >
-                    <Typography variant="h6">Net Annual Benefit:</Typography>
-                    <Typography variant="h5" fontWeight="bold" color="primary">
-                        {netIsNegative ? "−" : "+"}${Math.abs(netBenefit).toLocaleString()}
-                    </Typography>
-                </Box>
-            </Box>
-        </Paper>
-    )
+  const netBenefit = totalSavings - totalCost;
+  const netIsNegative = netBenefit < 0;
+
+  return (
+    <div className="summary">
+      <p className="summary__title">Annual Summary</p>
+
+      <div className="summary__rows">
+        <div className="summary__row">
+          <span className="summary__row-label">Total Annual Volume:</span>
+          <span className="summary__row-value">
+            {totalVolume.toLocaleString()} lbs
+          </span>
+        </div>
+        <div className="summary__row">
+          <span className="summary__row-label">Total Annual Savings:</span>
+          <span className="summary__row-value summary__row-value--savings">
+            +${totalSavings.toLocaleString()}
+          </span>
+        </div>
+        <div className="summary__row">
+          <span className="summary__row-label">Total Annual Cost:</span>
+          <span className="summary__row-value summary__row-value--cost">
+            −${totalCost.toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      <div className="summary__net">
+        <span className="summary__net-label">Net Annual Benefit:</span>
+        <span
+          className={`summary__net-value${netIsNegative ? " summary__net-value--negative" : ""}`}
+        >
+          {netIsNegative ? "−" : "+"}${Math.abs(netBenefit).toLocaleString()}
+        </span>
+      </div>
+    </div>
+  );
 }

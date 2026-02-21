@@ -1,44 +1,43 @@
-import { TextField, Card, CardContent, Typography} from "@mui/material";
+import { TextField } from "@mui/material";
 import type { EAnimalSpecies } from "../types";
 import { AVG_HANGING_WEIGHTS } from "../types";
+import { calculateHeads } from "../utils/calculations";
 
 interface SpeciesCardProps {
-  species: EAnimalSpecies;
-  volume: string;
-  onVolumeChange: (value: string) => void;
+    species: EAnimalSpecies;
+    volume: string;
+    onVolumeChange: (value: string) => void;
 }
 
 
 export default function SpeciesCard({
-  species,
-  volume,
-  onVolumeChange,
+    species,
+    volume,
+    onVolumeChange,
 }: SpeciesCardProps) {
+    const avgWeight = AVG_HANGING_WEIGHTS[species];
+    const vol = parseFloat(volume || "0");
+    const heads = vol > 0 ? calculateHeads(vol, avgWeight) : null;
+
     return (
-        <Card key={species} sx={{ mb: 2 }}>
-            <CardContent>
-            <Typography variant="subtitle1" gutterBottom>
-                {species.charAt(0).toUpperCase() + species.slice(1)}
-                <Typography
-                component="span"
-                variant="body2"
-                color="text.secondary"
-                sx={{ ml: 1 }}
-                >
-                (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
-                </Typography>
-            </Typography>
+        <div className="species-card">
+            <p className="species-card__name">{species.toUpperCase()}</p>
+            <p className="species-card__meta"> Avg hanging weight: {avgWeight} lbs / animal </p>
+
             <TextField
                 fullWidth
                 label="Total Annual Hanging Weight (lbs)"
                 type="number"
                 value={volume}
-                onChange={(e) =>
-                onVolumeChange(e.target.value)
-                }
-                inputProps={{ min: 0 }}
+                onChange={(e) => onVolumeChange(e.target.value)}
+                slotProps={{ htmlInput: { min: 0 } }}
+                size="small"
             />
-            </CardContent>
-        </Card>
+            {heads !== null && (
+                <span className="fs-species-card__heads">
+                    ≈ {heads.toLocaleString()} head / year
+                </span>
+            )}
+        </div>
     )
 }

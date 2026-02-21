@@ -31,7 +31,6 @@ function App() {
     {} as Record<EAnimalSpecies, string>,
   );
   const [selectOpen, setSelectOpen] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
   const [hourlyWage, setHourlyWage] = useState("25"); // dollars
 
@@ -49,7 +48,7 @@ function App() {
   const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
     setVolumes((prev) => ({ ...prev, [species]: value }));
   };
-  
+
   const totalSavings: number = selectedSpecies.reduce((acc, species) => {
     const vol = parseFloat(volumes[species] || "0");
     if (vol <= 0) return acc;
@@ -68,97 +67,109 @@ function App() {
   return (
     <ThemeProvider theme={farmshareTheme}>
       <CssBaseline />
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Meat Processor Value Calculator
-        </Typography>
-
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel>Select Animal Species</InputLabel>
-            <Select
-              multiple
-              open={selectOpen}
-              onOpen={() => setSelectOpen(true)}
-              onClose={() => setSelectOpen(false)}
-              value={selectedSpecies}
-              onChange={handleSpeciesChange}
-              input={<OutlinedInput label="Select Animal Species" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip
-                      key={value}
-                      label={value.charAt(0).toUpperCase() + value.slice(1)}
-                      onDelete={(e) => {
-                        e.stopPropagation();
-                        handleRemoveSpecies(value);
-                      }}
-                      deleteIcon={
-                        <span
-                          role="button"
-                          aria-label="remove"
-                          onMouseDown={(e) => e.stopPropagation()}
-                          style={{
-                            cursor: "pointer",
-                            marginLeft: 2,
-                            marginRight: 4,
-                            fontSize: "15px",
-                            color: "#3A7D5E",
-                            lineHeight: 1,
-                          }}
-                        >
-                          ×
-                        </span>
-                      }
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {Object.values(AnimalSpecies).map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {selectedSpecies.length > 0 && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Annual Processing Volume by Species
-              </Typography>
-              {selectedSpecies.map((species) => (
-                <SpeciesCard
-                  key={species}
-                  species={species}
-                  volume={volumes[species]||""}
-                  onVolumeChange={(val)=>handleVolumeChange(species,val)}
-                />
-              ))}
-            </Box>
-          )}
+      <main className="page">
+        <header className="page-header">
+          <p className="page-header__eyebrow">For Processors</p>
+          <h1 className="page-header__title">Meat Processor Value Calculator</h1>
+          <p className="page-header__subtitle">
+            Estimate your annual labor savings and platform costs based on your
+            processing volume. Adjust species, volumes, and labor settings below.
+          </p>
+        </header>
 
 
-          <AdvancedSettings 
-            timePerAnimal={timePerAnimal}
-            hourlyWage={hourlyWage}
-            onTimeChange={setTimePerAnimal}
-            onWageChange={setHourlyWage}          
-          />
+        <div className="card">
+          <div className="card__header">
+            <p className="card__header-title">Step 1 - Select Species</p>
+          </div>
+          <div className="card-body">
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <InputLabel>Select Animal Species</InputLabel>
+              <Select
+                multiple
+                open={selectOpen}
+                onOpen={() => setSelectOpen(true)}
+                onClose={() => setSelectOpen(false)}
+                value={selectedSpecies}
+                onChange={handleSpeciesChange}
+                input={<OutlinedInput label="Select Animal Species" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value.charAt(0).toUpperCase() + value.slice(1)}
+                        onDelete={(e) => {
+                          e.stopPropagation();
+                          handleRemoveSpecies(value);
+                        }}
+                        deleteIcon={
+                          <span
+                            role="button"
+                            aria-label="remove"
+                            onMouseDown={(e) => e.stopPropagation()}
+                            style={{
+                              cursor: "pointer",
+                              marginLeft: 2,
+                              marginRight: 4,
+                              fontSize: "15px",
+                              color: "#3A7D5E",
+                              lineHeight: 1,
+                            }}
+                          >
+                            ×
+                          </span>
+                        }
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {Object.values(AnimalSpecies).map((s) => (
+                  <MenuItem key={s} value={s}>
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+        </div>
 
-        </Paper>
-        <Paper sx={{ p: 3 }}>
-          <AnnualSummary
-            totalVolume={totalVolume}
-            totalSavings={totalSavings}
-            totalCost={totalCost}
-          />
-        </Paper>
+        {selectedSpecies.length > 0 && (
+          <div className="card">
+            <div className="card__header">
+              <p className="card__header-title"> Step 2 - Annual Processing Volume by Species</p>
+            </div>
+            <div className="card__body">
+              <div className="species-grid">
+                {selectedSpecies.map((species) => (
+                  <SpeciesCard
+                    key={species}
+                    species={species}
+                    volume={volumes[species] || ""}
+                    onVolumeChange={(val) => handleVolumeChange(species, val)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
-      
-      </Box>
+        <AdvancedSettings
+          timePerAnimal={timePerAnimal}
+          hourlyWage={hourlyWage}
+          onTimeChange={setTimePerAnimal}
+          onWageChange={setHourlyWage}
+        />
+
+        <AnnualSummary
+          totalVolume={totalVolume}
+          totalSavings={totalSavings}
+          totalCost={totalCost}
+        />
+
+      </main>
+
     </ThemeProvider>
   );
 }

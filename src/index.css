@@ -1,32 +1,43 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --fs-green-900: #1B3D2A;
+  --fs-green-800: #2D6A4F;
+  --fs-green-700: #3A7D5E;
+  --fs-green-500: #52B788;
+  --fs-green-100: #D8F3E3;
+  --fs-green-50:  #F0FAF4;
+  --fs-bg:        #F7F5F0;
+  --fs-surface:   #FFFFFF;
+  --fs-text: #1C2526;
+  --fs-text-muted: #5A6A65;
+  --fs-border: #DDE4DF;
+  
+  --fs-radius: 12px;
+  --fs-radius-sm: 8px;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  --fs-shadow:    0 1px 3px rgba(29, 61, 42, 0.08), 0 4px 12px rgba(29, 61, 42, 0.06);
+  --fs-shadow-md: 0 4px 16px rgba(29, 61, 42, 0.12), 0 1px 4px rgba(29, 61, 42, 0.08);
+  }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--fs-green-700);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--fs-green-800);
+  text-decoration: underline;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--fs-text);
+  background-color: var(--fs-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   min-height: 100vh;
 }
 
@@ -52,17 +63,4 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }
