@@ -12,7 +12,7 @@ describe("Meat Processor Value Calculator", () => {
   it("renders the calculator title", () => {
     render(<FarmProvider><Calculator /></FarmProvider>);
     expect(
-      screen.getByText("Meat Processor Value Calculator")
+      screen.getByText("Value Calculator")
     ).toBeInTheDocument();
   });
 
@@ -20,8 +20,8 @@ describe("Meat Processor Value Calculator", () => {
     render(<FarmProvider><Calculator /></FarmProvider>);
     expect(screen.getAllByRole("combobox")[0]).toBeInTheDocument();
     expect(screen.getByText("Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument();
-    expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
+    expect(screen.getByText("Total Annual Savings")).toBeInTheDocument();
+    expect(screen.getByText("Total Annual Cost")).toBeInTheDocument();
   });
 
   it("shows volume inputs when species are selected", () => {
@@ -46,7 +46,7 @@ describe("Meat Processor Value Calculator", () => {
   it("calculates annual savings and cost correctly", () => {
     render(<FarmProvider><Calculator /></FarmProvider>);
 
-    const selectElement = screen.getAllByRole("combobox")[0];
+    const selectElement = screen.getAllByRole("combobox")[1]; // Changed from [0] to [1] due to preset dropdown
 
     // Open the dropdown and select Beef
     fireEvent.mouseDown(selectElement);
@@ -60,7 +60,7 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Total Annual Volume:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Volume")).toBeInTheDocument();
     expect(screen.getByText("Net Annual Benefit:")).toBeInTheDocument();
   });
 
