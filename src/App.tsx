@@ -26,12 +26,11 @@ import "./App.css";
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([
-    "beef",
-  ]);
+  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
   const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
     {} as Record<EAnimalSpecies, string>,
   );
+  const [selectOpen, setSelectOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
   const [hourlyWage, setHourlyWage] = useState("25"); // dollars
@@ -40,6 +39,11 @@ function App() {
     const value = event.target.value;
     const species = typeof value === "string" ? value.split(",") : value;
     setSelectedSpecies(species as EAnimalSpecies[]);
+    setSelectOpen(false);
+  };
+
+  const handleRemoveSpecies = (species: EAnimalSpecies): void => {
+    setSelectedSpecies((prev) => prev.filter((s) => s !== species));
   };
 
   const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
@@ -88,6 +92,9 @@ function App() {
             <InputLabel>Select Animal Species</InputLabel>
             <Select
               multiple
+              open={selectOpen}
+              onOpen={() => setSelectOpen(true)}
+              onClose={() => setSelectOpen(false)}
               value={selectedSpecies}
               onChange={handleSpeciesChange}
               input={<OutlinedInput label="Select Animal Species" />}
@@ -97,6 +104,27 @@ function App() {
                     <Chip
                       key={value}
                       label={value.charAt(0).toUpperCase() + value.slice(1)}
+                      onDelete={(e) => {
+                        e.stopPropagation();
+                        handleRemoveSpecies(value);
+                      }}
+                      deleteIcon={
+                        <span
+                          role="button"
+                          aria-label="remove"
+                          onMouseDown={(e) => e.stopPropagation()}
+                          style={{
+                            cursor: "pointer",
+                            marginLeft: 2,
+                            marginRight: 4,
+                            fontSize: "15px",
+                            color: "#3A7D5E",
+                            lineHeight: 1,
+                          }}
+                        >
+                          ×
+                        </span>
+                      }
                     />
                   ))}
                 </Box>
