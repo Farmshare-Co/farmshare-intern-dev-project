@@ -8,8 +8,6 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Card,
-  CardContent,
   Collapse,
   IconButton,
   OutlinedInput,
@@ -19,6 +17,7 @@ import {
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 
+import SpeciesCard from "./components/SpeciesCard";
 import farmshareTheme from "./theme";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { EAnimalSpecies } from "./types";
@@ -148,31 +147,12 @@ function App() {
                 Annual Processing Volume by Species
               </Typography>
               {selectedSpecies.map((species) => (
-                <Card key={species} sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {species.charAt(0).toUpperCase() + species.slice(1)}
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ ml: 1 }}
-                      >
-                        (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
-                      </Typography>
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Total Annual Hanging Weight (lbs)"
-                      type="number"
-                      value={volumes[species] || ""}
-                      onChange={(e) =>
-                        handleVolumeChange(species, e.target.value)
-                      }
-                      inputProps={{ min: 0 }}
-                    />
-                  </CardContent>
-                </Card>
+                <SpeciesCard
+                  key={species}
+                  species={species}
+                  volume={volumes[species]||""}
+                  onVolumeChange={(val)=>handleVolumeChange(species,val)}
+                />
               ))}
             </Box>
           )}
