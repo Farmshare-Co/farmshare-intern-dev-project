@@ -24,6 +24,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SaveIcon from "@mui/icons-material/Save";
@@ -69,6 +71,7 @@ function App() {
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [savePresetDialogOpen, setSavePresetDialogOpen] = useState(false);
   const [presetName, setPresetName] = useState("");
+  const [viewMode, setViewMode] = useState<"annual" | "monthly">("annual");
 
   // custom presets state are loaded from localStorage
   interface CustomPreset {
@@ -379,6 +382,26 @@ function App() {
 
   const isTimePerAnimalValid = +timePerAnimal < 1 || +timePerAnimal > 480;
 
+  const getDisplayVolume = () => {
+    const annual = getTotalVolume();
+    return viewMode === "monthly" ? annual / 12 : annual;
+  };
+
+  const getDisplaySavings = () => {
+    const annual = calculateTotalAnnualSavings();
+    return viewMode === "monthly" ? annual / 12 : annual;
+  };
+
+  const getDisplayCost = () => {
+    const annual = calculateTotalAnnualCost();
+    return viewMode === "monthly" ? annual / 12 : annual;
+  };
+
+  const getDisplayBenefit = () => {
+    const annual = calculateTotalAnnualSavings() - calculateTotalAnnualCost();
+    return viewMode === "monthly" ? annual / 12 : annual;
+  };
+
   return (
     <Container>
       <Box sx={{ my: 4 }}>
@@ -619,7 +642,22 @@ function App() {
               mb: 2,
             }}
           >
-            <Typography variant="h5">Annual Summary</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Typography variant="h5">Summary</Typography>
+              <ToggleButtonGroup
+                value={viewMode}
+                exclusive
+                onChange={(_, newMode) => {
+                  if (newMode !== null) {
+                    setViewMode(newMode);
+                  }
+                }}
+                size="small"
+              >
+                <ToggleButton value="annual">Annual</ToggleButton>
+                <ToggleButton value="monthly">Monthly</ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
             <Box sx={{ display: "flex", gap: 1 }}>
               <Button variant="outlined" size="small" onClick={handleExportCSV}>
                 Export CSV
@@ -640,9 +678,15 @@ function App() {
                 borderColor: "divider",
               }}
             >
-              <Typography variant="body1">Total Annual Volume:</Typography>
+              <Typography variant="body1">
+                Total {viewMode === "annual" ? "Annual" : "Monthly"} Volume:
+              </Typography>
               <Typography variant="body1" fontWeight="bold">
-                {getTotalVolume().toLocaleString()} lbs
+                {getDisplayVolume().toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}{" "}
+                lbs
               </Typography>
             </Box>
             <Box
@@ -656,11 +700,11 @@ function App() {
               }}
             >
               <Typography variant="body1" color="success.main">
-                Total Annual Savings:
+                Total {viewMode === "annual" ? "Annual" : "Monthly"} Savings:
               </Typography>
               <Typography variant="h6" fontWeight="bold" color="success.main">
                 $
-                {calculateTotalAnnualSavings().toLocaleString(undefined, {
+                {getDisplaySavings().toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -674,11 +718,11 @@ function App() {
               }}
             >
               <Typography variant="body1" color="error.main">
-                Total Annual Cost:
+                Total {viewMode === "annual" ? "Annual" : "Monthly"} Cost:
               </Typography>
               <Typography variant="h6" fontWeight="bold" color="error.main">
                 $
-                {calculateTotalAnnualCost().toLocaleString(undefined, {
+                {getDisplayCost().toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -693,12 +737,12 @@ function App() {
                 borderColor: "primary.main",
               }}
             >
-              <Typography variant="h6">Net Annual Benefit:</Typography>
+              <Typography variant="h6">
+                Net {viewMode === "annual" ? "Annual" : "Monthly"} Benefit:
+              </Typography>
               <Typography variant="h5" fontWeight="bold" color="primary">
                 $
-                {(
-                  calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-                ).toLocaleString(undefined, {
+                {getDisplayBenefit().toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -711,11 +755,10 @@ function App() {
           volumes={volumes}
           timePerAnimal={timePerAnimal}
           hourlyWage={hourlyWage}
-          savings={calculateTotalAnnualSavings()}
-          cost={calculateTotalAnnualCost()}
-          netBenefit={
-            calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-          }
+          savings={getDisplaySavings()}
+          cost={getDisplayCost()}
+          netBenefit={getDisplayBenefit()}
+          viewMode={viewMode}
         />
         <BeforeAfterComparison
           selectedSpecies={selectedSpecies}

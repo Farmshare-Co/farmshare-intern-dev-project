@@ -19,8 +19,8 @@ describe("Meat Processor Value Calculator", () => {
   it("displays the multi-select dropdown and summary", () => {
     render(<FarmProvider><App /></FarmProvider>);
     expect(screen.getAllByRole("combobox")[0]).toBeInTheDocument();
-    expect(screen.getByText("Annual Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Summary")).toBeInTheDocument();
+    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument();
     expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
   });
 

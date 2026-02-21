@@ -24,6 +24,7 @@ interface SavingsChartProps {
   savings: number;
   cost: number;
   netBenefit: number;
+  viewMode: "annual" | "monthly";
 }
 
 export default function SavingsChart({
@@ -34,6 +35,7 @@ export default function SavingsChart({
   savings,
   cost,
   netBenefit,
+  viewMode,
 }: SavingsChartProps) {
   const [chartType, setChartType] = useState<"bar" | "line">("bar");
 
@@ -54,16 +56,18 @@ export default function SavingsChart({
     const volume = parseFloat(volumes[species] || "0");
     const avgWeight = AVG_HANGING_WEIGHTS[species];
     const heads = calculateHeads(volume, avgWeight);
-    return calculateLaborValue(
+    const annualValue = calculateLaborValue(
       heads,
       parseFloat(timePerAnimal),
       parseFloat(hourlyWage)
     );
+    return viewMode === "monthly" ? annualValue / 12 : annualValue;
   });
 
   const speciesCosts = selectedSpecies.map((species) => {
     const volume = parseFloat(volumes[species] || "0");
-    return volume * COST_PER_LB;
+    const annualCost = volume * COST_PER_LB;
+    return viewMode === "monthly" ? annualCost / 12 : annualCost;
   });
 
   return (
@@ -76,7 +80,9 @@ export default function SavingsChart({
           mb: 2,
         }}
       >
-        <Typography variant="h6">Savings vs Costs Comparison</Typography>
+        <Typography variant="h6">
+          Savings vs Costs Comparison ({viewMode === "annual" ? "Annual" : "Monthly"})
+        </Typography>
         <FormControl size="small" sx={{ minWidth: 150 }}>
           <InputLabel>Chart Type</InputLabel>
           <Select
@@ -96,7 +102,7 @@ export default function SavingsChart({
             xAxis={[
               {
                 scaleType: "band",
-                data: ["Annual Comparison"],
+                data: [viewMode === "annual" ? "Annual Comparison" : "Monthly Comparison"],
               },
             ]}
             series={[
