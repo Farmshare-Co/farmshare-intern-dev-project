@@ -15,6 +15,7 @@ import {
   IconButton,
   OutlinedInput,
   Chip,
+  Button,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -39,9 +40,14 @@ function App() {
     const species = typeof value === "string" ? value.split(",") : value;
     setSelectedSpecies(species as EAnimalSpecies[]);
   };
-const handleDelete = (speciesToDelete: EAnimalSpecies) => {
-  setSelectedSpecies((prev) => prev.filter((s) => s !== speciesToDelete));
-};
+  const handleDelete = (speciesToDelete: EAnimalSpecies) => {
+    setSelectedSpecies((prev) => prev.filter((s) => s !== speciesToDelete));
+  };
+
+  const handleClearAll = () => {
+    setSelectedSpecies([]);
+    setVolumes({} as Record<EAnimalSpecies, string>);
+  };
 
   const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
     setVolumes((prev) => ({ ...prev, [species]: value }));
@@ -79,192 +85,216 @@ const handleDelete = (speciesToDelete: EAnimalSpecies) => {
 
   return (
     <Container>
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Meat Processor Value Calculator
-        </Typography>
-
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel>Select Animal Species</InputLabel>
-            <Select
-  multiple
-  value={selectedSpecies}
-  onChange={handleSpeciesChange}
-  input={<OutlinedInput label="Select Animal Species" />}
-  renderValue={(selected) => (
-    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-      {selected.map((value) => (
-        <Chip
-          key={value}
-          label={value.charAt(0).toUpperCase() + value.slice(1)}
-          onDelete={() => handleDelete(value)}
-          onMouseDown={(e) => e.stopPropagation()}
-        />
-      ))}
-    </Box>
-  )}
->
-  {Object.values(AnimalSpecies).map((s) => (
-    <MenuItem key={s} value={s}>
-      {s.charAt(0).toUpperCase() + s.slice(1)}
-    </MenuItem>
-  ))}
-</Select>
-
-          </FormControl>
-
-          {selectedSpecies.length > 0 && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Annual Processing Volume by Species
-              </Typography>
-              {selectedSpecies.map((species) => (
-                <Card key={species} sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {species.charAt(0).toUpperCase() + species.slice(1)}
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ ml: 1 }}
-                      >
-                        (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
-                      </Typography>
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Total Annual Hanging Weight (lbs)"
-                      type="number"
-                      value={volumes[species] || ""}
-                      onChange={(e) =>
-                        handleVolumeChange(species, e.target.value)
-                      }
-                      inputProps={{ min: 0 }}
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
-          )}
-
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography variant="body2" sx={{ flexGrow: 1 }}>
-              Advanced Settings
+      <Box sx={{ pb: 8 }}>
+        <Box className="hero-header">
+          <Container maxWidth="md">
+            <Typography variant="h3" component="h1" fontWeight="700" gutterBottom>
+              Meat Processor Value Calculator
             </Typography>
-            <IconButton
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              sx={{
-                transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s",
-              }}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </Box>
+            <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 300 }}>
+              Maximize your labor savings. Minimize your costs. Grow your farm.
+            </Typography>
+          </Container>
+        </Box>
+        <Container maxWidth="lg" sx={{ mt: -4 }}>
 
-          <Collapse in={showAdvanced}>
-            <TextField
-              fullWidth
-              label="Time Savings per Animal (minutes)"
-              type="number"
-              value={timePerAnimal}
-              onChange={(e) => setTimePerAnimal(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Average Hourly Wage ($)"
-              type="number"
-              value={hourlyWage}
-              onChange={(e) => setHourlyWage(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-          </Collapse>
-        </Paper>
+          <Paper className="premium-card" sx={{ p: 4, mb: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+              <Typography variant="h5" fontWeight="700">1. Setup Your Data</Typography>
+              <Button
+                color="error"
+                onClick={handleClearAll}
+                disabled={selectedSpecies.length === 0}
+                sx={{ borderRadius: 2 }}
+              >
+                Clear All
+              </Button>
+            </Box>
 
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h5" gutterBottom>
-            Annual Summary
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1">Total Annual Volume:</Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {getTotalVolume().toLocaleString()} lbs
+            <FormControl fullWidth sx={{ mb: 4 }}>
+              <InputLabel>Select Animal Species</InputLabel>
+              <Select
+                multiple
+                value={selectedSpecies}
+                onChange={handleSpeciesChange}
+                input={<OutlinedInput label="Select Animal Species" />}
+                sx={{ borderRadius: 3 }}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {selected.map((value) => (
+                      <Chip
+                        key={value}
+                        label={value.charAt(0).toUpperCase() + value.slice(1)}
+                        onDelete={() => handleDelete(value)}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        color="primary"
+                        sx={{ fontWeight: 600 }}
+                      />
+                    ))}
+                  </Box>
+                )}
+              >
+                {Object.values(AnimalSpecies).map((s) => (
+                  <MenuItem key={s} value={s} sx={{ py: 1.5 }}>
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+
+            {selectedSpecies.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Annual Processing Volume by Species
+                </Typography>
+                {selectedSpecies.map((species) => (
+                  <Card key={species} sx={{ mb: 2 }}>
+                    <CardContent>
+                      <Typography variant="subtitle1" gutterBottom>
+                        {species.charAt(0).toUpperCase() + species.slice(1)}
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ ml: 1 }}
+                        >
+                          (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
+                        </Typography>
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        label="Total Annual Hanging Weight (lbs)"
+                        type="number"
+                        value={volumes[species] || ""}
+                        onChange={(e) =>
+                          handleVolumeChange(species, e.target.value)
+                        }
+                        inputProps={{ min: 0 }}
+                      />
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            )}
+
+            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                Advanced Settings
               </Typography>
+              <IconButton
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                sx={{
+                  transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s",
+                }}
+              >
+                <ExpandMoreIcon />
+              </IconButton>
             </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1" color="success.main">
-                Total Annual Savings:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="success.main">
-                $
-                {calculateTotalAnnualSavings().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
+
+            <Collapse in={showAdvanced}>
+              <TextField
+                fullWidth
+                label="Time Savings per Animal (minutes)"
+                type="number"
+                value={timePerAnimal}
+                onChange={(e) => setTimePerAnimal(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Average Hourly Wage ($)"
+                type="number"
+                value={hourlyWage}
+                onChange={(e) => setHourlyWage(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+            </Collapse>
+          </Paper>
+
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              Annual Summary
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 2,
+                  pb: 1,
+                  borderBottom: 1,
+                  borderColor: "divider",
+                }}
+              >
+                <Typography variant="body1">Total Annual Volume:</Typography>
+                <Typography variant="body1" fontWeight="bold">
+                  {getTotalVolume().toLocaleString()} lbs
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 2,
+                  pb: 1,
+                  borderBottom: 1,
+                  borderColor: "divider",
+                }}
+              >
+                <Typography variant="body1" color="success.main">
+                  Total Annual Savings:
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" color="success.main">
+                  $
+                  {calculateTotalAnnualSavings().toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 2,
+                }}
+              >
+                <Typography variant="body1" color="error.main">
+                  Total Annual Cost:
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" color="error.main">
+                  $
+                  {calculateTotalAnnualCost().toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  pt: 2,
+                  borderTop: 2,
+                  borderColor: "primary.main",
+                }}
+              >
+                <Typography variant="h6">Net Annual Benefit:</Typography>
+                <Typography variant="h5" fontWeight="bold" color="primary">
+                  $
+                  {(
+                    calculateTotalAnnualSavings() - calculateTotalAnnualCost()
+                  ).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </Typography>
+              </Box>
             </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Typography variant="body1" color="error.main">
-                Total Annual Cost:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="error.main">
-                $
-                {calculateTotalAnnualCost().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                pt: 2,
-                borderTop: 2,
-                borderColor: "primary.main",
-              }}
-            >
-              <Typography variant="h6">Net Annual Benefit:</Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary">
-                $
-                {(
-                  calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-                ).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-          </Box>
-        </Paper>
+          </Paper>
+        </Container>
       </Box>
     </Container>
   );
