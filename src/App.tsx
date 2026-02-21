@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Container,
   TextField,
   Typography,
   Box,
@@ -15,8 +14,12 @@ import {
   IconButton,
   OutlinedInput,
   Chip,
+  CssBaseline,
+  ThemeProvider
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
+
+import farmshareTheme from "./theme";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { EAnimalSpecies } from "./types";
 import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
@@ -81,7 +84,8 @@ function App() {
   };
 
   return (
-    <Container>
+    <ThemeProvider theme={farmshareTheme}>
+      <CssBaseline />
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Meat Processor Value Calculator
@@ -290,7 +294,7 @@ function App() {
           </Box>
         </Paper>
       </Box>
-    </Container>
+    </ThemeProvider>
   );
 }
 
