@@ -66,17 +66,25 @@ export default function SpeciesMixComparison({
   const costDiff = totalsB.cost - totalsA.cost;
   const benefitDiff = totalsB.benefit - totalsA.benefit;
 
-  if (scenarioA.selectedSpecies.length === 0 && scenarioB.selectedSpecies.length === 0) {
+  if (
+    scenarioA.selectedSpecies.length === 0 &&
+    scenarioB.selectedSpecies.length === 0
+  ) {
     return null;
   }
 
   return (
-    <Paper sx={{ p: 3, mt: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Species Mix Comparison
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Compare different species combinations to optimize profitability
+    <Paper
+      sx={{
+        p: 3,
+        mt: 3,
+        border: "2px solid #e0e0e0",
+        boxShadow: "none",
+        borderRadius: 3,
+      }}
+    >
+      <Typography variant="h5" gutterBottom sx={{ fontFamily: "roca", mb: 2 }}>
+        Comparison Table
       </Typography>
 
       <TableContainer>
@@ -168,9 +176,13 @@ export default function SpeciesMixComparison({
         <Typography variant="body2" sx={{ color: "#2e7d32" }}>
           <strong>Recommendation:</strong>{" "}
           {benefitDiff > 0
-            ? `${scenarioB.name} provides $${benefitDiff.toFixed(2)} more annual benefit than ${scenarioA.name}.`
+            ? `${scenarioB.name} provides $${benefitDiff.toFixed(
+                2
+              )} more annual benefit than ${scenarioA.name}.`
             : benefitDiff < 0
-            ? `${scenarioA.name} provides $${Math.abs(benefitDiff).toFixed(2)} more annual benefit than ${scenarioB.name}.`
+            ? `${scenarioA.name} provides $${Math.abs(benefitDiff).toFixed(
+                2
+              )} more annual benefit than ${scenarioB.name}.`
             : `Both scenarios provide equal annual benefit.`}
         </Typography>
       </Box>

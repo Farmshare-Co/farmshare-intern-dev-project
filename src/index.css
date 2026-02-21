@@ -4,6 +4,7 @@
   font-family: "Poppins", system-ui, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  padding: 0;
 
   color-scheme: light dark;
   color: #45403d;
@@ -20,12 +21,6 @@
   src: url("./assets/Roca.otf") format("opentype");
 }
 
-/* 
-green - #016F35 
-orange - #FF7C01
-gray-text - #45403d
-*/
-
 a {
   font-weight: 500;
   color: #646cff;
@@ -37,8 +32,7 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -59,9 +53,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

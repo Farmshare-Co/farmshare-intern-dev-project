@@ -26,12 +26,18 @@ const theme = createTheme({
     fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
   },
   palette: {
+    text: {
+      primary: "#45403d",
+      secondary: "#6a6664",
+    },
     farmGreen: {
       main: "#016F35",
+      light: "#b3d4c2",
       contrastText: "#fff",
     },
     farmOrange: {
       main: "#FF7C01",
+      light: "#ffcb99",
       contrastText: "#fff",
     },
     farmGray: {

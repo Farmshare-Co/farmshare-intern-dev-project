@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import App from "./App";
+import Calculator from "./pages/Calculator";
 import FarmProvider from "./context/FarmContext";
 
 describe("Meat Processor Value Calculator", () => {
@@ -10,14 +10,14 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("renders the calculator title", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
     expect(
       screen.getByText("Meat Processor Value Calculator")
     ).toBeInTheDocument();
   });
 
   it("displays the multi-select dropdown and summary", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
     expect(screen.getAllByRole("combobox")[0]).toBeInTheDocument();
     expect(screen.getByText("Summary")).toBeInTheDocument();
     expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("shows volume inputs when species are selected", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
 
     // Find the select by its role (get first one - main calculator)
     const selectElement = screen.getAllByRole("combobox")[0];
@@ -44,7 +44,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("calculates annual savings and cost correctly", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
 
     const selectElement = screen.getAllByRole("combobox")[0];
 
@@ -65,7 +65,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("shows advanced settings when clicked", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
 
     // Advanced settings should be hidden initially
     expect(
@@ -82,7 +82,7 @@ describe("Meat Processor Value Calculator", () => {
   });
 
   it("can select multiple species", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
 
     const selectElement = screen.getAllByRole("combobox")[1]; // Changed from [0] to [1] due to preset dropdown
 
@@ -108,7 +108,7 @@ describe("Meat Processor Value Calculator", () => {
 
   // FAILING TEST - Interns need to add delete/remove functionality
   it("should allow removing a selected species", () => {
-    render(<FarmProvider><App /></FarmProvider>);
+    render(<FarmProvider><Calculator /></FarmProvider>);
 
     const selectElement = screen.getAllByRole("combobox")[1]; // Changed from [0] to [1] due to preset dropdown
 
