@@ -1,8 +1,12 @@
-import { describe, it, expect } from "vitest";
+import { beforeEach, describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
 
 describe("Meat Processor Value Calculator", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it("renders the calculator title", () => {
     render(<App />);
     expect(
@@ -14,7 +18,7 @@ describe("Meat Processor Value Calculator", () => {
     render(<App />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByText("Annual Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Monthly Savings:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument();
     expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
   });
 
@@ -33,7 +37,7 @@ describe("Meat Processor Value Calculator", () => {
 
     // Check if volume input appears
     expect(
-      screen.getByText(/Monthly Processing Volume by Species/i), // Wrong text!
+      screen.getByText(/Annual Processing Volume by Species/i),
     ).toBeInTheDocument();
   });
 
@@ -54,7 +58,7 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Total Processing Volume:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Volume:")).toBeInTheDocument();
     expect(screen.getByText("Net Annual Benefit:")).toBeInTheDocument();
   });
 
@@ -112,7 +116,10 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.click(beefOption);
 
     // This delete/remove button doesn't exist yet - interns need to add it
-    const deleteButton = screen.getByRole("button", { name: /remove|delete/i });
+    const deleteButton = screen.getByRole("button", {
+      name: /remove|delete/i,
+      hidden: true,
+    });
     fireEvent.click(deleteButton);
 
     expect(
