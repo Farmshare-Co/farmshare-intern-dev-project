@@ -10,6 +10,10 @@ import {
   Chip,
   TextField,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { EAnimalSpecies as AnimalSpecies } from "../types";
 import type { EAnimalSpecies } from "../types";
@@ -20,7 +24,9 @@ import BeforeAfterComparison from "../components/BeforeAfterComparison";
 export default function Comparisons() {
   const {
     timePerAnimal,
+    setTimePerAnimal,
     hourlyWage,
+    setHourlyWage,
     selectedSpecies,
     volumes,
     calculateTotalAnnualSavings,
@@ -31,6 +37,9 @@ export default function Comparisons() {
   const [comparisonType, setComparisonType] = useState<
     "speciesMix" | "beforeAfter"
   >("speciesMix");
+
+  // State for advanced settings dialog
+  const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false);
 
   // State for species mix comparison
   const [scenarioASpecies, setScenarioASpecies] = useState<EAnimalSpecies[]>(
@@ -127,174 +136,181 @@ export default function Comparisons() {
       {comparisonType === "speciesMix" && (
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: "flex", gap: 3 }}>
-          {/* Scenario A */}
-          <Box
-            sx={{
-              flex: 1,
-              p: 3,
-              border: "2px solid #e0e0e0",
-              borderColor: "farmGreen.light",
-              borderRadius: 3,
-              backgroundColor: "#fff",
-            }}
-          >
-            <Typography
-              variant="h5"
-              gutterBottom
+            {/* Scenario A */}
+            <Box
               sx={{
-                color: "farmGreen.main",
-                fontFamily: "roca",
-                mb: "15px",
+                flex: 1,
+                p: 3,
+                border: "2px solid #e0e0e0",
+                borderColor: "farmGreen.light",
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
+                transition: "all 0.2s ease",
               }}
             >
-              Species A
-            </Typography>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Select Species</InputLabel>
-              <Select
-                multiple
-                value={scenarioASpecies}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const species =
-                    typeof value === "string" ? value.split(",") : value;
-                  setScenarioASpecies(species as EAnimalSpecies[]);
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  color: "farmGreen.main",
+                  fontFamily: "roca",
+                  mb: "15px",
                 }}
-                input={<OutlinedInput label="Select Species" />}
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip
-                        key={value}
-                        label={value.charAt(0).toUpperCase() + value.slice(1)}
-                        size="small"
-                      />
-                    ))}
-                  </Box>
-                )}
               >
-                {Object.values(AnimalSpecies).map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                Species A
+              </Typography>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel>Select Species</InputLabel>
+                <Select
+                  multiple
+                  value={scenarioASpecies}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const species =
+                      typeof value === "string" ? value.split(",") : value;
+                    setScenarioASpecies(species as EAnimalSpecies[]);
+                  }}
+                  input={<OutlinedInput label="Select Species" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value.charAt(0).toUpperCase() + value.slice(1)}
+                          size="small"
+                        />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {Object.values(AnimalSpecies).map((s) => (
+                    <MenuItem key={s} value={s}>
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            {scenarioASpecies.map((species) => (
-              <TextField
-                key={species}
-                fullWidth
-                label={`${
-                  species.charAt(0).toUpperCase() + species.slice(1)
-                } Volume (lbs)`}
-                type="number"
-                value={scenarioAVolumes[species] || ""}
-                onChange={(e) =>
-                  setScenarioAVolumes((prev) => ({
-                    ...prev,
-                    [species]: e.target.value,
-                  }))
-                }
-                sx={{ mb: 2 }}
-                slotProps={{
-                  htmlInput: { min: 0 },
-                }}
-              />
-            ))}
-          </Box>
+              {scenarioASpecies.map((species) => (
+                <TextField
+                  key={species}
+                  fullWidth
+                  label={`${
+                    species.charAt(0).toUpperCase() + species.slice(1)
+                  } Volume (lbs)`}
+                  type="number"
+                  value={scenarioAVolumes[species] || ""}
+                  onChange={(e) =>
+                    setScenarioAVolumes((prev) => ({
+                      ...prev,
+                      [species]: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                  slotProps={{
+                    htmlInput: { min: 0 },
+                  }}
+                />
+              ))}
+            </Box>
 
-          {/* Scenario B */}
-          <Box
-            sx={{
-              flex: 1,
-              p: 3,
-              border: "2px solid",
-              borderColor: "farmOrange.light",
-              borderRadius: 3,
-              backgroundColor: "#fff",
-            }}
-          >
-            <Typography
-              variant="h5"
-              gutterBottom
-              sx={{ color: "farmOrange.main", fontFamily: "roca", mb: "15px" }}
+            {/* Scenario B */}
+            <Box
+              sx={{
+                flex: 1,
+                p: 3,
+                border: "2px solid",
+                borderColor: "farmOrange.light",
+                borderRadius: 3,
+                background: "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
+                transition: "all 0.2s ease",
+              }}
             >
-              Species B
-            </Typography>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Select Species</InputLabel>
-              <Select
-                multiple
-                value={scenarioBSpecies}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  const species =
-                    typeof value === "string" ? value.split(",") : value;
-                  setScenarioBSpecies(species as EAnimalSpecies[]);
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  color: "farmOrange.main",
+                  fontFamily: "roca",
+                  mb: "15px",
                 }}
-                input={<OutlinedInput label="Select Species" />}
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip
-                        key={value}
-                        label={value.charAt(0).toUpperCase() + value.slice(1)}
-                        size="small"
-                      />
-                    ))}
-                  </Box>
-                )}
               >
-                {Object.values(AnimalSpecies).map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                Species B
+              </Typography>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel>Select Species</InputLabel>
+                <Select
+                  multiple
+                  value={scenarioBSpecies}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const species =
+                      typeof value === "string" ? value.split(",") : value;
+                    setScenarioBSpecies(species as EAnimalSpecies[]);
+                  }}
+                  input={<OutlinedInput label="Select Species" />}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip
+                          key={value}
+                          label={value.charAt(0).toUpperCase() + value.slice(1)}
+                          size="small"
+                        />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {Object.values(AnimalSpecies).map((s) => (
+                    <MenuItem key={s} value={s}>
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-            {scenarioBSpecies.map((species) => (
-              <TextField
-                key={species}
-                fullWidth
-                label={`${
-                  species.charAt(0).toUpperCase() + species.slice(1)
-                } Volume (lbs)`}
-                type="number"
-                value={scenarioBVolumes[species] || ""}
-                onChange={(e) =>
-                  setScenarioBVolumes((prev) => ({
-                    ...prev,
-                    [species]: e.target.value,
-                  }))
-                }
-                sx={{ mb: 2 }}
-                slotProps={{
-                  htmlInput: { min: 0 },
-                }}
-              />
-            ))}
+              {scenarioBSpecies.map((species) => (
+                <TextField
+                  key={species}
+                  fullWidth
+                  label={`${
+                    species.charAt(0).toUpperCase() + species.slice(1)
+                  } Volume (lbs)`}
+                  type="number"
+                  value={scenarioBVolumes[species] || ""}
+                  onChange={(e) =>
+                    setScenarioBVolumes((prev) => ({
+                      ...prev,
+                      [species]: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                  slotProps={{
+                    htmlInput: { min: 0 },
+                  }}
+                />
+              ))}
+            </Box>
           </Box>
-        </Box>
 
-        <SpeciesMixComparison
-          scenarioA={{
-            name: "Species A",
-            selectedSpecies: scenarioASpecies,
-            volumes: scenarioAVolumes,
-            timePerAnimal,
-            hourlyWage,
-          }}
-          scenarioB={{
-            name: "Species B",
-            selectedSpecies: scenarioBSpecies,
-            volumes: scenarioBVolumes,
-            timePerAnimal,
-            hourlyWage,
-          }}
-        />
-      </Box>
+          <SpeciesMixComparison
+            scenarioA={{
+              name: "Species A",
+              selectedSpecies: scenarioASpecies,
+              volumes: scenarioAVolumes,
+              timePerAnimal,
+              hourlyWage,
+            }}
+            scenarioB={{
+              name: "Species B",
+              selectedSpecies: scenarioBSpecies,
+              volumes: scenarioBVolumes,
+              timePerAnimal,
+              hourlyWage,
+            }}
+            onSettingsClick={() => setAdvancedSettingsOpen(true)}
+          />
+        </Box>
       )}
 
       {comparisonType === "beforeAfter" && (
@@ -307,6 +323,44 @@ export default function Comparisons() {
           }
         />
       )}
+
+      <Dialog
+        open={advancedSettingsOpen}
+        onClose={() => setAdvancedSettingsOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontFamily: "roca" }} variant="h5">
+          Advanced Settings
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "flex", gap: 2, mt: 2, flexDirection: "row" }}>
+            <TextField
+              fullWidth
+              label="Time Savings per Animal (minutes)"
+              type="number"
+              value={timePerAnimal}
+              onChange={(e) => setTimePerAnimal(e.target.value)}
+              slotProps={{
+                htmlInput: { min: 1, max: 480 },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Average Hourly Wage ($)"
+              type="number"
+              value={hourlyWage}
+              onChange={(e) => setHourlyWage(e.target.value)}
+              slotProps={{
+                htmlInput: { min: 1, max: 200 },
+              }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAdvancedSettingsOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

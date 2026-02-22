@@ -63,6 +63,8 @@ export default function Home() {
               height: "100%",
               display: "flex",
               borderRadius: 3,
+              px: 1,
+              py: 0.25,
               boxShadow: "none",
               border: "2px solid #e0e0e0",
               flexDirection: "column",

@@ -11,6 +11,7 @@ import {
   Typography,
   Breadcrumbs,
   Link,
+  Avatar,
 } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
@@ -151,6 +152,10 @@ export default function Layout({ children }: LayoutProps) {
             position: "sticky",
             top: 0,
             zIndex: 1000,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
           <Breadcrumbs aria-label="breadcrumb" sx={{ fontSize: "12px" }}>
@@ -178,6 +183,17 @@ export default function Layout({ children }: LayoutProps) {
               );
             })}
           </Breadcrumbs>
+
+          <Avatar
+            sx={{
+              bgcolor: "farmOrange.main",
+              width: "30px",
+              height: "30px",
+              cursor: "pointer",
+            }}
+          >
+            J
+          </Avatar>
         </Box>
 
         {/* Page Content */}

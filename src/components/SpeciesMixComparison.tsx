@@ -8,7 +8,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  IconButton,
+  Button,
 } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
 import type { EAnimalSpecies } from "../types";
 import { AVG_HANGING_WEIGHTS } from "../types";
 import { calculateHeads, calculateLaborValue } from "../utils/calculations";
@@ -25,11 +28,13 @@ interface ScenarioData {
 interface SpeciesMixComparisonProps {
   scenarioA: ScenarioData;
   scenarioB: ScenarioData;
+  onSettingsClick?: () => void;
 }
 
 export default function SpeciesMixComparison({
   scenarioA,
   scenarioB,
+  onSettingsClick,
 }: SpeciesMixComparisonProps) {
   // Calculate totals for Scenario A
   const calculateScenarioTotals = (scenario: ScenarioData) => {
@@ -83,9 +88,42 @@ export default function SpeciesMixComparison({
         borderRadius: 3,
       }}
     >
-      <Typography variant="h5" gutterBottom sx={{ fontFamily: "roca", mb: 2 }}>
-        Comparison Table
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h5" sx={{ fontFamily: "roca" }}>
+          Comparison Table
+        </Typography>
+
+        {onSettingsClick && (
+          <Button
+            variant="contained"
+            onClick={onSettingsClick}
+            sx={{
+              backgroundColor: "farmGreen.main",
+              color: "#fff",
+              paddingX: 3,
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: "farmGreen.main",
+                boxShadow: "none",
+                opacity: 1,
+              },
+            }}
+          >
+            Settings
+          </Button>
+        )}
+      </Box>
 
       <TableContainer>
         <Table>
