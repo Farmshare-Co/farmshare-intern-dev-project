@@ -2,6 +2,8 @@ import { useState } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 
+import { useLocalStorage } from "./hooks/useLocalStorage";
+
 import farmshareTheme from "./theme";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -17,10 +19,10 @@ import "./App.css";
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
-  const [volumes, setVolumes] = useState<Partial<Record<EAnimalSpecies, string>>>({});
-  const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
-  const [hourlyWage, setHourlyWage] = useState("25"); // dollars per hour
+  const [selectedSpecies, setSelectedSpecies] = useLocalStorage<EAnimalSpecies[]>("fs_selectedSpecies", []);
+  const [volumes, setVolumes] = useLocalStorage<Partial<Record<EAnimalSpecies, string>>>("fs_volumes", {});
+  const [timePerAnimal, setTimePerAnimal] = useLocalStorage<string>("fs_timePerAnimal", "45");
+  const [hourlyWage, setHourlyWage] = useLocalStorage<string>("fs_hourlyWage", "25");
   const [selectOpen, setSelectOpen] = useState(false);
 
   const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
