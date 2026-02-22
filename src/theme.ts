@@ -45,6 +45,44 @@ const theme = createTheme({
       contrastText: "#fff",
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:focus": {
+            outline: "none",
+          },
+          "&:focus-visible": {
+            outline: "none",
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          "&:focus": {
+            outline: "none",
+          },
+          "&:focus-visible": {
+            outline: "none",
+          },
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          "&:focus": {
+            outline: "none",
+          },
+          "&:focus-visible": {
+            outline: "none",
+          },
+        },
+      },
+    },
+  },
 });
 
 export default theme;

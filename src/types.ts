@@ -23,6 +23,17 @@ export const AVG_HANGING_WEIGHTS: Record<EAnimalSpecies, number> = {
   veal: 200,
 };
 
+export const SPECIES_EMOJIS: Record<EAnimalSpecies, string> = {
+  beef: "🐄",
+  hog: "🐷",
+  bison: "🦬",
+  lamb: "🐑",
+  goat: "🐐",
+  venison: "🦌",
+  yak: "🐃",
+  veal: "🐮",
+};
+
 export interface AnimalData {
   species: EAnimalSpecies;
   totalHangingWeight: number;

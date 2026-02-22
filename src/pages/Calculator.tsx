@@ -36,7 +36,11 @@ import CheckIcon from "@mui/icons-material/Check";
 import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { EAnimalSpecies } from "../types";
-import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "../types";
+import {
+  EAnimalSpecies as AnimalSpecies,
+  AVG_HANGING_WEIGHTS,
+  SPECIES_EMOJIS,
+} from "../types";
 import { exportCSV } from "../utils/exportCSV";
 import { exportPDF } from "../utils/exportPDF";
 import { FarmContext } from "../context/FarmContext";
@@ -631,16 +635,6 @@ export default function Calculator() {
               )}
             >
               {Object.values(AnimalSpecies).map((s) => {
-                const speciesEmojis: Record<string, string> = {
-                  beef: "🐄",
-                  hog: "🐷",
-                  bison: "🦬",
-                  lamb: "🐑",
-                  goat: "🐐",
-                  venison: "🦌",
-                  yak: "🐃",
-                  veal: "🐮",
-                };
                 const isSelected = selectedSpecies.includes(s);
                 return (
                   <MenuItem
@@ -680,7 +674,7 @@ export default function Calculator() {
                         },
                       }}
                     >
-                      {speciesEmojis[s]}
+                      {SPECIES_EMOJIS[s]}
                     </Box>
                     <Box sx={{ flex: 1, fontWeight: isSelected ? 600 : 400 }}>
                       {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -1325,17 +1319,55 @@ export default function Calculator() {
         </Box>
       </Paper>
 
-      <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
-        <DialogTitle>Clear All Data?</DialogTitle>
+      <Dialog
+        open={clearDialogOpen}
+        onClose={() => setClearDialogOpen(false)}
+        sx={{
+          "& .MuiPaper-root": {
+            borderRadius: 3,
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontFamily: "roca" }}>Clear All Data?</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ fontSize: "14px", fontWeight: 500 }}>
             Are you sure you want to clear all selected species and volume data?
             This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setClearDialogOpen(false)}>Cancel</Button>
-          <Button onClick={confirmClearAll} color="error" variant="contained">
+          <Button
+            onClick={() => setClearDialogOpen(false)}
+            sx={{
+              color: "farmGreen.main",
+              paddingX: { xs: 2, sm: 3 },
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: "0.875rem",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmClearAll}
+            color="error"
+            variant="contained"
+            sx={{
+              color: "#fff",
+              paddingX: { xs: 2, sm: 3 },
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: "0.875rem",
+            }}
+          >
             Clear All
           </Button>
         </DialogActions>

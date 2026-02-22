@@ -104,34 +104,38 @@ export default function Home() {
                 pb: 0,
                 px: { xs: 2, sm: 2.5 },
                 pt: { xs: 2, sm: 2.5 },
+                display: "flex",
+                flexDirection: "column",
                 "&:last-child": {
                   paddingBottom: { xs: "12px", sm: "14px" },
                 },
               }}
             >
-              <Box sx={{ mb: { xs: 1.5, sm: 2 } }}>{feature.icon}</Box>
-              <Typography
-                variant="h5"
-                gutterBottom
-                sx={{
-                  fontWeight: 600,
-                  fontFamily: "roca",
-                  color: "farmGreen.main",
-                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
-                }}
-              >
-                {feature.title}
-              </Typography>
-              <Typography
-                color="text.secondary"
-                sx={{
-                  mb: { xs: 1.5, sm: 2 },
-                  fontSize: { xs: "13px", sm: "14px" },
-                  fontWeight: 500,
-                }}
-              >
-                {feature.description}
-              </Typography>
+              <Box sx={{ flexGrow: 1 }}>
+                <Box sx={{ mb: { xs: 1.5, sm: 2 } }}>{feature.icon}</Box>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 600,
+                    fontFamily: "roca",
+                    color: "farmGreen.main",
+                    fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                  }}
+                >
+                  {feature.title}
+                </Typography>
+                <Typography
+                  color="text.secondary"
+                  sx={{
+                    mb: { xs: 1.5, sm: 2 },
+                    fontSize: { xs: "13px", sm: "14px" },
+                    fontWeight: 500,
+                  }}
+                >
+                  {feature.description}
+                </Typography>
+              </Box>
               <Button
                 variant="contained"
                 fullWidth
