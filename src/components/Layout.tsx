@@ -88,7 +88,7 @@ export default function Layout({ children }: LayoutProps) {
         </Toolbar>
 
         {/* Navigation Menu */}
-        <List>
+        <List sx={{ mx: "10px" }}>
           {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
               <ListItemButton
@@ -96,11 +96,20 @@ export default function Layout({ children }: LayoutProps) {
                 to={item.path}
                 selected={location.pathname === item.path}
                 sx={{
+                  px: "8px",
+                  borderRadius: "8px",
+                  "&:hover": {
+                    color: "farmOrange.main",
+                    "& .MuiListItemIcon-root": {
+                      color: "farmOrange.main",
+                    },
+                  },
                   "&.Mui-selected": {
                     backgroundColor: "farmGreen.main",
                     color: "#fff",
                     "&:hover": {
                       backgroundColor: "farmGreen.main",
+                      color: "#fff",
                     },
                     "& .MuiListItemIcon-root": {
                       color: "#fff",
