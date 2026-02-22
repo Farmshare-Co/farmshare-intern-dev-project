@@ -500,7 +500,11 @@ export default function Calculator() {
               display: "flex",
               gap: 2,
               ml: { xs: 0, sm: "auto" },
-              flexDirection: { xs: "column", sm: "row" },
+              flexDirection: "row",
+              padding: { xs: "10px", lg: 0 },
+              backgroundColor: { xs: "#fafafa", lg: "transparent" },
+              borderRadius: { xs: "8px", lg: 0 },
+              border: { xs: "1px dashed #e0e0e0", lg: "none" },
             }}
           >
             <Button
