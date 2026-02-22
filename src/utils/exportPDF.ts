@@ -13,6 +13,7 @@ interface ExportPDFParams {
   getTotalVolume: () => number;
   calculateTotalAnnualSavings: () => number;
   calculateTotalAnnualCost: () => number;
+  viewMode: "annual" | "monthly";
 }
 
 export const exportPDF = async ({
@@ -23,11 +24,15 @@ export const exportPDF = async ({
   getTotalVolume,
   calculateTotalAnnualSavings,
   calculateTotalAnnualCost,
+  viewMode,
 }: ExportPDFParams) => {
   const doc = new jsPDF();
-  const totalSavings = calculateTotalAnnualSavings();
-  const totalCost = calculateTotalAnnualCost();
+  const annualSavings = calculateTotalAnnualSavings();
+  const annualCost = calculateTotalAnnualCost();
+  const totalSavings = viewMode === "monthly" ? annualSavings / 12 : annualSavings;
+  const totalCost = viewMode === "monthly" ? annualCost / 12 : annualCost;
   const netBenefit = totalSavings - totalCost;
+  const periodLabel = viewMode === "annual" ? "Annual" : "Monthly";
   const pageWidth = doc.internal.pageSize.getWidth();
   const green: [number, number, number] = [0, 107, 60];
   const lightGreen: [number, number, number] = [235, 247, 241];
@@ -61,7 +66,7 @@ export const exportPDF = async ({
   doc.setTextColor(...white);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("Meat Processor Annual Projections", pageWidth / 2, 40, {
+  doc.text(`Meat Processor ${periodLabel} Projections`, pageWidth / 2, 40, {
     align: "center",
   });
   doc.setFontSize(10);
@@ -91,12 +96,14 @@ export const exportPDF = async ({
     const volume = parseFloat(volumes[species] || "0");
     const avgWeight = AVG_HANGING_WEIGHTS[species];
     const heads = calculateHeads(volume, avgWeight);
-    const savings = calculateLaborValue(
+    const annualSavings = calculateLaborValue(
       heads,
       parseFloat(timePerAnimal),
       parseFloat(hourlyWage)
     );
-    const cost = volume * COST_PER_LB;
+    const annualCost = volume * COST_PER_LB;
+    const savings = viewMode === "monthly" ? annualSavings / 12 : annualSavings;
+    const cost = viewMode === "monthly" ? annualCost / 12 : annualCost;
     const net = savings - cost;
 
     doc.setFillColor(...(i % 2 === 0 ? white : lightGreen));
@@ -148,7 +155,7 @@ export const exportPDF = async ({
   doc.setTextColor(...darkGray);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.text("Annual Summary", 16, y + 1);
+  doc.text(`${periodLabel} Summary`, 16, y + 1);
   y += 9;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
@@ -168,5 +175,5 @@ export const exportPDF = async ({
   doc.text(`Net Benefit:`, 16, y);
   doc.text(`$${netBenefit.toFixed(2)}`, 70, y);
 
-  doc.save("annual_projections.pdf");
+  doc.save(`${viewMode}_projections.pdf`);
 };

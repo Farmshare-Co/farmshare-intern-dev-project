@@ -11,6 +11,7 @@ interface ExportCSVParams {
   getTotalVolume: () => number;
   calculateTotalAnnualSavings: () => number;
   calculateTotalAnnualCost: () => number;
+  viewMode: "annual" | "monthly";
 }
 
 export const exportCSV = ({
@@ -21,9 +22,11 @@ export const exportCSV = ({
   getTotalVolume,
   calculateTotalAnnualSavings,
   calculateTotalAnnualCost,
+  viewMode,
 }: ExportCSVParams) => {
+  const periodLabel = viewMode === "annual" ? "Annual" : "Monthly";
   const rows = [
-    ["Meat Processor Annual Projections"],
+    [`Meat Processor ${periodLabel} Projections`],
     [],
     [
       "Species",
@@ -40,12 +43,14 @@ export const exportCSV = ({
     const volume = parseFloat(volumes[species] || "0");
     const avgWeight = AVG_HANGING_WEIGHTS[species];
     const heads = calculateHeads(volume, avgWeight);
-    const savings = calculateLaborValue(
+    const annualSavings = calculateLaborValue(
       heads,
       parseFloat(timePerAnimal),
       parseFloat(hourlyWage)
     );
-    const cost = volume * COST_PER_LB;
+    const annualCost = volume * COST_PER_LB;
+    const savings = viewMode === "monthly" ? annualSavings / 12 : annualSavings;
+    const cost = viewMode === "monthly" ? annualCost / 12 : annualCost;
     const net = savings - cost;
     rows.push([
       species.charAt(0).toUpperCase() + species.slice(1),
@@ -58,15 +63,20 @@ export const exportCSV = ({
     ]);
   });
 
+  const annualSavings = calculateTotalAnnualSavings();
+  const annualCost = calculateTotalAnnualCost();
+  const totalSavings = viewMode === "monthly" ? annualSavings / 12 : annualSavings;
+  const totalCost = viewMode === "monthly" ? annualCost / 12 : annualCost;
+
   rows.push([]);
   rows.push([
     "TOTALS",
     getTotalVolume().toString(),
     "",
     "",
-    calculateTotalAnnualSavings().toFixed(2),
-    calculateTotalAnnualCost().toFixed(2),
-    (calculateTotalAnnualSavings() - calculateTotalAnnualCost()).toFixed(2),
+    totalSavings.toFixed(2),
+    totalCost.toFixed(2),
+    (totalSavings - totalCost).toFixed(2),
   ]);
 
   const csvContent = rows.map((row) => row.join(",")).join("\n");
@@ -74,7 +84,7 @@ export const exportCSV = ({
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "annual_projections.csv";
+  a.download = `${viewMode}_projections.csv`;
   a.click();
   URL.revokeObjectURL(url);
 };

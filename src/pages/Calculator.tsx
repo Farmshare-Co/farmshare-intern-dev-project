@@ -40,7 +40,7 @@ import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "../types";
 import { exportCSV } from "../utils/exportCSV";
 import { exportPDF } from "../utils/exportPDF";
 import { FarmContext } from "../context/FarmContext";
-import BeforeAfterComparison from "../components/BeforeAfterComparison";
+// import BeforeAfterComparison from "../components/BeforeAfterComparison";
 
 export default function Calculator() {
   const {
@@ -305,6 +305,7 @@ export default function Calculator() {
       getTotalVolume,
       calculateTotalAnnualSavings,
       calculateTotalAnnualCost,
+      viewMode,
     });
 
     setSnackbar({
@@ -350,6 +351,7 @@ export default function Calculator() {
       getTotalVolume,
       calculateTotalAnnualSavings,
       calculateTotalAnnualCost,
+      viewMode,
     });
 
     setSnackbar({
