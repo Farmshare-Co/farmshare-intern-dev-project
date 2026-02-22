@@ -23,7 +23,7 @@ describe("Charts Component", () => {
     expect(screen.getByText("No charts to display")).toBeInTheDocument();
     expect(
       screen.getByText(
-        /In order for you to see the charts, please select at least on species/i
+        /In order for you to see the charts, please select at least one species from the Calculator page/i
       )
     ).toBeInTheDocument();
 

@@ -79,22 +79,30 @@ export default function SpeciesMixComparison({
   return (
     <Paper
       sx={{
-        p: 3,
-        mt: 3,
+        p: { xs: 2, sm: 3 },
+        mt: { xs: 2, sm: 3 },
         border: "2px solid #e0e0e0",
         boxShadow: "none",
-        borderRadius: 3,
+        borderRadius: { xs: 2, sm: 3 },
       }}
     >
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: { xs: "stretch", sm: "center" },
           mb: 2,
+          gap: { xs: 2, sm: 0 },
         }}
       >
-        <Typography variant="h5" sx={{ fontFamily: "roca" }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontFamily: "roca",
+            fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          }}
+        >
           Comparison Table
         </Typography>
 
@@ -105,12 +113,14 @@ export default function SpeciesMixComparison({
             sx={{
               backgroundColor: "farmGreen.main",
               color: "#fff",
-              paddingX: 3,
+              paddingX: { xs: 2, sm: 3 },
               paddingY: 1,
               borderRadius: 2,
               fontWeight: 600,
               textTransform: "none",
               boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               "&:hover": {
                 backgroundColor: "farmGreen.main",
                 boxShadow: "none",
@@ -123,8 +133,8 @@ export default function SpeciesMixComparison({
         )}
       </Box>
 
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table sx={{ minWidth: { xs: 300, sm: "auto" } }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell align="left">
@@ -208,8 +218,21 @@ export default function SpeciesMixComparison({
         </Table>
       </TableContainer>
 
-      <Box sx={{ mt: 2, p: 2, backgroundColor: "#e8f5e9", borderRadius: 1 }}>
-        <Typography variant="body2" sx={{ color: "#2e7d32" }}>
+      <Box
+        sx={{
+          mt: 2,
+          p: { xs: 1.5, sm: 2 },
+          backgroundColor: "#e8f5e9",
+          borderRadius: 1,
+        }}
+      >
+        <Typography
+          variant="body2"
+          sx={{
+            color: "#2e7d32",
+            fontSize: { xs: "0.8rem", sm: "0.875rem" },
+          }}
+        >
           <strong>Recommendation:</strong>{" "}
           {benefitDiff > 0
             ? `${scenarioB.name} provides $${benefitDiff.toFixed(

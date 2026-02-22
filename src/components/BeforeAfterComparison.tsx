@@ -41,14 +41,14 @@ export default function BeforeAfterComparison({
   return (
     <Paper
       sx={{
-        p: 3,
-        borderRadius: 3,
+        p: { xs: 2, sm: 3 },
+        borderRadius: { xs: 2, sm: 3 },
         boxShadow: "none",
         border: "2px solid #e0e0e0",
       }}
     >
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table sx={{ minWidth: { xs: 300, sm: "auto" } }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell align="left">
@@ -111,7 +111,7 @@ export default function BeforeAfterComparison({
                 sx={{
                   color: "#006B3C",
                   fontWeight: "bold",
-                  fontSize: "1.1rem",
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
                 }}
               >
                 +${benefitDiff.toFixed(2)}
@@ -121,8 +121,21 @@ export default function BeforeAfterComparison({
         </Table>
       </TableContainer>
 
-      <Box sx={{ mt: 2, p: 2, backgroundColor: "#e8f5e9", borderRadius: 1 }}>
-        <Typography variant="body2" sx={{ color: "#2e7d32" }}>
+      <Box
+        sx={{
+          mt: 2,
+          p: { xs: 1.5, sm: 2 },
+          backgroundColor: "#e8f5e9",
+          borderRadius: 1,
+        }}
+      >
+        <Typography
+          variant="body2"
+          sx={{
+            color: "#2e7d32",
+            fontSize: { xs: "0.8rem", sm: "0.875rem" },
+          }}
+        >
           <strong>ROI Analysis:</strong> By using FarmShare, you save{" "}
           <strong>${withPlatformSavings.toFixed(2)}</strong> in labor costs
           while paying only <strong>${withPlatformCost.toFixed(2)}</strong> for

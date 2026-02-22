@@ -20,6 +20,7 @@ import type { EAnimalSpecies } from "../types";
 import { FarmContext } from "../context/FarmContext";
 import SpeciesMixComparison from "../components/SpeciesMixComparison";
 import BeforeAfterComparison from "../components/BeforeAfterComparison";
+import Empty from "../components/Empty";
 
 export default function Comparisons() {
   const {
@@ -56,20 +57,27 @@ export default function Comparisons() {
   >({} as Record<EAnimalSpecies, string>);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
+          alignItems: { xs: "flex-start", sm: "center" },
+          mb: { xs: 3, sm: 4 },
+          gap: { xs: 2, sm: 0 },
         }}
       >
         <Box>
           <Typography
             variant="h4"
             gutterBottom
-            sx={{ fontWeight: 600, mb: 1, fontFamily: "roca" }}
+            sx={{
+              fontWeight: 600,
+              mb: 1,
+              fontFamily: "roca",
+              fontSize: { xs: "1.5rem", sm: "2.125rem" },
+            }}
           >
             {comparisonType === "speciesMix"
               ? "Species Mix Comparison"
@@ -77,7 +85,10 @@ export default function Comparisons() {
           </Typography>
           <Typography
             color="text.secondary"
-            sx={{ fontWeight: 500, fontSize: "14px" }}
+            sx={{
+              fontWeight: 500,
+              fontSize: { xs: "13px", sm: "14px" },
+            }}
           >
             {comparisonType === "speciesMix"
               ? "Compare different species combinations to optimize profitability"
@@ -85,19 +96,27 @@ export default function Comparisons() {
           </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1.5,
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
           <Button
             variant="contained"
             onClick={() => setComparisonType("speciesMix")}
             sx={{
               backgroundColor: "farmGreen.main",
               color: "#fff",
-              paddingX: 3,
+              paddingX: { xs: 2, sm: 3 },
               paddingY: 1,
               borderRadius: 2,
               fontWeight: 600,
               textTransform: "none",
               boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               opacity: comparisonType === "speciesMix" ? 1 : 0.6,
               "&:hover": {
                 backgroundColor: "farmGreen.main",
@@ -114,12 +133,14 @@ export default function Comparisons() {
             sx={{
               backgroundColor: "farmOrange.main",
               color: "#fff",
-              paddingX: 3,
+              paddingX: { xs: 2, sm: 3 },
               paddingY: 1,
               borderRadius: 2,
               fontWeight: 600,
               textTransform: "none",
               boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               opacity: comparisonType === "beforeAfter" ? 1 : 0.6,
               "&:hover": {
                 backgroundColor: "farmOrange.main",
@@ -134,16 +155,22 @@ export default function Comparisons() {
       </Box>
 
       {comparisonType === "speciesMix" && (
-        <Box sx={{ mb: 4 }}>
-          <Box sx={{ display: "flex", gap: 3 }}>
+        <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: { xs: 2, sm: 3 },
+            }}
+          >
             {/* Scenario A */}
             <Box
               sx={{
                 flex: 1,
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 border: "2px solid #e0e0e0",
                 borderColor: "farmGreen.light",
-                borderRadius: 3,
+                borderRadius: { xs: 2, sm: 3 },
                 background: "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
                 transition: "all 0.2s ease",
               }}
@@ -155,6 +182,7 @@ export default function Comparisons() {
                   color: "farmGreen.main",
                   fontFamily: "roca",
                   mb: "15px",
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
                 }}
               >
                 Species A
@@ -218,10 +246,10 @@ export default function Comparisons() {
             <Box
               sx={{
                 flex: 1,
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 border: "2px solid",
                 borderColor: "farmOrange.light",
-                borderRadius: 3,
+                borderRadius: { xs: 2, sm: 3 },
                 background: "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
                 transition: "all 0.2s ease",
               }}
@@ -233,6 +261,7 @@ export default function Comparisons() {
                   color: "farmOrange.main",
                   fontFamily: "roca",
                   mb: "15px",
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
                 }}
               >
                 Species B
@@ -313,16 +342,24 @@ export default function Comparisons() {
         </Box>
       )}
 
-      {comparisonType === "beforeAfter" && (
-        <BeforeAfterComparison
-          selectedSpecies={selectedSpecies}
-          withPlatformSavings={calculateTotalAnnualSavings()}
-          withPlatformCost={calculateTotalAnnualCost()}
-          withPlatformBenefit={
-            calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-          }
-        />
-      )}
+      {comparisonType === "beforeAfter" &&
+        (selectedSpecies.length === 0 ? (
+          <Empty
+            heading="No comparisons to display"
+            description="In order for you to see the comparisons, please head to the Calculator page and select atleast one species."
+            btnLink="calculator"
+            btnText="Calculator Page"
+          />
+        ) : (
+          <BeforeAfterComparison
+            selectedSpecies={selectedSpecies}
+            withPlatformSavings={calculateTotalAnnualSavings()}
+            withPlatformCost={calculateTotalAnnualCost()}
+            withPlatformBenefit={
+              calculateTotalAnnualSavings() - calculateTotalAnnualCost()
+            }
+          />
+        ))}
 
       <Dialog
         open={advancedSettingsOpen}
