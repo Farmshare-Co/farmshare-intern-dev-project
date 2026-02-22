@@ -29,23 +29,11 @@ export default function SpeciesCard({
             const heads = vol > 0 ? calculateHeads(vol, avgWeight) : null;
 
             return (
-              <div key={species} className="species-card" style={{ position: "relative" }}>
+              <div key={species} className="species-card">
                 <button
                   onClick={() => onRemove(species)}
                   aria-label={`remove ${species}`}
-                  style={{
-                    position: "absolute",
-                    top: 8,
-                    right: 8,
-                    background: "none",
-                    border: "none",
-                    padding: "0 4px",
-                    cursor: "pointer",
-                    fontSize: 16,
-                    lineHeight: 1,
-                    color: "var(--fs-text-muted)",
-                    borderRadius: 4,
-                  }}
+                  className="species-btn__remove"
                 >
                   ×
                 </button>

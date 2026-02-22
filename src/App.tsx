@@ -38,6 +38,11 @@ function App() {
     setVolumes((prev) => ({ ...prev, [species]: value }));
   };
 
+  const handleClear = (): void => {
+    setSelectedSpecies([]);
+    setVolumes({});
+  };
+
   const totalSavings: number = selectedSpecies.reduce((acc, species) => {
     const vol = parseFloat(volumes[species] || "0");
     if (vol <= 0) return acc;
@@ -75,6 +80,7 @@ function App() {
           onClose={() => setSelectOpen(false)}
           onChange={handleSpeciesChange}
           onRemove={handleRemoveSpecies}
+          onClear={handleClear}
         />
 
         {selectedSpecies.length > 0 && (

@@ -18,6 +18,7 @@ interface SpeciesSelectProps {
   onClose: () => void;
   onChange: (event: SelectChangeEvent<EAnimalSpecies[]>) => void;
   onRemove: (species: EAnimalSpecies) => void;
+  onClear: () => void;
 }
 
 export default function SpeciesSelect({
@@ -27,11 +28,17 @@ export default function SpeciesSelect({
   onClose,
   onChange,
   onRemove,
+  onClear,
 }: SpeciesSelectProps) {
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="card__header">
+      <div className="card__header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <p className="card__header-title">Step 1 — Select Species</p>
+        {selectedSpecies.length > 0 && (
+          <button onClick={onClear} className="species-btn__clear">
+            Clear all
+          </button>
+        )}
       </div>
       <div className="card__body">
         <FormControl fullWidth>
@@ -59,14 +66,7 @@ export default function SpeciesSelect({
                         role="button"
                         aria-label="remove"
                         onMouseDown={(e) => e.stopPropagation()}
-                        style={{
-                          cursor: "pointer",
-                          marginLeft: 2,
-                          marginRight: 4,
-                          fontSize: "15px",
-                          color: "#3A7D5E",
-                          lineHeight: 1,
-                        }}
+                        className="species-chip__delete"
                       >
                         ×
                       </span>
