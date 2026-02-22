@@ -18,8 +18,8 @@ export default function AdvancedSettings({
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="card">
-            <div className="card__body" style={{ paddingBottom: open ? 24 : 4 }}>
+        <div className="card"  style={{ marginBottom: 28 }}>
+            <div className="card__body" style={{ paddingBottom: open ? 24 : 4, paddingTop: 4 }}>
                 <div className="advanced-toggle" onClick={() => setOpen((prev) => !prev)}>
                     <span className="advanced-toggle__label">
                         Advanced Settings — Labor &amp; Wage

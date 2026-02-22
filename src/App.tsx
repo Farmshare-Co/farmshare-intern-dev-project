@@ -1,25 +1,16 @@
 import { useState } from "react";
-import {
-  Typography,
-  Box,
-  Paper,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  Chip,
-  CssBaseline,
-  ThemeProvider
-} from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 
-import AnnualSummary from "./components/AnnualSummary"
-import AdvancedSettings from "./components/AdvancedSettings";
-import SpeciesCard from "./components/SpeciesCard";
 import farmshareTheme from "./theme";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import SpeciesSelect from "./components/SpeciesSelect";
+import SpeciesCard from "./components/SpeciesCard";
+import AdvancedSettings from "./components/AdvancedSettings";
+import AnnualSummary from "./components/AnnualSummary";
 import type { EAnimalSpecies } from "./types";
-import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
+import { AVG_HANGING_WEIGHTS } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
 import "./App.css";
 
@@ -27,12 +18,10 @@ const COST_PER_LB = 0.02;
 
 function App() {
   const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
-  const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
-    {} as Record<EAnimalSpecies, string>,
-  );
-  const [selectOpen, setSelectOpen] = useState(false);
+  const [volumes, setVolumes] = useState<Partial<Record<EAnimalSpecies, string>>>({});
   const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
-  const [hourlyWage, setHourlyWage] = useState("25"); // dollars
+  const [hourlyWage, setHourlyWage] = useState("25"); // dollars per hour
+  const [selectOpen, setSelectOpen] = useState(false);
 
   const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
     const value = event.target.value;
@@ -45,7 +34,7 @@ function App() {
     setSelectedSpecies((prev) => prev.filter((s) => s !== species));
   };
 
-  const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
+  const handleVolumeChange = (species: EAnimalSpecies, value: string): void => {
     setVolumes((prev) => ({ ...prev, [species]: value }));
   };
 
@@ -67,6 +56,8 @@ function App() {
   return (
     <ThemeProvider theme={farmshareTheme}>
       <CssBaseline />
+      <Navbar />
+
       <main className="page">
         <header className="page-header">
           <p className="page-header__eyebrow">For Processors</p>
@@ -77,82 +68,22 @@ function App() {
           </p>
         </header>
 
-
-        <div className="card">
-          <div className="card__header">
-            <p className="card__header-title">Step 1 - Select Species</p>
-          </div>
-          <div className="card-body">
-            <FormControl fullWidth sx={{ mb: 3 }}>
-              <InputLabel>Select Animal Species</InputLabel>
-              <Select
-                multiple
-                open={selectOpen}
-                onOpen={() => setSelectOpen(true)}
-                onClose={() => setSelectOpen(false)}
-                value={selectedSpecies}
-                onChange={handleSpeciesChange}
-                input={<OutlinedInput label="Select Animal Species" />}
-                renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value) => (
-                      <Chip
-                        key={value}
-                        label={value.charAt(0).toUpperCase() + value.slice(1)}
-                        onDelete={(e) => {
-                          e.stopPropagation();
-                          handleRemoveSpecies(value);
-                        }}
-                        deleteIcon={
-                          <span
-                            role="button"
-                            aria-label="remove"
-                            onMouseDown={(e) => e.stopPropagation()}
-                            style={{
-                              cursor: "pointer",
-                              marginLeft: 2,
-                              marginRight: 4,
-                              fontSize: "15px",
-                              color: "#3A7D5E",
-                              lineHeight: 1,
-                            }}
-                          >
-                            ×
-                          </span>
-                        }
-                      />
-                    ))}
-                  </Box>
-                )}
-              >
-                {Object.values(AnimalSpecies).map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-        </div>
+        <SpeciesSelect
+          selectedSpecies={selectedSpecies}
+          selectOpen={selectOpen}
+          onOpen={() => setSelectOpen(true)}
+          onClose={() => setSelectOpen(false)}
+          onChange={handleSpeciesChange}
+          onRemove={handleRemoveSpecies}
+        />
 
         {selectedSpecies.length > 0 && (
-          <div className="card">
-            <div className="card__header">
-              <p className="card__header-title"> Step 2 - Annual Processing Volume by Species</p>
-            </div>
-            <div className="card__body">
-              <div className="species-grid">
-                {selectedSpecies.map((species) => (
-                  <SpeciesCard
-                    key={species}
-                    species={species}
-                    volume={volumes[species] || ""}
-                    onVolumeChange={(val) => handleVolumeChange(species, val)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <SpeciesCard
+            selectedSpecies={selectedSpecies}
+            volumes={volumes}
+            onVolumeChange={handleVolumeChange}
+            onRemove={handleRemoveSpecies}
+          />
         )}
 
         <AdvancedSettings
@@ -167,11 +98,12 @@ function App() {
           totalSavings={totalSavings}
           totalCost={totalCost}
         />
-
       </main>
 
+        <Footer/>
     </ThemeProvider>
   );
 }
 
 export default App;
+

@@ -1,4 +1,57 @@
+.navbar {
+  background-color: var(--fs-green-900);
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
 
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.navbar__logo-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--fs-green-500);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--fs-green-900);
+  letter-spacing: -0.5px;
+}
+
+.navbar__name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.navbar__badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fs-green-100);
+  background: rgba(82, 183, 136, 0.2);
+  border: 1px solid rgba(82, 183, 136, 0.35);
+  border-radius: 20px;
+  padding: 2px 10px;
+  letter-spacing: 0.3px;
+}
+
+/* ---- Page Layout ---- */
 .page {
   flex: 1;
   padding: 32px 16px 64px;
@@ -7,6 +60,7 @@
   width: 100%;
 }
 
+/* ---- Page Header ---- */
 .page-header {
   margin-bottom: 32px;
 }
@@ -14,38 +68,40 @@
 .page-header__eyebrow {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--fs-green-700);
-  margin-bottom: -6px;
+  margin-bottom: 6px;
 }
 
 .page-header__title {
-  font-size: 30px;
+  font-size: clamp(22px, 4vw, 30px);
   font-weight: 800;
   color: var(--fs-green-900);
-  margin: 0 0 0px;
+  margin: 0 0 8px;
   letter-spacing: -0.5px;
   line-height: 1.2;
 }
 
 .page-header__subtitle {
-  font-size: 10px;
+  font-size: 15px;
   color: var(--fs-text-muted);
   margin: 0;
   max-width: 560px;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+/* ---- Section Cards ---- */
+.card {
+  background: var(--fs-surface);
+  border-radius: var(--fs-radius);
+  border: 1px solid var(--fs-border);
+  box-shadow: var(--fs-shadow);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
 }
-
-/* Cards */
 
 .card {
   margin-top: 20px;
-  margin-bottom: 20px;
 }
 
 .card__header {
@@ -64,10 +120,20 @@ body {
 }
 
 .card__body {
-  /* padding: 24px; */
+  padding: 24px;
 }
 
-/* Species Card Styling */
+.select-hint {
+  font-size: 13px;
+  color: var(--fs-text-muted);
+  margin-top: 8px;
+}
+
+.species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
 
 .species-card {
   background: var(--fs-surface);
@@ -75,6 +141,11 @@ body {
   border-radius: var(--fs-radius-sm);
   padding: 16px;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.species-card:hover {
+  border-color: var(--fs-green-500);
+  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.1);
 }
 
 .species-card__name {
@@ -90,14 +161,18 @@ body {
   margin: 0 0 12px;
 }
 
-.species-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+.species-card__heads {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fs-green-700);
+  background: var(--fs-green-50);
+  border: 1px solid var(--fs-green-100);
+  border-radius: 20px;
+  display: inline-block;
+  padding: 2px 10px;
+  margin-top: 10px;
 }
 
-
-/* Advanced Card Styling */
 .advanced-toggle {
   display: flex;
   align-items: center;
@@ -124,7 +199,7 @@ body {
 /* Summary Card Styling */
 
 .summary {
-  background: linear-gradient(135deg, var(--fs-green-800) 0%, #1e4d35 100%);
+  background: linear-gradient(135deg, var(--fs-green-900) 0%, #1e4d35 100%);
   border-radius: var(--fs-radius);
   padding: 32px;
   color: #fff;
@@ -240,4 +315,41 @@ body {
 
 .summary__net-value--negative {
   color: #ff9a8b;
+}
+
+/*  Footer  */
+.footer {
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 13px;
+  color: var(--fs-text-muted);
+  border-top: 1px solid var(--fs-border);
+  background: var(--fs-surface);
+}
+
+.footer a {
+  color: var(--fs-green-700);
+  font-weight: 600;
+}
+
+/*  Responsive  */
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 12px 48px;
+  }
+  .card__body {
+    padding: 16px;
+  }
+  .summary {
+    padding: 24px 20px;
+  }
+  .summary__net-value {
+    font-size: 22px;
+  }
+  .species-grid {
+    grid-template-columns: 1fr;
+  }
+  .navbar {
+    padding: 0 16px;
+  }
 }
