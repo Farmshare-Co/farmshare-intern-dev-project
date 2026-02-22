@@ -85,7 +85,7 @@ function App() {
   };
 
   return (
-    <Container>
+    <Box sx={{ minHeight: '100vh', width: '100%' }}>
       <Box sx={{ pb: 8 }}>
         <Box className="hero-header">
           <Container maxWidth="md">
@@ -97,7 +97,7 @@ function App() {
             </Typography>
           </Container>
         </Box>
-        <Container maxWidth="lg" sx={{ mt: -4 }}>
+        <Container maxWidth={false} sx={{ mt: -4, px: { xs: 2, lg: 8 } }}>
           <Grid container spacing={4}>
             {/* LEFT COLUMN: INPUTS */}
             <Grid size={{ xs: 12, md: 8 }}>
@@ -258,12 +258,44 @@ function App() {
                     *Based on selected species and assumptions
                   </Typography>
                 </Box>
+
+                {/* FINANCIAL VISUALIZATION BAR CHART */}
+                {(calculateTotalAnnualSavings() > 0 || calculateTotalAnnualCost() > 0) && (
+                  <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+                    <Typography variant="subtitle2" sx={{ opacity: 0.8, mb: 3, letterSpacing: 1.5 }}>FINANCIAL VISUALIZATION</Typography>
+
+                    <Box sx={{ mb: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: '#a5d6a7', fontWeight: 700 }}>Total Savings</Typography>
+                      </Box>
+                      <Box sx={{ width: '100%', height: 10, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 4, overflow: 'hidden' }}>
+                        <Box sx={{
+                          width: `${Math.max(1, (calculateTotalAnnualSavings() / Math.max(0.01, Math.max(calculateTotalAnnualSavings(), calculateTotalAnnualCost()))) * 100)}%`,
+                          height: '100%', bgcolor: '#a5d6a7', transition: 'width 1s ease-in-out'
+                        }} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ mb: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: '#ef9a9a', fontWeight: 700 }}>Total Cost</Typography>
+                      </Box>
+                      <Box sx={{ width: '100%', height: 10, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 4, overflow: 'hidden' }}>
+                        <Box sx={{
+                          width: `${Math.max(1, (calculateTotalAnnualCost() / Math.max(0.01, Math.max(calculateTotalAnnualSavings(), calculateTotalAnnualCost()))) * 100)}%`,
+                          height: '100%', bgcolor: '#ef9a9a', transition: 'width 1s ease-in-out'
+                        }} />
+                      </Box>
+                    </Box>
+                  </Box>
+                )}
+
               </Paper>
             </Grid>
           </Grid>
         </Container>
       </Box>
-    </Container>
+    </Box>
   );
 }
 
