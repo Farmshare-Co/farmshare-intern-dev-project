@@ -111,7 +111,7 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.click(beefOption);
 
     // Checking remove button
-    const deleteButton = screen.getByRole("button", { name: /remove/i });
+    const deleteButton = screen.getByLabelText(`remove beef`);
     fireEvent.click(deleteButton);
 
     expect(
