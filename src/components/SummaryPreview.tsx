@@ -4,6 +4,7 @@ interface SummaryPreviewProps {
   totalVolume: number;
   totalSavings: number;
   totalCost: number;
+  label?: string;
 }
 
 const fmt = (n: number) =>
@@ -16,6 +17,7 @@ export default function SummaryPreview({
   totalVolume,
   totalSavings,
   totalCost,
+  label = "Live Preview",
 }: SummaryPreviewProps) {
   const [tab, setTab] = useState<"annual" | "monthly">("annual");
 
@@ -39,7 +41,7 @@ export default function SummaryPreview({
     <div className="preview">
       {/* Header */}
       <div className="summary__header">
-        <span className="summary__title">Live Preview</span>
+        <span className="summary__title">{label}</span>
         <div className="summary__tabs">
           <button
             className={`summary__tab${tab === "annual" ? " summary__tab--active" : ""}`}

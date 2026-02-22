@@ -21,7 +21,9 @@ function App() {
   const [scenarioA, setScenarioA] = useLocalStorage<Scenario>(SCENARIO_A.storageKey, DEFAULT_SCENARIO);
   const [scenarioB, setScenarioB] = useLocalStorage<Scenario>(SCENARIO_B.storageKey, DEFAULT_SCENARIO);
   const [summaryFullyVisible, setSummaryFullyVisible] = useState(false);
+  const [scenarioBVisible, setScenarioBVisible] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
+  const scenarioBRef = useRef<HTMLDivElement>(null);
 
   const [comparisonMode, setComparisonMode] = useLocalStorage<boolean>(
     "comparison",
@@ -38,6 +40,17 @@ function App() {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const el = scenarioBRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setScenarioBVisible(entry.intersectionRatio >= 0.3),
+      { threshold: [0, 0.3] },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [comparisonMode]);
 
   const getScenarioSetter = (which: ScenarioKey) =>
     which === SCENARIO_A ? setScenarioA : setScenarioB;
@@ -118,20 +131,20 @@ function App() {
                 <span>{SCENARIO_B.label}</span>
               </div> */}
 
-              <ScenarioPanel
-                label={SCENARIO_B.label}
-                scenario={scenarioB}
-                onSpeciesChange={(s) => handleSpeciesChange(SCENARIO_B, s)}
-                onVolumeChange={(sp, v) => handleVolumeChange(SCENARIO_B, sp, v)}
-                onRemoveSpecies={(sp) => handleRemoveSpecies(SCENARIO_B, sp)}
-                onTimeChange={(v) => setScenarioB((prev) => ({ ...prev, timePerAnimal: v }))}
-                onWageChange={(v) => setScenarioB((prev) => ({ ...prev, hourlyWage: v }))}
-                onClearAll={() => handleClear(SCENARIO_B)}
-              />
+              <div ref={scenarioBRef}>
+                <ScenarioPanel
+                  label={SCENARIO_B.label}
+                  scenario={scenarioB}
+                  onSpeciesChange={(s) => handleSpeciesChange(SCENARIO_B, s)}
+                  onVolumeChange={(sp, v) => handleVolumeChange(SCENARIO_B, sp, v)}
+                  onRemoveSpecies={(sp) => handleRemoveSpecies(SCENARIO_B, sp)}
+                  onTimeChange={(v) => setScenarioB((prev) => ({ ...prev, timePerAnimal: v }))}
+                  onWageChange={(v) => setScenarioB((prev) => ({ ...prev, hourlyWage: v }))}
+                  onClearAll={() => handleClear(SCENARIO_B)}
+                />
+              </div>
             </>
-
           )}
-
 
           <div ref={summaryRef}>
             <AnnualSummary
@@ -144,9 +157,10 @@ function App() {
 
         <aside className={`page-sidebar${summaryFullyVisible ? " page-sidebar--absorbed" : ""}`}>
           <SummaryPreview
-            totalVolume={totalVolume}
-            totalSavings={totalSavings}
-            totalCost={totalCost}
+            label={comparisonMode && scenarioBVisible ? SCENARIO_B.label : SCENARIO_A.label}
+            totalVolume={comparisonMode && scenarioBVisible ? totalVolumeB : totalVolume}
+            totalSavings={comparisonMode && scenarioBVisible ? totalSavingsB : totalSavings}
+            totalCost={comparisonMode && scenarioBVisible ? totalCostB : totalCost}
           />
         </aside>
       </div>
