@@ -7,8 +7,13 @@ import Charts from "./pages/Charts";
 import "./App.css";
 
 function App() {
+  const basename =
+    import.meta.env.MODE === "production"
+      ? "/farmshare-intern-dev-project"
+      : "";
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

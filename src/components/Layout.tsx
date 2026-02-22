@@ -13,7 +13,7 @@ import {
   Link,
   Avatar,
 } from "@mui/material";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
@@ -43,9 +43,14 @@ const pathToBreadcrumb: Record<string, string> = {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Generate breadcrumbs from current path
   const generateBreadcrumbs = () => {
+    // Home page shows only "Home"
+    if (location.pathname === "/") {
+      return [{ label: "Home", path: "/" }];
+    }
+
     const paths = location.pathname.split("/").filter((x) => x);
     const breadcrumbs = [{ label: "Home", path: "/" }];
 
@@ -76,14 +81,15 @@ export default function Layout({ children }: LayoutProps) {
           },
         }}
       >
-        {/* Logo/Title */}
         <Toolbar
           sx={{
             alignItems: "center",
             justifyContent: "center",
             pt: "10px",
             pb: "-10px",
+            cursor: "pointer",
           }}
+          onClick={() => navigate("/")}
         >
           <img src={farmshare_text} alt="logo" width={150} />
         </Toolbar>

@@ -8,10 +8,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
   Button,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
 import type { EAnimalSpecies } from "../types";
 import { AVG_HANGING_WEIGHTS } from "../types";
 import { calculateHeads, calculateLaborValue } from "../utils/calculations";
