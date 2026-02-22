@@ -80,10 +80,8 @@ export default function Layout({ children }: LayoutProps) {
           alignItems: "center",
           justifyContent: "center",
           pt: "10px",
-          pb: "10px",
           cursor: "pointer",
           minHeight: "64px !important",
-          mb: 2,
         }}
         onClick={() => {
           navigate("/");
@@ -97,7 +95,7 @@ export default function Layout({ children }: LayoutProps) {
         )}
       </Toolbar>
 
-      {/* Navigation Menu */}
+      {/* nav menu */}
       <List sx={{ mx: "10px" }}>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: "8px" }}>
@@ -142,9 +140,7 @@ export default function Layout({ children }: LayoutProps) {
               >
                 {item.icon}
               </ListItemIcon>
-              {(isMobile || drawerOpen) && (
-                <ListItemText primary={item.text} />
-              )}
+              {(isMobile || drawerOpen) && <ListItemText primary={item.text} />}
             </ListItemButton>
           </ListItem>
         ))}
@@ -154,13 +150,13 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {/* Mobile Drawer (temporary) */}
+      {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
         open={mobileDrawerOpen}
         onClose={() => setMobileDrawerOpen(false)}
         ModalProps={{
-          keepMounted: true, // Better mobile performance
+          keepMounted: true,
         }}
         sx={{
           display: { xs: "block", md: "none" },
@@ -175,7 +171,7 @@ export default function Layout({ children }: LayoutProps) {
         {drawerContent(true)}
       </Drawer>
 
-      {/* Desktop Drawer (permanent) */}
+      {/* Desktop Drawer */}
       <Drawer
         variant="permanent"
         sx={{

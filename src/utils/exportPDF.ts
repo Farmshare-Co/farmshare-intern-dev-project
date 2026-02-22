@@ -3,7 +3,7 @@ import { AVG_HANGING_WEIGHTS, type EAnimalSpecies } from "../types";
 import { calculateHeads, calculateLaborValue } from "./calculations";
 import { COST_PER_LB } from "./statics";
 
-import farmShareLogo from "../assets/farmshare_text.svg";
+import farmShareLogo from "../assets/farmshare_text_pdf.svg";
 
 interface ExportPDFParams {
   selectedSpecies: EAnimalSpecies[];
@@ -29,7 +29,8 @@ export const exportPDF = async ({
   const doc = new jsPDF();
   const annualSavings = calculateTotalAnnualSavings();
   const annualCost = calculateTotalAnnualCost();
-  const totalSavings = viewMode === "monthly" ? annualSavings / 12 : annualSavings;
+  const totalSavings =
+    viewMode === "monthly" ? annualSavings / 12 : annualSavings;
   const totalCost = viewMode === "monthly" ? annualCost / 12 : annualCost;
   const netBenefit = totalSavings - totalCost;
   const periodLabel = viewMode === "annual" ? "Annual" : "Monthly";
