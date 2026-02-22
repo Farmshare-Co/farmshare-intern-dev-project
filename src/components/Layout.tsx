@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useState } from "react";
 import {
   Box,
   Drawer,
@@ -12,15 +13,19 @@ import {
   Breadcrumbs,
   Link,
   Avatar,
+  IconButton,
 } from "@mui/material";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import { farmshare_text } from "../assets";
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { farmshare_text, farmshare_logo } from "../assets";
 
-const drawerWidth = 240;
+const drawerWidthOpen = 240;
+const drawerWidthClosed = 80;
 
 interface LayoutProps {
   children: ReactNode;
@@ -44,6 +49,7 @@ const pathToBreadcrumb: Record<string, string> = {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(true);
 
   const generateBreadcrumbs = () => {
     // Home page shows only "Home"
@@ -71,13 +77,16 @@ export default function Layout({ children }: LayoutProps) {
       <Drawer
         variant="permanent"
         sx={{
-          width: drawerWidth,
+          width: drawerOpen ? drawerWidthOpen : drawerWidthClosed,
           flexShrink: 0,
+          transition: "width 0.3s ease",
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
+            width: drawerOpen ? drawerWidthOpen : drawerWidthClosed,
             boxSizing: "border-box",
             backgroundColor: "#fff",
             borderRight: "2px solid #e0e0e0",
+            transition: "width 0.3s ease",
+            overflowX: "hidden",
           },
         }}
       >
@@ -86,25 +95,32 @@ export default function Layout({ children }: LayoutProps) {
             alignItems: "center",
             justifyContent: "center",
             pt: "10px",
-            pb: "-10px",
+            pb: "10px",
             cursor: "pointer",
+            minHeight: "64px !important",
+            mb: 2,
           }}
           onClick={() => navigate("/")}
         >
-          <img src={farmshare_text} alt="logo" width={150} />
+          {drawerOpen ? (
+            <img src={farmshare_text} alt="logo" width={150} />
+          ) : (
+            <img src={farmshare_logo} alt="logo" width={40} />
+          )}
         </Toolbar>
 
         {/* Navigation Menu */}
         <List sx={{ mx: "10px" }}>
           {menuItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
+            <ListItem key={item.text} disablePadding sx={{ mb: "8px" }}>
               <ListItemButton
                 component={RouterLink}
                 to={item.path}
                 selected={location.pathname === item.path}
                 sx={{
-                  px: "8px",
+                  px: drawerOpen ? "8px" : "0px",
                   borderRadius: "8px",
+                  justifyContent: drawerOpen ? "flex-start" : "center",
                   "&:hover": {
                     color: "farmOrange.main",
                     "& .MuiListItemIcon-root": {
@@ -130,11 +146,13 @@ export default function Layout({ children }: LayoutProps) {
                       location.pathname === item.path
                         ? "#fff"
                         : "farmGray.main",
+                    minWidth: drawerOpen ? "40px" : "auto",
+                    justifyContent: "center",
                   }}
                 >
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText primary={item.text} />
+                {drawerOpen && <ListItemText primary={item.text} />}
               </ListItemButton>
             </ListItem>
           ))}
@@ -164,31 +182,58 @@ export default function Layout({ children }: LayoutProps) {
             justifyContent: "space-between",
           }}
         >
-          <Breadcrumbs aria-label="breadcrumb" sx={{ fontSize: "12px" }}>
-            {breadcrumbs.map((crumb, index) => {
-              const isLast = index === breadcrumbs.length - 1;
-              return isLast ? (
-                <Typography
-                  key={crumb.path}
-                  color="text.primary"
-                  sx={{ fontSize: "12px" }}
-                >
-                  {crumb.label}
-                </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <IconButton
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              sx={{
+                backgroundColor: "#f5f5f5",
+                border: "1px solid #e0e0e0",
+                p: 2,
+                width: "12px",
+                height: "12px",
+                "&:hover": {
+                  backgroundColor: "#ececec",
+                },
+              }}
+            >
+              {drawerOpen ? (
+                <MenuOpenIcon sx={{ width: "18px", height: "18px" }} />
               ) : (
-                <Link
-                  key={crumb.path}
-                  component={RouterLink}
-                  to={crumb.path}
-                  underline="hover"
-                  color="inherit"
-                  sx={{ fontSize: "12px" }}
-                >
-                  {crumb.label}
-                </Link>
-              );
-            })}
-          </Breadcrumbs>
+                <MenuIcon sx={{ width: "18px", height: "18px" }} />
+              )}
+            </IconButton>
+            <Breadcrumbs aria-label="breadcrumb" sx={{ fontSize: "12px" }}>
+              {breadcrumbs.map((crumb, index) => {
+                const isLast = index === breadcrumbs.length - 1;
+                return isLast ? (
+                  <Typography
+                    key={crumb.path}
+                    color="text.primary"
+                    sx={{ fontSize: "12px" }}
+                  >
+                    {crumb.label}
+                  </Typography>
+                ) : (
+                  <Link
+                    key={crumb.path}
+                    component={RouterLink}
+                    to={crumb.path}
+                    underline="hover"
+                    color="inherit"
+                    sx={{ fontSize: "12px" }}
+                  >
+                    {crumb.label}
+                  </Link>
+                );
+              })}
+            </Breadcrumbs>
+          </Box>
 
           <Avatar
             sx={{
