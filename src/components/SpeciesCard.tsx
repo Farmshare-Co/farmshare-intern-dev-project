@@ -4,6 +4,7 @@ import { AVG_HANGING_WEIGHTS } from "../types";
 import { calculateHeads } from "../utils/calculations";
 
 interface SpeciesCardProps {
+  label: string;
   selectedSpecies: EAnimalSpecies[];
   volumes: Partial<Record<EAnimalSpecies, string>>;
   onVolumeChange: (species: EAnimalSpecies, value: string) => void;
@@ -12,6 +13,7 @@ interface SpeciesCardProps {
 }
 
 export default function SpeciesCard({
+  label,
   selectedSpecies,
   volumes,
   onVolumeChange,
@@ -21,7 +23,15 @@ export default function SpeciesCard({
   return (
     <div className="card">
       <div className="card__header">
-        <p className="card__header-title">Step {stepNumber} — Annual Processing Volume by Species</p>
+        <p className="card__header-title">Step {stepNumber} — Annual Processing Volume by Species
+          {label && (
+            <span
+              className="scenario-badge"
+            >
+              {label}
+            </span>
+          )}
+        </p>
       </div>
       <div className="card__body">
         <div className="species-grid">

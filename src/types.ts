@@ -46,6 +46,16 @@ export const DEFAULT_SCENARIO: Scenario = {
 
 export const MAX_VOLUME_LBS = 10_000_000;
 
+export const SCENARIO_A = { storageKey: "fs_scenario", label: "Scenario A" } as const;
+export const SCENARIO_B = { storageKey: "fs_scenarioB", label: "Scenario B" } as const;
+
+export type ScenarioKey = typeof SCENARIO_A | typeof SCENARIO_B;
+
+export type KeyedSpeciesChangeHandler = (which: ScenarioKey, species: EAnimalSpecies[]) => void;
+export type KeyedRemoveSpeciesHandler = (which: ScenarioKey, species: EAnimalSpecies) => void;
+export type KeyedVolumeChangeHandler = (which: ScenarioKey, species: EAnimalSpecies, value: string) => void;
+export type KeyedClearHandler = (which: ScenarioKey) => void;
+
 export interface PresetConfig {
   label: string;
   icon: string;

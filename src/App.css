@@ -255,6 +255,20 @@
   line-height: 1;
 }
 
+.scenario-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 20px;
+  vertical-align: middle;
+  letter-spacing: 0.3px;
+  background: var(--fs-green-700);
+}
+
+
 /* Advanced Card */
 
 .advanced-toggle {
@@ -280,7 +294,7 @@
 }
 
 
-/* ---- Summary Card & Preview (shared) ---- */
+/* Summary Card & Preview */
 
 .summary,
 .preview {

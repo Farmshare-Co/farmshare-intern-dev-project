@@ -1,4 +1,14 @@
-export default function Navbar() {
+import {
+  Button,
+} from "@mui/material";
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+
+interface NavbarProps {
+  comparisonMode: boolean;
+  setComparisonMode: (value: boolean) => void;
+}
+
+export default function Navbar({ comparisonMode, setComparisonMode }: NavbarProps) {
   return (
     <nav className="navbar">
       <a href="https://farmshare.co" target="_blank" rel="noopener noreferrer" className="navbar__brand">
@@ -8,7 +18,24 @@ export default function Navbar() {
           style={{ height: 28, width: "auto" }}
         />
       </a>
-      <span className="navbar__badge">Value Calculator</span>
+      {/* <span className="navbar__badge">Value Calculator</span> */}
+      <div className="navbar__actions">
+        <Button
+          variant={comparisonMode ? "contained" : "outlined"}
+          size="small"
+          startIcon={<CompareArrowsIcon />}
+          onClick={() => setComparisonMode(!comparisonMode)}
+          sx={{
+            fontSize: 12,
+            borderColor: "rgba(255,255,255,0.35)",
+            color: comparisonMode ? undefined : "#fff",
+            "&:hover": { borderColor: "#fff" },
+          }}
+        >
+          {comparisonMode ? "Exit Comparison" : "Compare Scenarios"}
+        </Button>
+      </div>
     </nav>
   );
 }
+

@@ -12,6 +12,7 @@ import type { EAnimalSpecies } from "../types";
 import { EAnimalSpecies as AnimalSpecies } from "../types";
 
 interface SpeciesSelectProps {
+  label?: string;
   selectedSpecies: EAnimalSpecies[];
   selectOpen: boolean;
   onOpen: () => void;
@@ -23,6 +24,7 @@ interface SpeciesSelectProps {
 }
 
 export default function SpeciesSelect({
+  label,
   selectedSpecies,
   selectOpen,
   onOpen,
@@ -35,7 +37,16 @@ export default function SpeciesSelect({
   return (
     <div className="card" style={{ marginBottom: 20 }}>
       <div className="card__header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <p className="card__header-title">Step {stepNumber} — Select Species</p>
+        <p className="card__header-title">Step {stepNumber} — Select Species
+          {label && (
+            <span
+              className="scenario-badge"
+            >
+              {label}
+            </span>
+          )}
+        </p>
+
         {selectedSpecies.length > 0 && (
           <button onClick={onClear} className="species-btn__clear">
             Clear all

@@ -10,17 +10,23 @@ import ScenarioPanel from "./components/ScenarioPanel";
 import AnnualSummary from "./components/AnnualSummary";
 import SummaryPreview from "./components/SummaryPreview";
 
-import type { EAnimalSpecies, Scenario } from "./types";
-import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO } from "./types";
+import type { Scenario, ScenarioKey, KeyedSpeciesChangeHandler, KeyedRemoveSpeciesHandler, KeyedVolumeChangeHandler, KeyedClearHandler } from "./types";
+import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO, SCENARIO_A, SCENARIO_B } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
 import "./App.css";
 
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [scenario, setScenario] = useLocalStorage<Scenario>("fs_scenario", DEFAULT_SCENARIO);
+  const [scenarioA, setScenarioA] = useLocalStorage<Scenario>(SCENARIO_A.storageKey, DEFAULT_SCENARIO);
+  const [scenarioB, setScenarioB] = useLocalStorage<Scenario>(SCENARIO_B.storageKey, DEFAULT_SCENARIO);
   const [summaryFullyVisible, setSummaryFullyVisible] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
+
+  const [comparisonMode, setComparisonMode] = useLocalStorage<boolean>(
+    "comparison",
+    false,
+  );
 
   useEffect(() => {
     const el = summaryRef.current;
@@ -33,46 +39,56 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSpeciesChange = (species: EAnimalSpecies[]): void => {
-    setScenario((prev) => ({ ...prev, selectedSpecies: species }));
+  const getScenarioSetter = (which: ScenarioKey) =>
+    which === SCENARIO_A ? setScenarioA : setScenarioB;
+
+  const handleSpeciesChange: KeyedSpeciesChangeHandler = (which, species) => {
+    getScenarioSetter(which)((prev) => ({ ...prev, selectedSpecies: species }));
   };
 
-  const handleRemoveSpecies = (species: EAnimalSpecies): void => {
-    setScenario((prev) => ({
+  const handleRemoveSpecies: KeyedRemoveSpeciesHandler = (which, species) => {
+    getScenarioSetter(which)((prev) => ({
       ...prev,
       selectedSpecies: prev.selectedSpecies.filter((s) => s !== species),
     }));
   };
 
-  const handleVolumeChange = (species: EAnimalSpecies, value: string): void => {
-    setScenario((prev) => ({ ...prev, volumes: { ...prev.volumes, [species]: value } }));
+  const handleVolumeChange: KeyedVolumeChangeHandler = (which, species, value) => {
+    getScenarioSetter(which)((prev) => ({ ...prev, volumes: { ...prev.volumes, [species]: value } }));
   };
 
-  const handleClear = (): void => {
-    setScenario((prev) => ({ ...prev, selectedSpecies: [], volumes: {} }));
+  const handleClear: KeyedClearHandler = (which) => {
+    getScenarioSetter(which)((prev) => ({ ...prev, selectedSpecies: [], volumes: {} }));
   };
 
-  const { selectedSpecies, volumes, timePerAnimal, hourlyWage } = scenario;
+  const computeTotals = (scenario: Scenario) => {
+    const savings = scenario.selectedSpecies.reduce((acc, species) => {
+      const vol = parseFloat(scenario.volumes[species] || "0");
+      if (vol <= 0) return acc;
+      const heads = calculateHeads(vol, AVG_HANGING_WEIGHTS[species]);
+      return acc + calculateLaborValue(heads, parseFloat(scenario.timePerAnimal), parseFloat(scenario.hourlyWage));
+    }, 0);
+    const cost = scenario.selectedSpecies.reduce(
+      (acc, species) => acc + parseFloat(scenario.volumes[species] || "0") * COST_PER_LB,
+      0,
+    );
+    const volume = scenario.selectedSpecies.reduce(
+      (acc, species) => acc + parseFloat(scenario.volumes[species] || "0"),
+      0,
+    );
+    return { savings, cost, volume };
+  };
 
-  const totalSavings: number = selectedSpecies.reduce((acc, species) => {
-    const vol = parseFloat(volumes[species] || "0");
-    if (vol <= 0) return acc;
-    const heads = calculateHeads(vol, AVG_HANGING_WEIGHTS[species]);
-    return acc + calculateLaborValue(heads, parseFloat(timePerAnimal), parseFloat(hourlyWage));
-  }, 0);
-
-  const totalCost: number = selectedSpecies.reduce((acc, species) => {
-    return acc + parseFloat(volumes[species] || "0") * COST_PER_LB;
-  }, 0);
-
-  const totalVolume: number = selectedSpecies.reduce((acc, species) => {
-    return acc + parseFloat(volumes[species] || "0");
-  }, 0);
+  const { savings: totalSavings, cost: totalCost, volume: totalVolume } = computeTotals(scenarioA);
+  const { savings: totalSavingsB, cost: totalCostB, volume: totalVolumeB } = computeTotals(scenarioB);
 
   return (
     <ThemeProvider theme={farmshareTheme}>
       <CssBaseline />
-      <Navbar />
+      <Navbar
+        comparisonMode={comparisonMode}
+        setComparisonMode={setComparisonMode}
+      />
 
       <div className="page-wrap">
         <main className="page">
@@ -86,14 +102,36 @@ function App() {
           </header>
 
           <ScenarioPanel
-            scenario={scenario}
-            onSpeciesChange={handleSpeciesChange}
-            onVolumeChange={handleVolumeChange}
-            onRemoveSpecies={handleRemoveSpecies}
-            onTimeChange={(v) => setScenario((prev) => ({ ...prev, timePerAnimal: v }))}
-            onWageChange={(v) => setScenario((prev) => ({ ...prev, hourlyWage: v }))}
-            onClearAll={handleClear}
+            label={comparisonMode ? SCENARIO_A.label : undefined}
+            scenario={scenarioA}
+            onSpeciesChange={(s) => handleSpeciesChange(SCENARIO_A, s)}
+            onVolumeChange={(sp, v) => handleVolumeChange(SCENARIO_A, sp, v)}
+            onRemoveSpecies={(sp) => handleRemoveSpecies(SCENARIO_A, sp)}
+            onTimeChange={(v) => setScenarioA((prev) => ({ ...prev, timePerAnimal: v }))}
+            onWageChange={(v) => setScenarioA((prev) => ({ ...prev, hourlyWage: v }))}
+            onClearAll={() => handleClear(SCENARIO_A)}
           />
+
+          {comparisonMode && (
+            <>
+              {/* <div className="scenario-divider">
+                <span>{SCENARIO_B.label}</span>
+              </div> */}
+
+              <ScenarioPanel
+                label={SCENARIO_B.label}
+                scenario={scenarioB}
+                onSpeciesChange={(s) => handleSpeciesChange(SCENARIO_B, s)}
+                onVolumeChange={(sp, v) => handleVolumeChange(SCENARIO_B, sp, v)}
+                onRemoveSpecies={(sp) => handleRemoveSpecies(SCENARIO_B, sp)}
+                onTimeChange={(v) => setScenarioB((prev) => ({ ...prev, timePerAnimal: v }))}
+                onWageChange={(v) => setScenarioB((prev) => ({ ...prev, hourlyWage: v }))}
+                onClearAll={() => handleClear(SCENARIO_B)}
+              />
+            </>
+
+          )}
+
 
           <div ref={summaryRef}>
             <AnnualSummary
@@ -119,5 +157,3 @@ function App() {
 }
 
 export default App;
-
-
