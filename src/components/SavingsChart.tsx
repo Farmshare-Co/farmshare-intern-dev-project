@@ -73,9 +73,9 @@ export default function SavingsChart({
   return (
     <Paper
       sx={{
-        p: 3,
-        mt: 3,
-        borderRadius: 3,
+        p: { xs: 2, sm: 3 },
+        mt: { xs: 2, sm: 3 },
+        borderRadius: { xs: 2, sm: 3 },
         boxShadow: "none",
         border: "2px solid #e0e0e0",
       }}
@@ -83,15 +83,28 @@ export default function SavingsChart({
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: { xs: "flex-start", sm: "center" },
           mb: 2,
+          gap: { xs: 2, sm: 0 },
         }}
       >
-        <Typography variant="h5" sx={{ fontFamily: "roca" }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontFamily: "roca",
+            fontSize: { xs: "1.25rem", sm: "1.5rem" },
+          }}
+        >
           Savings vs Costs Comparison
         </Typography>
-        <FormControl size="small" sx={{ minWidth: 150 }}>
+        <FormControl
+          size="small"
+          sx={{
+            minWidth: { xs: "100%", sm: 150 },
+          }}
+        >
           <InputLabel sx={{ fontSize: "12px", mt: "4px" }}>
             Chart Type
           </InputLabel>
@@ -111,7 +124,11 @@ export default function SavingsChart({
         </FormControl>
       </Box>
 
-      <Box sx={{ width: "100%", height: 350 }}>
+      <Box
+        sx={{
+          width: "100%",
+        }}
+      >
         {chartType === "bar" && (
           <BarChart
             xAxis={[
@@ -141,7 +158,14 @@ export default function SavingsChart({
                 color: "#006B3C",
               },
             ]}
-            height={350}
+            height={300}
+            slotProps={{
+              legend: {
+                direction: "row" as const,
+                position: { vertical: "bottom", horizontal: "center" },
+                padding: 0,
+              },
+            }}
           />
         )}
 
@@ -165,28 +189,68 @@ export default function SavingsChart({
                 color: "#C83232",
               },
             ]}
-            height={350}
+            height={300}
+            slotProps={{
+              legend: {
+                direction: "row" as const,
+                position: { vertical: "bottom", horizontal: "center" },
+                padding: 0,
+              },
+            }}
           />
         )}
       </Box>
 
       <Box sx={{ mt: 2, display: "flex", gap: 3, justifyContent: "center" }}>
-        <Typography variant="body2" color="success.main">
-          ► Savings: $
+        <Typography
+          variant="body2"
+          color="success.main"
+          sx={{
+            fontSize: { xs: "10px", lg: "14px" },
+            bgcolor: "#fafafa",
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px dashed #e0e0e0",
+            textAlign: "center",
+          }}
+        >
+          Savings: $
           {savings.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
         </Typography>
-        <Typography variant="body2" color="error.main">
-          ► Cost: $
+        <Typography
+          variant="body2"
+          color="error.main"
+          sx={{
+            fontSize: { xs: "10px", lg: "14px" },
+            bgcolor: "#fafafa",
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px dashed #e0e0e0",
+            textAlign: "center",
+          }}
+        >
+          Cost: $
           {cost.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
         </Typography>
-        <Typography variant="body2" sx={{ color: "#006B3C" }}>
-          ► Net Benefit: $
+        <Typography
+          variant="body2"
+          sx={{
+            color: "#006B3C",
+            fontSize: { xs: "10px", lg: "14px" },
+            bgcolor: "#fafafa",
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px dashed #e0e0e0",
+            textAlign: "center",
+          }}
+        >
+          Net Benefit: $
           {netBenefit.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,

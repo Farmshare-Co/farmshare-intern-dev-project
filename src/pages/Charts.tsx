@@ -35,44 +35,62 @@ export default function Charts() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
+          alignItems: { xs: "flex-start", sm: "center" },
+          mb: { xs: 3, sm: 4 },
+          gap: { xs: 2, sm: 0 },
         }}
       >
         <Box>
           <Typography
             variant="h4"
             gutterBottom
-            sx={{ fontWeight: 600, mb: 1, fontFamily: "roca" }}
+            sx={{
+              fontWeight: 600,
+              mb: 1,
+              fontFamily: "roca",
+              fontSize: { xs: "1.5rem", sm: "2.125rem" },
+            }}
           >
             Charts & Analytics
           </Typography>
           <Typography
             color="text.secondary"
-            sx={{ fontWeight: 500, fontSize: "14px" }}
+            sx={{
+              fontWeight: 500,
+              fontSize: { xs: "13px", sm: "14px" },
+            }}
           >
             Visualize your savings and costs with interactive charts
           </Typography>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1.5,
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
           <Button
             variant="contained"
             onClick={() => setViewMode("annual")}
             sx={{
               backgroundColor: "farmGreen.main",
               color: "#fff",
-              paddingX: 3,
+              paddingX: { xs: 2, sm: 3 },
               paddingY: 1,
               borderRadius: 2,
               fontWeight: 600,
               textTransform: "none",
               boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               opacity: viewMode === "annual" ? 1 : 0.6,
               "&:hover": {
                 backgroundColor: "farmGreen.main",
@@ -89,12 +107,14 @@ export default function Charts() {
             sx={{
               backgroundColor: "farmOrange.main",
               color: "#fff",
-              paddingX: 3,
+              paddingX: { xs: 2, sm: 3 },
               paddingY: 1,
               borderRadius: 2,
               fontWeight: 600,
               textTransform: "none",
               boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               opacity: viewMode === "monthly" ? 1 : 0.6,
               "&:hover": {
                 backgroundColor: "farmOrange.main",
