@@ -1,30 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
 
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 import farmshareTheme from "./theme";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import SpeciesSelect from "./components/SpeciesSelect";
-import SpeciesCard from "./components/SpeciesCard";
-import AdvancedSettings from "./components/AdvancedSettings";
+import ScenarioPanel from "./components/ScenarioPanel";
 import AnnualSummary from "./components/AnnualSummary";
 import SummaryPreview from "./components/SummaryPreview";
-import type { EAnimalSpecies } from "./types";
-import { AVG_HANGING_WEIGHTS } from "./types";
+
+import type { EAnimalSpecies, Scenario } from "./types";
+import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
 import "./App.css";
 
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useLocalStorage<EAnimalSpecies[]>("fs_selectedSpecies", []);
-  const [volumes, setVolumes] = useLocalStorage<Partial<Record<EAnimalSpecies, string>>>("fs_volumes", {});
-  const [timePerAnimal, setTimePerAnimal] = useLocalStorage<string>("fs_timePerAnimal", "45");
-  const [hourlyWage, setHourlyWage] = useLocalStorage<string>("fs_hourlyWage", "25");
-  const [selectOpen, setSelectOpen] = useState(false);
+  const [scenario, setScenario] = useLocalStorage<Scenario>("fs_scenario", DEFAULT_SCENARIO);
   const [summaryFullyVisible, setSummaryFullyVisible] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
 
@@ -39,25 +33,26 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
-    const value = event.target.value;
-    const species = typeof value === "string" ? value.split(",") : value;
-    setSelectedSpecies(species as EAnimalSpecies[]);
-    setSelectOpen(false);
+  const handleSpeciesChange = (species: EAnimalSpecies[]): void => {
+    setScenario((prev) => ({ ...prev, selectedSpecies: species }));
   };
 
   const handleRemoveSpecies = (species: EAnimalSpecies): void => {
-    setSelectedSpecies((prev) => prev.filter((s) => s !== species));
+    setScenario((prev) => ({
+      ...prev,
+      selectedSpecies: prev.selectedSpecies.filter((s) => s !== species),
+    }));
   };
 
   const handleVolumeChange = (species: EAnimalSpecies, value: string): void => {
-    setVolumes((prev) => ({ ...prev, [species]: value }));
+    setScenario((prev) => ({ ...prev, volumes: { ...prev.volumes, [species]: value } }));
   };
 
   const handleClear = (): void => {
-    setSelectedSpecies([]);
-    setVolumes({});
+    setScenario((prev) => ({ ...prev, selectedSpecies: [], volumes: {} }));
   };
+
+  const { selectedSpecies, volumes, timePerAnimal, hourlyWage } = scenario;
 
   const totalSavings: number = selectedSpecies.reduce((acc, species) => {
     const vol = parseFloat(volumes[species] || "0");
@@ -80,64 +75,49 @@ function App() {
       <Navbar />
 
       <div className="page-wrap">
-      <main className="page">
-        <header className="page-header">
-          <p className="page-header__eyebrow">For Processors</p>
-          <h1 className="page-header__title">Meat Processor Value Calculator</h1>
-          <p className="page-header__subtitle">
-            Estimate your annual labor savings and platform costs based on your
-            processing volume. Adjust species, volumes, and labor settings below.
-          </p>
-        </header>
+        <main className="page">
+          <header className="page-header">
+            <p className="page-header__eyebrow">For Processors</p>
+            <h1 className="page-header__title">Meat Processor Value Calculator</h1>
+            <p className="page-header__subtitle">
+              Estimate your annual labor savings and platform costs based on your
+              processing volume. Adjust species, volumes, and labor settings below.
+            </p>
+          </header>
 
-        <SpeciesSelect
-          selectedSpecies={selectedSpecies}
-          selectOpen={selectOpen}
-          onOpen={() => setSelectOpen(true)}
-          onClose={() => setSelectOpen(false)}
-          onChange={handleSpeciesChange}
-          onRemove={handleRemoveSpecies}
-          onClear={handleClear}
-        />
-
-        {selectedSpecies.length > 0 && (
-          <SpeciesCard
-            selectedSpecies={selectedSpecies}
-            volumes={volumes}
+          <ScenarioPanel
+            scenario={scenario}
+            onSpeciesChange={handleSpeciesChange}
             onVolumeChange={handleVolumeChange}
-            onRemove={handleRemoveSpecies}
+            onRemoveSpecies={handleRemoveSpecies}
+            onTimeChange={(v) => setScenario((prev) => ({ ...prev, timePerAnimal: v }))}
+            onWageChange={(v) => setScenario((prev) => ({ ...prev, hourlyWage: v }))}
+            onClearAll={handleClear}
           />
-        )}
 
-        <AdvancedSettings
-          timePerAnimal={timePerAnimal}
-          hourlyWage={hourlyWage}
-          onTimeChange={setTimePerAnimal}
-          onWageChange={setHourlyWage}
-        />
+          <div ref={summaryRef}>
+            <AnnualSummary
+              totalVolume={totalVolume}
+              totalSavings={totalSavings}
+              totalCost={totalCost}
+            />
+          </div>
+        </main>
 
-        <div ref={summaryRef}>
-          <AnnualSummary
+        <aside className={`page-sidebar${summaryFullyVisible ? " page-sidebar--absorbed" : ""}`}>
+          <SummaryPreview
             totalVolume={totalVolume}
             totalSavings={totalSavings}
             totalCost={totalCost}
           />
-        </div>
-      </main>
-
-      <aside className={`page-sidebar${summaryFullyVisible ? " page-sidebar--absorbed" : ""}`}>
-        <SummaryPreview
-          totalVolume={totalVolume}
-          totalSavings={totalSavings}
-          totalCost={totalCost}
-        />
-      </aside>
+        </aside>
       </div>
 
-        <Footer/>
+      <Footer />
     </ThemeProvider>
   );
 }
 
 export default App;
+
 

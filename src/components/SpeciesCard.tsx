@@ -8,6 +8,7 @@ interface SpeciesCardProps {
   volumes: Partial<Record<EAnimalSpecies, string>>;
   onVolumeChange: (species: EAnimalSpecies, value: string) => void;
   onRemove: (species: EAnimalSpecies) => void;
+  stepNumber?: number;
 }
 
 export default function SpeciesCard({
@@ -15,11 +16,12 @@ export default function SpeciesCard({
   volumes,
   onVolumeChange,
   onRemove,
+  stepNumber = 2,
 }: SpeciesCardProps) {
   return (
     <div className="card">
       <div className="card__header">
-        <p className="card__header-title">Step 2 — Annual Processing Volume by Species</p>
+        <p className="card__header-title">Step {stepNumber} — Annual Processing Volume by Species</p>
       </div>
       <div className="card__body">
         <div className="species-grid">

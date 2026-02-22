@@ -19,6 +19,7 @@ interface SpeciesSelectProps {
   onChange: (event: SelectChangeEvent<EAnimalSpecies[]>) => void;
   onRemove: (species: EAnimalSpecies) => void;
   onClear: () => void;
+  stepNumber?: number;
 }
 
 export default function SpeciesSelect({
@@ -29,11 +30,12 @@ export default function SpeciesSelect({
   onChange,
   onRemove,
   onClear,
+  stepNumber = 1,
 }: SpeciesSelectProps) {
   return (
     <div className="card" style={{ marginBottom: 20 }}>
       <div className="card__header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <p className="card__header-title">Step 1 — Select Species</p>
+        <p className="card__header-title">Step {stepNumber} — Select Species</p>
         {selectedSpecies.length > 0 && (
           <button onClick={onClear} className="species-btn__clear">
             Clear all
