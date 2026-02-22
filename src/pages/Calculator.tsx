@@ -23,10 +23,16 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Menu,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import CheckIcon from "@mui/icons-material/Check";
 import type { SelectChangeEvent } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { EAnimalSpecies } from "../types";
@@ -66,6 +72,9 @@ export default function Calculator() {
   const [savePresetDialogOpen, setSavePresetDialogOpen] = useState(false);
   const [presetName, setPresetName] = useState("");
   const [viewMode, setViewMode] = useState<"annual" | "monthly">("annual");
+  const [presetMenuAnchor, setPresetMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
 
   // custom presets state are loaded from localStorage
   interface CustomPreset {
@@ -441,57 +450,333 @@ export default function Calculator() {
           borderRadius: 3,
           boxShadow: "none",
           border: "2px solid #e0e0e0",
+          bgcolor: "#fff",
         }}
       >
-        <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
-          <FormControl sx={{ flex: 1 }}>
-            <InputLabel>Load Preset</InputLabel>
-            <Select
-              defaultValue="none"
-              label="Load Preset"
-              onChange={handlePresetChange}
-            >
-              <MenuItem value="none">
-                <em>None - Start from scratch</em>
-              </MenuItem>
-              <MenuItem
-                disabled
-                sx={{
-                  fontSize: "0.85rem",
-                  fontWeight: "bold",
-                  color: "text.secondary",
-                }}
-              >
-                Default Presets
-              </MenuItem>
-              <MenuItem value="beefFocused">Beef-Focused Processor</MenuItem>
-              <MenuItem value="mixedOperation">Mixed Operation</MenuItem>
-              <MenuItem value="smallFarm">Small Farm Processor</MenuItem>
-              <MenuItem value="largeCommercial">Large Commercial</MenuItem>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            mb: 3,
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 600, fontFamily: "roca" }}>
+            Meat Processor Value Calculator
+          </Typography>
 
-              {customPresets.length > 0 && (
+          <Button
+            variant="contained"
+            startIcon={<SaveIcon />}
+            onClick={() => setSavePresetDialogOpen(true)}
+            sx={{
+              ml: "auto",
+              textTransform: "none",
+              borderRadius: 2,
+              fontWeight: 600,
+              backgroundColor: "farmGreen.main",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: "farmGreen.main",
+                boxShadow: "none",
+                opacity: 0.9,
+              },
+            }}
+          >
+            Save
+          </Button>
+
+          <Button
+            variant="outlined"
+            onClick={handleClearAll}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              fontWeight: 600,
+              borderColor: "#e0e0e0",
+              color: "text.secondary",
+              "&:hover": {
+                borderColor: "farmOrange.main",
+                backgroundColor: "rgba(255, 124, 1, 0.05)",
+              },
+            }}
+          >
+            Clear All
+          </Button>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 2,
+            mb: 3,
+            alignItems: "center",
+          }}
+        >
+          <FormControl
+            fullWidth
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                backgroundColor: "#fafafa",
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "farmOrange.main",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "farmGreen.main",
+                  borderWidth: 2,
+                },
+              },
+            }}
+          >
+            <InputLabel sx={{ fontWeight: 500 }}>
+              Select Animal Species
+            </InputLabel>
+            <Select
+              multiple
+              value={selectedSpecies}
+              onChange={handleSpeciesChange}
+              input={<OutlinedInput label="Select Animal Species" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {selected.map((value) => (
+                    <Chip
+                      key={value}
+                      label={value.charAt(0).toUpperCase() + value.slice(1)}
+                      onDelete={() => {
+                        setSelectedSpecies(
+                          selectedSpecies.filter((spec) => spec !== value)
+                        );
+                      }}
+                      deleteIcon={
+                        <div
+                          role="button"
+                          aria-label="Remove"
+                          onMouseDown={(e) => e.stopPropagation()}
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <CancelIcon />
+                        </div>
+                      }
+                      sx={{
+                        backgroundColor: "farmGreen.main",
+                        color: "#fff",
+                        fontWeight: 600,
+                        "& .MuiChip-deleteIcon": {
+                          color: "#fff",
+                          "&:hover": {
+                            color: "#fff",
+                          },
+                        },
+                      }}
+                    />
+                  ))}
+                </Box>
+              )}
+            >
+              {Object.values(AnimalSpecies).map((s) => (
+                <MenuItem
+                  key={s}
+                  value={s}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(1, 111, 53, 0.08)",
+                    },
+                    "&.Mui-selected": {
+                      backgroundColor: "rgba(1, 111, 53, 0.12)",
+                      "&:hover": {
+                        backgroundColor: "rgba(1, 111, 53, 0.16)",
+                      },
+                    },
+                  }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Chip
+            icon={<BookmarkBorderIcon />}
+            label="Quick Start Templates"
+            onClick={(e) => setPresetMenuAnchor(e.currentTarget)}
+            sx={{
+              px: 1,
+              py: 3.3,
+              borderRadius: 2,
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              backgroundColor: "#fff",
+              border: "1.5px solid #e0e0e0",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              whiteSpace: "nowrap",
+              "&:hover": {
+                borderColor: "farmOrange.main",
+                backgroundColor: "rgba(255, 124, 1, 0.05)",
+                transform: "translateY(-1px)",
+              },
+              "& .MuiChip-icon": {
+                color: "farmGreen.main",
+              },
+            }}
+          />
+          <Menu
+            anchorEl={presetMenuAnchor}
+            open={Boolean(presetMenuAnchor)}
+            onClose={() => setPresetMenuAnchor(null)}
+            sx={{
+              "& .MuiPaper-root": {
+                borderRadius: 2,
+                minWidth: 250,
+                mt: 1,
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+              },
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                setPresetMenuAnchor(null);
+              }}
+              sx={{
+                fontStyle: "italic",
+                color: "text.secondary",
+                fontSize: "0.875rem",
+                "&:hover": {
+                  backgroundColor: "rgba(1, 111, 53, 0.08)",
+                },
+              }}
+            >
+              None - Start from scratch
+            </MenuItem>
+            <Divider sx={{ my: 1 }} />
+            <MenuItem
+              disabled
+              sx={{
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                color: "farmGreen.main",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                opacity: 1,
+              }}
+            >
+              Default Templates
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handlePresetChange({
+                  target: { value: "beefFocused" },
+                } as SelectChangeEvent<string>);
+                setPresetMenuAnchor(null);
+              }}
+              sx={{
+                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+              }}
+            >
+              <ListItemIcon>
+                <BookmarkBorderIcon
+                  fontSize="small"
+                  sx={{ color: "farmGreen.main" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Beef-Focused Processor</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handlePresetChange({
+                  target: { value: "mixedOperation" },
+                } as SelectChangeEvent<string>);
+                setPresetMenuAnchor(null);
+              }}
+              sx={{
+                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+              }}
+            >
+              <ListItemIcon>
+                <BookmarkBorderIcon
+                  fontSize="small"
+                  sx={{ color: "farmGreen.main" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Mixed Operation</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handlePresetChange({
+                  target: { value: "smallFarm" },
+                } as SelectChangeEvent<string>);
+                setPresetMenuAnchor(null);
+              }}
+              sx={{
+                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+              }}
+            >
+              <ListItemIcon>
+                <BookmarkBorderIcon
+                  fontSize="small"
+                  sx={{ color: "farmGreen.main" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Small Farm Processor</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handlePresetChange({
+                  target: { value: "largeCommercial" },
+                } as SelectChangeEvent<string>);
+                setPresetMenuAnchor(null);
+              }}
+              sx={{
+                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+              }}
+            >
+              <ListItemIcon>
+                <BookmarkBorderIcon
+                  fontSize="small"
+                  sx={{ color: "farmGreen.main" }}
+                />
+              </ListItemIcon>
+              <ListItemText>Large Commercial</ListItemText>
+            </MenuItem>
+
+            {customPresets.length > 0 && (
+              <>
+                <Divider sx={{ my: 1 }} />
                 <MenuItem
                   disabled
                   sx={{
-                    fontSize: "0.85rem",
+                    fontSize: "0.7rem",
                     fontWeight: "bold",
-                    color: "text.secondary",
+                    color: "farmOrange.main",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    opacity: 1,
                   }}
                 >
-                  Custom Presets
+                  Your Templates
                 </MenuItem>
-              )}
-              {customPresets.map((preset) => (
-                <MenuItem key={preset.name} value={`custom-${preset.name}`}>
-                  <Box
+                {customPresets.map((preset) => (
+                  <MenuItem
+                    key={preset.name}
+                    onClick={() => {
+                      handlePresetChange({
+                        target: { value: `custom-${preset.name}` },
+                      } as SelectChangeEvent<string>);
+                      setPresetMenuAnchor(null);
+                    }}
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      width: "100%",
+                      "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
                     }}
                   >
-                    <span>{preset.name}</span>
+                    <ListItemIcon>
+                      <CheckIcon
+                        fontSize="small"
+                        sx={{ color: "farmOrange.main" }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText>{preset.name}</ListItemText>
                     <IconButton
                       size="small"
                       onClick={(e) => {
@@ -502,138 +787,127 @@ export default function Calculator() {
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
-                  </Box>
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            variant="outlined"
-            startIcon={<SaveIcon />}
-            onClick={() => setSavePresetDialogOpen(true)}
-            sx={{
-              textTransform: "none",
-              borderRadius: 2,
-              fontWeight: 600,
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            onClick={handleClearAll}
-            sx={{
-              textTransform: "none",
-              borderRadius: 2,
-              fontWeight: 600,
-            }}
-          >
-            Clear All
-          </Button>
-        </Box>
-        <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>Select Animal Species</InputLabel>
-          <Select
-            multiple
-            value={selectedSpecies}
-            onChange={handleSpeciesChange}
-            input={<OutlinedInput label="Select Animal Species" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip
-                    key={value}
-                    label={value.charAt(0).toUpperCase() + value.slice(1)}
-                    onDelete={() => {
-                      setSelectedSpecies(
-                        selectedSpecies.filter((spec) => spec !== value)
-                      );
-                    }}
-                    deleteIcon={
-                      <div
-                        role="button"
-                        aria-label="Remove"
-                        onMouseDown={(e) => e.stopPropagation()}
-                        style={{ display: "flex", alignItems: "center" }}
-                      >
-                        <CancelIcon />
-                      </div>
-                    }
-                  />
+                  </MenuItem>
                 ))}
-              </Box>
+              </>
             )}
-          >
-            {Object.values(AnimalSpecies).map((s) => (
-              <MenuItem key={s} value={s}>
-                {s.charAt(0).toUpperCase() + s.slice(1)}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          </Menu>
+        </Box>
 
         {selectedSpecies.length > 0 && (
           <Box sx={{ mb: 3 }}>
             <Typography
               variant="h5"
               gutterBottom
-              sx={{ fontWeight: 600, fontFamily: "roca", mb: 2 }}
+              sx={{ fontWeight: 600, fontFamily: "roca", mb: 3 }}
             >
               Annual Processing Volume by Species
             </Typography>
-            {selectedSpecies.map((species) => (
-              <Card
-                key={species}
-                sx={{
-                  mb: 2,
-                  borderRadius: 3,
-                  boxShadow: "none",
-                  border: "2px solid #e0e0e0",
-                }}
-              >
-                <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
-                    {species.charAt(0).toUpperCase() + species.slice(1)}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                },
+                gap: 2,
+              }}
+            >
+              {selectedSpecies.map((species) => (
+                <Card
+                  key={species}
+                  sx={{
+                    borderRadius: 3,
+                    boxShadow: "none",
+                    border: "2px solid #e0e0e0",
+                    background:
+                      "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
+                    transition: "all 0.2s ease",
+                    // "&:hover": {
+                    //   borderColor: "farmGreen.main",
+                    //   transform: "translateY(-2px)",
+                    // },
+                  }}
+                >
+                  <CardContent>
                     <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ ml: 1 }}
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 600,
+                        color: "farmOrange.main",
+                        fontFamily: "roca",
+                        mb: "15px",
+                      }}
                     >
-                      (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
+                      {species.charAt(0).toUpperCase() + species.slice(1)}
+                      <Typography
+                        component="span"
+                        color="text.secondary"
+                        sx={{
+                          ml: 1,
+                          fontWeight: 500,
+                          fontFamily: "Poppins",
+                          fontSize: "10px",
+                        }}
+                      >
+                        (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
+                      </Typography>
                     </Typography>
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    label="Total Annual Hanging Weight (lbs)"
-                    type="number"
-                    value={volumes[species] || ""}
-                    onChange={(e) =>
-                      handleVolumeChange(species, e.target.value)
-                    }
-                    slotProps={{
-                      htmlInput: { min: 0, max: 10000000 },
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">lbs</InputAdornment>
-                        ),
-                      },
-                    }}
-                    error={isAnnualHangingInvalid(species)}
-                    helperText={
-                      isAnnualHangingInvalid(species)
-                        ? "Enter a value between 0 and 10,000,000"
-                        : " "
-                    }
-                  />
-                </CardContent>
-              </Card>
-            ))}
+
+                    <TextField
+                      fullWidth
+                      label="Total Annual Hanging Weight (lbs)"
+                      type="number"
+                      value={volumes[species] || ""}
+                      onChange={(e) =>
+                        handleVolumeChange(species, e.target.value)
+                      }
+                      slotProps={{
+                        htmlInput: { min: 0, max: 10000000 },
+                        input: {
+                          endAdornment: (
+                            <InputAdornment position="end">lbs</InputAdornment>
+                          ),
+                        },
+                      }}
+                      error={isAnnualHangingInvalid(species)}
+                      helperText={
+                        isAnnualHangingInvalid(species)
+                          ? "Enter a value between 0 and 10,000,000"
+                          : " "
+                      }
+                      sx={{
+                        "& .MuiInputLabel-root": {
+                          fontSize: "0.875rem",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline legend": {
+                          width: "auto",
+                          maxWidth: "w-fit",
+                        },
+                        "& input::placeholder": {
+                          fontSize: "15px",
+                        },
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: 2,
+                          backgroundColor: "#fff",
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "farmGreen.main",
+                            borderWidth: 2,
+                          },
+                        },
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
           </Box>
         )}
 
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{ flexGrow: 1, fontWeight: 600, fontFamily: "roca" }}
           >
             Advanced Settings
@@ -650,48 +924,76 @@ export default function Calculator() {
         </Box>
 
         <Collapse in={showAdvanced}>
-          <TextField
-            fullWidth
-            label="Time Savings per Animal (minutes)"
-            type="number"
-            value={timePerAnimal}
-            onChange={(e) => setTimePerAnimal(e.target.value)}
-            slotProps={{
-              htmlInput: { min: 0 },
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">mins</InputAdornment>
-                ),
-              },
-            }}
-            sx={{ mb: 2 }}
-            error={isTimePerAnimalValid}
-            helperText={
-              isTimePerAnimalValid
-                ? "Enter a value between 1 minute and 480 minutes"
-                : " "
-            }
-          />
-          <TextField
-            fullWidth
-            label="Average Hourly Wage ($)"
-            type="number"
-            value={hourlyWage}
-            onChange={(e) => setHourlyWage(e.target.value)}
-            slotProps={{
-              htmlInput: { min: 0 },
-              input: {
-                endAdornment: (
-                  <InputAdornment position="start">&nbsp;$</InputAdornment>
-                ),
-              },
-            }}
-            sx={{ mb: 2 }}
-            error={isHourlyWageValid}
-            helperText={
-              isHourlyWageValid ? "Enter a value between $7.25 and $200" : " "
-            }
-          />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              fullWidth
+              label="Time Savings per Animal (minutes)"
+              type="number"
+              value={timePerAnimal}
+              onChange={(e) => setTimePerAnimal(e.target.value)}
+              slotProps={{
+                htmlInput: { min: 0 },
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">mins</InputAdornment>
+                  ),
+                },
+              }}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "#fafafa",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmOrange.main",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmGreen.main",
+                    borderWidth: 2,
+                  },
+                },
+              }}
+              error={isTimePerAnimalValid}
+              helperText={
+                isTimePerAnimalValid
+                  ? "Enter a value between 1 minute and 480 minutes"
+                  : " "
+              }
+            />
+            <TextField
+              fullWidth
+              label="Average Hourly Wage ($)"
+              type="number"
+              value={hourlyWage}
+              onChange={(e) => setHourlyWage(e.target.value)}
+              slotProps={{
+                htmlInput: { min: 0 },
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="start">&nbsp;$</InputAdornment>
+                  ),
+                },
+              }}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "#fafafa",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmOrange.main",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmGreen.main",
+                    borderWidth: 2,
+                  },
+                },
+              }}
+              error={isHourlyWageValid}
+              helperText={
+                isHourlyWageValid ? "Enter a value between $7.25 and $200" : " "
+              }
+            />
+          </Box>
         </Collapse>
       </Paper>
 
@@ -855,16 +1157,6 @@ export default function Calculator() {
           </Box>
         </Box>
       </Paper>
-
-      {/* 
-      <BeforeAfterComparison
-        selectedSpecies={selectedSpecies}
-        withPlatformSavings={calculateTotalAnnualSavings()}
-        withPlatformCost={calculateTotalAnnualCost()}
-        withPlatformBenefit={
-          calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-        }
-      /> */}
 
       <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
         <DialogTitle>Clear All Data?</DialogTitle>

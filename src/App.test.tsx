@@ -46,7 +46,7 @@ describe("Meat Processor Value Calculator", () => {
   it("calculates annual savings and cost correctly", () => {
     render(<FarmProvider><Calculator /></FarmProvider>);
 
-    const selectElement = screen.getAllByRole("combobox")[1]; // Changed from [0] to [1] due to preset dropdown
+    const selectElement = screen.getAllByRole("combobox")[0]; // Select Animal Species is the first combobox
 
     // Open the dropdown and select Beef
     fireEvent.mouseDown(selectElement);
@@ -84,7 +84,7 @@ describe("Meat Processor Value Calculator", () => {
   it("can select multiple species", () => {
     render(<FarmProvider><Calculator /></FarmProvider>);
 
-    const selectElement = screen.getAllByRole("combobox")[1]; // Changed from [0] to [1] due to preset dropdown
+    const selectElement = screen.getAllByRole("combobox")[0]; // Select Animal Species is the first combobox
 
     // Open the dropdown
     fireEvent.mouseDown(selectElement);
@@ -110,7 +110,7 @@ describe("Meat Processor Value Calculator", () => {
   it("should allow removing a selected species", () => {
     render(<FarmProvider><Calculator /></FarmProvider>);
 
-    const selectElement = screen.getAllByRole("combobox")[1]; // Changed from [0] to [1] due to preset dropdown
+    const selectElement = screen.getAllByRole("combobox")[0]; // Select Animal Species is the first combobox
 
     // Select Beef
     fireEvent.mouseDown(selectElement);
