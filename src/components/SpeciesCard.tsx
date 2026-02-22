@@ -54,10 +54,18 @@ export default function SpeciesCard({
                 <TextField
                   fullWidth
                   label="Total Annual Hanging Weight (lbs)"
-                  type="number"
+                  type="text"
                   value={volumes[species] || ""}
-                  onChange={(e) => onVolumeChange(species, e.target.value)}
-                  slotProps={{ htmlInput: { min: 0 } }}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    onVolumeChange(species, value);
+                  }}
+                  slotProps={{
+                    htmlInput: {
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                    },
+                  }}
                   size="small"
                 />
                 {heads !== null && (
