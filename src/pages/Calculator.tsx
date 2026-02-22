@@ -291,7 +291,7 @@ export default function Calculator() {
     if (handleValidationErrors()) {
       setSnackbar({
         open: true,
-        message: "Please fix vaildation errors.",
+        message: "Please fix validation errors.",
         severity: "error",
       });
       return;
