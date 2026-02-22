@@ -37,7 +37,7 @@ export default function SpeciesCard({
                 >
                   ×
                 </button>
-                <p className="species-card__name">{species.toUpperCase()}</p>
+                <p className="species-card__name">{species.charAt(0).toUpperCase() + species.slice(1)}</p>
                 <p className="species-card__meta">Avg hanging weight: {avgWeight} lbs / animal</p>
                 <TextField
                   fullWidth

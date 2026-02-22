@@ -16,6 +16,26 @@
 
   --fs-shadow:    0 1px 3px rgba(29, 61, 42, 0.08), 0 4px 12px rgba(29, 61, 42, 0.06);
   --fs-shadow-md: 0 4px 16px rgba(29, 61, 42, 0.12), 0 1px 4px rgba(29, 61, 42, 0.08);
+
+  /* ---- Dark card / glass UI tokens (shared by .summary and .preview) ---- */
+  --fs-cost:                #ff9a8b;                   /* cost / negative value */
+  --fs-green-orb:           rgba(82, 183, 136, 0.12);  /* decorative circle */
+  --fs-green-orb-faint:     rgba(82, 183, 136, 0.07);  /* second, larger orb */
+  --fs-savings-bg:          rgba(82, 183, 136, 0.15);  /* savings stat fill */
+  --fs-savings-border:      rgba(82, 183, 136, 0.25);  /* savings stat stroke */
+  --fs-cost-bg:             rgba(255, 154, 139, 0.10); /* cost stat fill */
+  --fs-cost-border:         rgba(255, 154, 139, 0.20); /* cost stat stroke */
+  --fs-glass-tab-bg:        rgba(255, 255, 255, 0.08); /* tab strip background */
+  --fs-glass-tab-active:    rgba(255, 255, 255, 0.15); /* active tab highlight */
+  --fs-glass-divider:       rgba(255, 255, 255, 0.10); /* divider lines */
+  --fs-glass-divider-faint: rgba(255, 255, 255, 0.06); /* faint row separator */
+  --fs-glass-label:         rgba(255, 255, 255, 0.50); /* dim label text */
+  --fs-glass-label-muted:   rgba(255, 255, 255, 0.45); /* more muted label */
+  --fs-glass-label-bright:  rgba(255, 255, 255, 0.55); /* less muted label */
+  --fs-glass-value:         rgba(255, 255, 255, 0.75); /* value text */
+  --fs-glass-value-dim:     rgba(255, 255, 255, 0.70); /* slightly dimmer value */
+  --fs-glass-empty:         rgba(255, 255, 255, 0.35); /* placeholder / empty */
+  --fs-glass-void:          rgba(255, 255, 255, 0.20); /* very faint / void */
   }
 
 a {

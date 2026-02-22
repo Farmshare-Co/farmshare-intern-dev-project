@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -11,6 +11,7 @@ import SpeciesSelect from "./components/SpeciesSelect";
 import SpeciesCard from "./components/SpeciesCard";
 import AdvancedSettings from "./components/AdvancedSettings";
 import AnnualSummary from "./components/AnnualSummary";
+import SummaryPreview from "./components/SummaryPreview";
 import type { EAnimalSpecies } from "./types";
 import { AVG_HANGING_WEIGHTS } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
@@ -24,6 +25,19 @@ function App() {
   const [timePerAnimal, setTimePerAnimal] = useLocalStorage<string>("fs_timePerAnimal", "45");
   const [hourlyWage, setHourlyWage] = useLocalStorage<string>("fs_hourlyWage", "25");
   const [selectOpen, setSelectOpen] = useState(false);
+  const [summaryFullyVisible, setSummaryFullyVisible] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = summaryRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setSummaryFullyVisible(entry.isIntersecting),
+      { threshold: 1.0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
     const value = event.target.value;
@@ -65,6 +79,7 @@ function App() {
       <CssBaseline />
       <Navbar />
 
+      <div className="page-wrap">
       <main className="page">
         <header className="page-header">
           <p className="page-header__eyebrow">For Processors</p>
@@ -101,12 +116,23 @@ function App() {
           onWageChange={setHourlyWage}
         />
 
-        <AnnualSummary
+        <div ref={summaryRef}>
+          <AnnualSummary
+            totalVolume={totalVolume}
+            totalSavings={totalSavings}
+            totalCost={totalCost}
+          />
+        </div>
+      </main>
+
+      <aside className={`page-sidebar${summaryFullyVisible ? " page-sidebar--absorbed" : ""}`}>
+        <SummaryPreview
           totalVolume={totalVolume}
           totalSavings={totalSavings}
           totalCost={totalCost}
         />
-      </main>
+      </aside>
+      </div>
 
         <Footer/>
     </ThemeProvider>
