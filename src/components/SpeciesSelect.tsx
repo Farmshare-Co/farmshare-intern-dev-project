@@ -1,0 +1,95 @@
+import {
+  Box,
+  Chip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+} from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
+import type { EAnimalSpecies } from "../types";
+import { EAnimalSpecies as AnimalSpecies } from "../types";
+
+interface SpeciesSelectProps {
+  selectedSpecies: EAnimalSpecies[];
+  selectOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  onChange: (event: SelectChangeEvent<EAnimalSpecies[]>) => void;
+  onRemove: (species: EAnimalSpecies) => void;
+}
+
+export default function SpeciesSelect({
+  selectedSpecies,
+  selectOpen,
+  onOpen,
+  onClose,
+  onChange,
+  onRemove,
+}: SpeciesSelectProps) {
+  return (
+    <div className="card" style={{ marginBottom: 20 }}>
+      <div className="card__header">
+        <p className="card__header-title">Step 1 — Select Species</p>
+      </div>
+      <div className="card__body">
+        <FormControl fullWidth>
+          <InputLabel>Animal Species</InputLabel>
+          <Select
+            multiple
+            open={selectOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+            value={selectedSpecies}
+            onChange={onChange}
+            input={<OutlinedInput label="Select Animal Species" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip
+                    key={value}
+                    label={value.charAt(0).toUpperCase() + value.slice(1)}
+                    onDelete={(e) => {
+                      e.stopPropagation();
+                      onRemove(value);
+                    }}
+                    deleteIcon={
+                      <span
+                        role="button"
+                        aria-label="remove"
+                        onMouseDown={(e) => e.stopPropagation()}
+                        style={{
+                          cursor: "pointer",
+                          marginLeft: 2,
+                          marginRight: 4,
+                          fontSize: "15px",
+                          color: "#3A7D5E",
+                          lineHeight: 1,
+                        }}
+                      >
+                        ×
+                      </span>
+                    }
+                  />
+                ))}
+              </Box>
+            )}
+          >
+            {Object.values(AnimalSpecies).map((s) => (
+              <MenuItem key={s} value={s}>
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {selectedSpecies.length === 0 && (
+          <p className="select-hint">
+            Select one or more species to begin calculating your value.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
