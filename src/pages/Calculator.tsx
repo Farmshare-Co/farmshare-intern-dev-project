@@ -626,25 +626,84 @@ export default function Calculator() {
                 </Box>
               )}
             >
-              {Object.values(AnimalSpecies).map((s) => (
-                <MenuItem
-                  key={s}
-                  value={s}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "rgba(1, 111, 53, 0.08)",
-                    },
-                    "&.Mui-selected": {
-                      backgroundColor: "rgba(1, 111, 53, 0.12)",
+              {Object.values(AnimalSpecies).map((s) => {
+                const speciesEmojis: Record<string, string> = {
+                  beef: "🐄",
+                  hog: "🐷",
+                  bison: "🦬",
+                  lamb: "🐑",
+                  goat: "🐐",
+                  venison: "🦌",
+                  yak: "🐃",
+                  veal: "🐮",
+                };
+                const isSelected = selectedSpecies.includes(s);
+                return (
+                  <MenuItem
+                    key={s}
+                    value={s}
+                    sx={{
+                      py: 1.5,
+                      px: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      transition: "all 0.2s ease",
+                      borderLeft: "3px solid transparent",
                       "&:hover": {
-                        backgroundColor: "rgba(1, 111, 53, 0.16)",
+                        backgroundColor: "rgba(1, 111, 53, 0.08)",
+                        transform: "translateX(4px)",
+                        borderLeftColor: "farmOrange.main",
                       },
-                    },
-                  }}
-                >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </MenuItem>
-              ))}
+                      "&.Mui-selected": {
+                        backgroundColor: "rgba(1, 111, 53, 0.12)",
+                        borderLeftColor: "farmGreen.main",
+                        fontWeight: 600,
+                        "&:hover": {
+                          backgroundColor: "rgba(1, 111, 53, 0.16)",
+                          transform: "translateX(4px)",
+                        },
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        fontSize: "1.5rem",
+                        lineHeight: 1,
+                        transition: "transform 0.2s ease",
+                        "&:hover": {
+                          transform: "scale(1.2)",
+                        },
+                      }}
+                    >
+                      {speciesEmojis[s]}
+                    </Box>
+                    <Box sx={{ flex: 1, fontWeight: isSelected ? 600 : 400 }}>
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </Box>
+                    {isSelected && (
+                      <CheckIcon
+                        sx={{
+                          color: "farmGreen.main",
+                          fontSize: "1.2rem",
+                          animation: "checkPop 0.3s ease",
+                          "@keyframes checkPop": {
+                            "0%": {
+                              transform: "scale(0)",
+                            },
+                            "50%": {
+                              transform: "scale(1.2)",
+                            },
+                            "100%": {
+                              transform: "scale(1)",
+                            },
+                          },
+                        }}
+                      />
+                    )}
+                  </MenuItem>
+                );
+              })}
             </Select>
           </FormControl>
           <Chip
