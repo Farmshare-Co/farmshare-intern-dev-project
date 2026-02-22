@@ -1,0 +1,15 @@
+/* Footer styles */
+
+.footer {
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 13px;
+  color: var(--fs-text-muted);
+  border-top: 1px solid var(--fs-border);
+  background: var(--fs-surface);
+}
+
+.footer a {
+  color: var(--fs-green-700);
+  font-weight: 600;
+}

@@ -46,6 +46,14 @@ export const DEFAULT_SCENARIO: Scenario = {
 
 export const MAX_VOLUME_LBS = 10_000_000;
 
+export interface BreakdownRow {
+  species: EAnimalSpecies;
+  volume: number;
+  heads: number;
+  savings: number;
+  cost: number;
+}
+
 export const SCENARIO_A = { storageKey: "fs_scenario", label: "Scenario A" } as const;
 export const SCENARIO_B = { storageKey: "fs_scenarioB", label: "Scenario B" } as const;
 

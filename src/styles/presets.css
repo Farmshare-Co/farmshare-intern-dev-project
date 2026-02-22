@@ -1,0 +1,55 @@
+/* Preset strip and button styles */
+
+.presets {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--fs-green-50);
+  border: 1px solid var(--fs-green-100);
+  border-radius: var(--fs-radius-sm);
+}
+
+.presets__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fs-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.presets__buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--fs-green-800);
+  background: var(--fs-surface);
+  border: 1px solid var(--fs-green-100);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.preset-btn:hover {
+  background: var(--fs-green-100);
+  border-color: var(--fs-green-500);
+  color: var(--fs-green-900);
+}
+
+.preset-btn__icon {
+  font-size: 14px;
+}

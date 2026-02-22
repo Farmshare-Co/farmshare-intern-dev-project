@@ -10,10 +10,19 @@ import ScenarioPanel from "./components/ScenarioPanel";
 import AnnualSummary from "./components/AnnualSummary";
 import SummaryPreview from "./components/SummaryPreview";
 
-import type { Scenario, ScenarioKey, KeyedSpeciesChangeHandler, KeyedRemoveSpeciesHandler, KeyedVolumeChangeHandler, KeyedClearHandler } from "./types";
+import type { Scenario, ScenarioKey, KeyedSpeciesChangeHandler, KeyedRemoveSpeciesHandler, KeyedVolumeChangeHandler, KeyedClearHandler, BreakdownRow } from "./types";
 import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO, SCENARIO_A, SCENARIO_B } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
-import "./App.css";
+
+import "./styles/App.css";
+import "./styles/navbar.css";
+import "./styles/card.css";
+import "./styles/species.css";
+import "./styles/summary.css";
+import "./styles/advanced.css";
+import "./styles/presets.css";
+import "./styles/footer.css";
+import "./styles/responsive.css";
 
 const COST_PER_LB = 0.02;
 
@@ -34,8 +43,8 @@ function App() {
     const el = summaryRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setSummaryFullyVisible(entry.isIntersecting),
-      { threshold: 1.0 },
+      ([entry]) => setSummaryFullyVisible(entry.intersectionRatio >= 0.5),
+      { threshold: [0, 0.5] },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -74,26 +83,27 @@ function App() {
     getScenarioSetter(which)((prev) => ({ ...prev, selectedSpecies: [], volumes: {} }));
   };
 
-  const computeTotals = (scenario: Scenario) => {
-    const savings = scenario.selectedSpecies.reduce((acc, species) => {
+  const computeTotals = (scenario: Scenario): { savings: number; cost: number; volume: number; breakdown: BreakdownRow[] } => {
+    const breakdown: BreakdownRow[] = [];
+    let savings = 0;
+    let cost = 0;
+    let volume = 0;
+    for (const species of scenario.selectedSpecies) {
       const vol = parseFloat(scenario.volumes[species] || "0");
-      if (vol <= 0) return acc;
+      if (vol <= 0) continue;
       const heads = calculateHeads(vol, AVG_HANGING_WEIGHTS[species]);
-      return acc + calculateLaborValue(heads, parseFloat(scenario.timePerAnimal), parseFloat(scenario.hourlyWage));
-    }, 0);
-    const cost = scenario.selectedSpecies.reduce(
-      (acc, species) => acc + parseFloat(scenario.volumes[species] || "0") * COST_PER_LB,
-      0,
-    );
-    const volume = scenario.selectedSpecies.reduce(
-      (acc, species) => acc + parseFloat(scenario.volumes[species] || "0"),
-      0,
-    );
-    return { savings, cost, volume };
+      const spSavings = calculateLaborValue(heads, parseFloat(scenario.timePerAnimal), parseFloat(scenario.hourlyWage));
+      const spCost = vol * COST_PER_LB;
+      savings += spSavings;
+      cost += spCost;
+      volume += vol;
+      breakdown.push({ species, volume: vol, heads, savings: spSavings, cost: spCost });
+    }
+    return { savings, cost, volume, breakdown };
   };
 
-  const { savings: totalSavings, cost: totalCost, volume: totalVolume } = computeTotals(scenarioA);
-  const { savings: totalSavingsB, cost: totalCostB, volume: totalVolumeB } = computeTotals(scenarioB);
+  const { savings: totalSavings, cost: totalCost, volume: totalVolume, breakdown } = computeTotals(scenarioA);
+  const { savings: totalSavingsB, cost: totalCostB, volume: totalVolumeB, breakdown: breakdownB } = computeTotals(scenarioB);
 
   return (
     <ThemeProvider theme={farmshareTheme}>
@@ -141,6 +151,7 @@ function App() {
                   onTimeChange={(v) => setScenarioB((prev) => ({ ...prev, timePerAnimal: v }))}
                   onWageChange={(v) => setScenarioB((prev) => ({ ...prev, hourlyWage: v }))}
                   onClearAll={() => handleClear(SCENARIO_B)}
+                  stepOffset={2}
                 />
               </div>
             </>
@@ -151,6 +162,14 @@ function App() {
               totalVolume={totalVolume}
               totalSavings={totalSavings}
               totalCost={totalCost}
+              breakdown={breakdown}
+              comparisonMode={comparisonMode}
+              totalVolumeB={totalVolumeB}
+              totalSavingsB={totalSavingsB}
+              totalCostB={totalCostB}
+              breakdownB={breakdownB}
+              labelA={SCENARIO_A.label}
+              labelB={SCENARIO_B.label}
             />
           </div>
         </main>
