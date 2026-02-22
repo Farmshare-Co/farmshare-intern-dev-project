@@ -603,10 +603,21 @@ export default function Calculator() {
                         backgroundColor: "farmGreen.main",
                         color: "#fff",
                         fontWeight: 600,
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "farmGreen.main",
+                          transform: "scale(1.02)",
+                        },
                         "& .MuiChip-deleteIcon": {
                           color: "#fff",
+                          transition: "all 0.2s ease",
                           "&:hover": {
                             color: "#fff",
+                            transform: "scale(1.2) rotate(90deg)",
+                            opacity: 0.8,
+                          },
+                          "&:active": {
+                            transform: "scale(0.9) rotate(90deg)",
                           },
                         },
                       }}
@@ -853,7 +864,7 @@ export default function Calculator() {
                 gap: 2,
               }}
             >
-              {selectedSpecies.map((species) => (
+              {selectedSpecies.map((species, index) => (
                 <Card
                   key={species}
                   sx={{
@@ -862,11 +873,19 @@ export default function Calculator() {
                     border: "2px solid #e0e0e0",
                     background:
                       "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
-                    transition: "all 0.2s ease",
-                    // "&:hover": {
-                    //   borderColor: "farmGreen.main",
-                    //   transform: "translateY(-2px)",
-                    // },
+                    animation: "fadeSlideIn 0.4s ease-out forwards",
+                    animationDelay: `${index * 0.1}s`,
+                    opacity: 0,
+                    "@keyframes fadeSlideIn": {
+                      "0%": {
+                        opacity: 0,
+                        transform: "translateY(20px)",
+                      },
+                      "100%": {
+                        opacity: 1,
+                        transform: "translateY(0)",
+                      },
+                    },
                   }}
                 >
                   <CardContent>
