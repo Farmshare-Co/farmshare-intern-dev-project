@@ -1,0 +1,31 @@
+/* Responsive overrides */
+
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 12px 48px;
+  }
+  .card__body {
+    padding: 16px;
+  }
+  .summary {
+    padding: 24px 20px;
+  }
+  .summary__hero-value {
+    font-size: 36px;
+  }
+  .species-grid {
+    grid-template-columns: 1fr;
+  }
+  .navbar {
+    padding: 0 16px;
+  }
+  .summary__cmp-cols,
+  .summary__cmp-bd-cols {
+    grid-template-columns: 1fr;
+    gap: 24px 0;
+  }
+  .summary__cmp-divider,
+  .summary__cmp-bd-divider {
+    display: none;
+  }
+}

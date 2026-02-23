@@ -1,269 +1,212 @@
-import { useState } from "react";
-import {
-  Container,
-  TextField,
-  Typography,
-  Box,
-  Paper,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Card,
-  CardContent,
-  Collapse,
-  IconButton,
-  OutlinedInput,
-  Chip,
-} from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import type { EAnimalSpecies } from "./types";
-import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
+import { useState, useEffect, useRef } from "react";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { SnackbarProvider, useSnackbar } from "./contexts/SnackbarContext";
+
+import farmshareTheme from "./utils/theme";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ScenarioPanel from "./components/ScenarioPanel";
+import AnnualSummary from "./components/AnnualSummary";
+import SummaryPreview from "./components/SummaryPreview";
+
+import type { Scenario, ScenarioKey, KeyedSpeciesChangeHandler, KeyedRemoveSpeciesHandler, KeyedVolumeChangeHandler, KeyedClearHandler, BreakdownRow } from "./utils/types";
+import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO, SCENARIO_A, SCENARIO_B } from "./utils/types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
-import "./App.css";
+
+import "./styles/App.css";
+import "./styles/navbar.css";
+import "./styles/card.css";
+import "./styles/species.css";
+import "./styles/summary.css";
+import "./styles/advanced.css";
+import "./styles/presets.css";
+import "./styles/footer.css";
+import "./styles/responsive.css";
 
 const COST_PER_LB = 0.02;
 
-function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([
-    "beef",
-  ]);
-  const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
-    {} as Record<EAnimalSpecies, string>,
+function AppContent() {
+  const [scenarioA, setScenarioA] = useLocalStorage<Scenario>(SCENARIO_A.storageKey, DEFAULT_SCENARIO);
+  const [scenarioB, setScenarioB] = useLocalStorage<Scenario>(SCENARIO_B.storageKey, DEFAULT_SCENARIO);
+  const [summaryFullyVisible, setSummaryFullyVisible] = useState(false);
+  const [scenarioBVisible, setScenarioBVisible] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const scenarioBRef = useRef<HTMLDivElement>(null);
+
+  const [comparisonMode, setComparisonMode] = useLocalStorage<boolean>(
+    "comparison",
+    false,
   );
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
-  const [hourlyWage, setHourlyWage] = useState("25"); // dollars
 
-  const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
-    const value = event.target.value;
-    const species = typeof value === "string" ? value.split(",") : value;
-    setSelectedSpecies(species as EAnimalSpecies[]);
+  const { showSnackbar } = useSnackbar();
+
+  const handleComparisonToggle = (value: boolean) => {
+    setComparisonMode(value);
+    showSnackbar(
+      value ? "Comparison mode enabled" : "Comparison mode disabled",
+      "info",
+    );
   };
 
-  const handleVolumeChange = (species: EAnimalSpecies, value: string) => {
-    setVolumes((prev) => ({ ...prev, [species]: value }));
+  useEffect(() => {
+    const el = summaryRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setSummaryFullyVisible(entry.intersectionRatio >= 0.2),
+      { threshold: [0,0.2] },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = scenarioBRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setScenarioBVisible(entry.intersectionRatio >= 0.2),
+      { threshold: [0, 0.2] },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [comparisonMode]);
+
+  const getScenarioSetter = (which: ScenarioKey) =>
+    which === SCENARIO_A ? setScenarioA : setScenarioB;
+
+  const handleSpeciesChange: KeyedSpeciesChangeHandler = (which, species) => {
+    getScenarioSetter(which)((prev) => ({ ...prev, selectedSpecies: species }));
   };
 
-  const calculateTotalAnnualSavings = () => {
-    return selectedSpecies.reduce((total, species) => {
-      const volume = parseFloat(volumes[species] || "0");
-      if (volume > 0) {
-        const avgWeight = AVG_HANGING_WEIGHTS[species];
-        const heads = calculateHeads(volume, avgWeight);
-        const savings = calculateLaborValue(
-          heads,
-          parseFloat(timePerAnimal),
-          parseFloat(hourlyWage),
-        );
-        return total + savings;
-      }
-      return total;
-    }, 0);
+  const handleRemoveSpecies: KeyedRemoveSpeciesHandler = (which, species) => {
+    getScenarioSetter(which)((prev) => ({
+      ...prev,
+      selectedSpecies: prev.selectedSpecies.filter((s) => s !== species),
+    }));
   };
 
-  const calculateTotalAnnualCost = () => {
-    return selectedSpecies.reduce((total, species) => {
-      const volume = parseFloat(volumes[species] || "0");
-      return total + volume * COST_PER_LB;
-    }, 0);
+  const handleVolumeChange: KeyedVolumeChangeHandler = (which, species, value) => {
+    getScenarioSetter(which)((prev) => ({ ...prev, volumes: { ...prev.volumes, [species]: value } }));
   };
 
-  const getTotalVolume = () => {
-    return selectedSpecies.reduce((total, species) => {
-      return total + parseFloat(volumes[species] || "0");
-    }, 0);
+  const handleClear: KeyedClearHandler = (which) => {
+    getScenarioSetter(which)((prev) => ({ ...prev, selectedSpecies: [], volumes: {} }));
   };
+
+  const computeTotals = (scenario: Scenario): { savings: number; cost: number; volume: number; breakdown: BreakdownRow[] } => {
+    const breakdown: BreakdownRow[] = [];
+    let savings = 0;
+    let cost = 0;
+    let volume = 0;
+    for (const species of scenario.selectedSpecies) {
+      const vol = parseFloat(scenario.volumes[species] || "0");
+      if (vol <= 0) continue;
+      const heads = calculateHeads(vol, AVG_HANGING_WEIGHTS[species]);
+      const spSavings = calculateLaborValue(heads, parseFloat(scenario.timePerAnimal), parseFloat(scenario.hourlyWage));
+      const spCost = vol * COST_PER_LB;
+      savings += spSavings;
+      cost += spCost;
+      volume += vol;
+      breakdown.push({ species, volume: vol, heads, savings: spSavings, cost: spCost });
+    }
+    return { savings, cost, volume, breakdown };
+  };
+
+  const { savings: totalSavings, cost: totalCost, volume: totalVolume, breakdown } = computeTotals(scenarioA);
+  const { savings: totalSavingsB, cost: totalCostB, volume: totalVolumeB, breakdown: breakdownB } = computeTotals(scenarioB);
 
   return (
-    <Container>
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Meat Processor Value Calculator
-        </Typography>
+    <>
+      <Navbar
+        comparisonMode={comparisonMode}
+        setComparisonMode={handleComparisonToggle}
+      />
 
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel>Select Animal Species</InputLabel>
-            <Select
-              multiple
-              value={selectedSpecies}
-              onChange={handleSpeciesChange}
-              input={<OutlinedInput label="Select Animal Species" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip
-                      key={value}
-                      label={value.charAt(0).toUpperCase() + value.slice(1)}
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {Object.values(AnimalSpecies).map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+      <div className="page-wrap">
+        <main className="page">
+          <header className="page-header">
+            <p className="page-header__eyebrow">For Processors</p>
+            <h1 className="page-header__title">Meat Processor Value Calculator</h1>
+            <p className="page-header__subtitle">
+              Estimate your annual labor savings and platform costs based on your
+              processing volume. Adjust species, volumes, and labor settings below.
+            </p>
+          </header>
 
-          {selectedSpecies.length > 0 && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Annual Processing Volume by Species
-              </Typography>
-              {selectedSpecies.map((species) => (
-                <Card key={species} sx={{ mb: 2 }}>
-                  <CardContent>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {species.charAt(0).toUpperCase() + species.slice(1)}
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ ml: 1 }}
-                      >
-                        (Avg: {AVG_HANGING_WEIGHTS[species]} lbs/animal)
-                      </Typography>
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Total Annual Hanging Weight (lbs)"
-                      type="number"
-                      value={volumes[species] || ""}
-                      onChange={(e) =>
-                        handleVolumeChange(species, e.target.value)
-                      }
-                      inputProps={{ min: 0 }}
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
+          <ScenarioPanel
+            label={comparisonMode ? SCENARIO_A.label : undefined}
+            scenario={scenarioA}
+            onSpeciesChange={(s) => handleSpeciesChange(SCENARIO_A, s)}
+            onVolumeChange={(sp, v) => handleVolumeChange(SCENARIO_A, sp, v)}
+            onRemoveSpecies={(sp) => handleRemoveSpecies(SCENARIO_A, sp)}
+            onTimeChange={(v) => setScenarioA((prev) => ({ ...prev, timePerAnimal: v }))}
+            onWageChange={(v) => setScenarioA((prev) => ({ ...prev, hourlyWage: v }))}
+            onClearAll={() => handleClear(SCENARIO_A)}
+          />
+
+          {comparisonMode && (
+            <>
+              {/* <div className="scenario-divider">
+                <span>{SCENARIO_B.label}</span>
+              </div> */}
+
+              <div ref={scenarioBRef}>
+                <ScenarioPanel
+                  label={SCENARIO_B.label}
+                  scenario={scenarioB}
+                  onSpeciesChange={(s) => handleSpeciesChange(SCENARIO_B, s)}
+                  onVolumeChange={(sp, v) => handleVolumeChange(SCENARIO_B, sp, v)}
+                  onRemoveSpecies={(sp) => handleRemoveSpecies(SCENARIO_B, sp)}
+                  onTimeChange={(v) => setScenarioB((prev) => ({ ...prev, timePerAnimal: v }))}
+                  onWageChange={(v) => setScenarioB((prev) => ({ ...prev, hourlyWage: v }))}
+                  onClearAll={() => handleClear(SCENARIO_B)}
+                  stepOffset={2}
+                />
+              </div>
+            </>
           )}
 
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Typography variant="body2" sx={{ flexGrow: 1 }}>
-              Advanced Settings
-            </Typography>
-            <IconButton
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              sx={{
-                transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform 0.3s",
-              }}
-            >
-              <ExpandMoreIcon />
-            </IconButton>
-          </Box>
-
-          <Collapse in={showAdvanced}>
-            <TextField
-              fullWidth
-              label="Time Savings per Animal (minutes)"
-              type="number"
-              value={timePerAnimal}
-              onChange={(e) => setTimePerAnimal(e.target.value)}
-              sx={{ mb: 2 }}
+          <div ref={summaryRef}>
+            <AnnualSummary
+              totalVolume={totalVolume}
+              totalSavings={totalSavings}
+              totalCost={totalCost}
+              breakdown={breakdown}
+              comparisonMode={comparisonMode}
+              totalVolumeB={totalVolumeB}
+              totalSavingsB={totalSavingsB}
+              totalCostB={totalCostB}
+              breakdownB={breakdownB}
+              labelA={SCENARIO_A.label}
+              labelB={SCENARIO_B.label}
             />
-            <TextField
-              fullWidth
-              label="Average Hourly Wage ($)"
-              type="number"
-              value={hourlyWage}
-              onChange={(e) => setHourlyWage(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-          </Collapse>
-        </Paper>
+          </div>
+        </main>
 
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h5" gutterBottom>
-            Annual Summary
-          </Typography>
-          <Box sx={{ mt: 2 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1">Total Annual Volume:</Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {getTotalVolume().toLocaleString()} lbs
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-                pb: 1,
-                borderBottom: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Typography variant="body1" color="success.main">
-                Total Annual Savings:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="success.main">
-                $
-                {calculateTotalAnnualSavings().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mb: 2,
-              }}
-            >
-              <Typography variant="body1" color="error.main">
-                Total Annual Cost:
-              </Typography>
-              <Typography variant="h6" fontWeight="bold" color="error.main">
-                $
-                {calculateTotalAnnualCost().toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                pt: 2,
-                borderTop: 2,
-                borderColor: "primary.main",
-              }}
-            >
-              <Typography variant="h6">Net Annual Benefit:</Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary">
-                $
-                {(
-                  calculateTotalAnnualSavings() - calculateTotalAnnualCost()
-                ).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Typography>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+        <aside className={`page-sidebar${summaryFullyVisible ? " page-sidebar--absorbed" : ""}`}>
+          <SummaryPreview
+            label={comparisonMode && scenarioBVisible ? SCENARIO_B.label : SCENARIO_A.label}
+            totalVolume={comparisonMode && scenarioBVisible ? totalVolumeB : totalVolume}
+            totalSavings={comparisonMode && scenarioBVisible ? totalSavingsB : totalSavings}
+            totalCost={comparisonMode && scenarioBVisible ? totalCostB : totalCost}
+          />
+        </aside>
+      </div>
+
+      <Footer />
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ThemeProvider theme={farmshareTheme}>
+      <CssBaseline />
+      <SnackbarProvider>
+        <AppContent />
+      </SnackbarProvider>
+    </ThemeProvider>
+  );
+}

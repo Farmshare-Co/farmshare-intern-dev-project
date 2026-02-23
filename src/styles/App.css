@@ -1,0 +1,75 @@
+/* Layout and page structure */
+
+.page {
+  flex: 1;
+  padding: 32px 16px 64px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-wrap {
+  display: contents;
+}
+
+.page-sidebar {
+  display: none;
+}
+
+@media (min-width: 1160px) {
+  .page-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 860px) 268px;
+    gap: 32px;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
+    align-items: start;
+  }
+  .page {
+    max-width: none;
+    margin: 0;
+  }
+  .page-sidebar {
+    display: block;
+    position: sticky;
+    top: 80px;
+    padding-top: 32px;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .page-sidebar--absorbed {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-header__eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--fs-green-700);
+  margin-bottom: 6px;
+}
+
+.page-header__title {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 800;
+  color: var(--fs-green-900);
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.page-header__subtitle {
+  font-size: 15px;
+  color: var(--fs-text-muted);
+  margin: 0;
+  max-width: 560px;
+}

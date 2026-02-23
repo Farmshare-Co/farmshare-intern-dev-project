@@ -13,9 +13,9 @@ describe("Meat Processor Value Calculator", () => {
   it("displays the multi-select dropdown and summary", () => {
     render(<App />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
-    expect(screen.getByText("Annual Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Monthly Savings:")).toBeInTheDocument(); // Wrong text!
-    expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
+    expect(screen.getByText("Results")).toBeInTheDocument();
+    expect(screen.getAllByText("Labor Savings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Platform Cost").length).toBeGreaterThan(0);
   });
 
   it("shows volume inputs when species are selected", () => {
@@ -33,7 +33,7 @@ describe("Meat Processor Value Calculator", () => {
 
     // Check if volume input appears
     expect(
-      screen.getByText(/Monthly Processing Volume by Species/i), // Wrong text!
+      screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i),
     ).toBeInTheDocument();
   });
 
@@ -54,8 +54,8 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Total Processing Volume:")).toBeInTheDocument(); // Wrong text!
-    expect(screen.getByText("Net Annual Benefit:")).toBeInTheDocument();
+    expect(screen.getAllByText("Labor Savings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Net Benefit").length).toBeGreaterThan(0);
   });
 
   it("shows advanced settings when clicked", () => {
@@ -100,7 +100,6 @@ describe("Meat Processor Value Calculator", () => {
     ).toBeInTheDocument();
   });
 
-  // FAILING TEST - Interns need to add delete/remove functionality
   it("should allow removing a selected species", () => {
     render(<App />);
 
@@ -111,8 +110,8 @@ describe("Meat Processor Value Calculator", () => {
     const beefOption = screen.getByRole("option", { name: /Beef/i });
     fireEvent.click(beefOption);
 
-    // This delete/remove button doesn't exist yet - interns need to add it
-    const deleteButton = screen.getByRole("button", { name: /remove|delete/i });
+    // Checking remove button
+    const deleteButton = screen.getByLabelText(`remove beef`);
     fireEvent.click(deleteButton);
 
     expect(

@@ -1,0 +1,23 @@
+/* Advanced settings and toggle styles */
+
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 12px 0;
+  user-select: none;
+}
+
+.advanced-toggle__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fs-text-muted);
+  letter-spacing: 0.2px;
+}
+
+.advanced-divider {
+  height: 1px;
+  background: var(--fs-border);
+  margin: 0 0 16px;
+}

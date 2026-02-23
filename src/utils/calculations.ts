@@ -1,4 +1,4 @@
-import type { AnimalData } from "../types";
+import type { AnimalData } from "./types";
 
 /**
  * Calculate the number of animal heads from total and average hanging weight
@@ -7,7 +7,7 @@ import type { AnimalData } from "../types";
  * @returns Number of animal heads (floored to whole number)
  */
 export function calculateHeads(totalWeight: number, avgWeight: number): number {
-  return Math.floor(totalWeight / avgWeight) - 1;
+  return Math.floor(totalWeight / avgWeight);
 }
 
 /**
