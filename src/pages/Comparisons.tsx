@@ -35,6 +35,7 @@ export default function Comparisons() {
     hourlyWage,
     setHourlyWage,
     selectedSpecies,
+    volumes,
     calculateTotalAnnualSavings,
     calculateTotalAnnualCost,
   } = useContext(FarmContext);
@@ -80,6 +81,14 @@ export default function Comparisons() {
     }
     setClearDialogOpen(false);
     setClearTarget(null);
+  };
+
+  // Check if user has entered any volume data for Before/After comparison
+  const hasVolumeData = () => {
+    return selectedSpecies.some((species) => {
+      const volume = parseFloat(volumes[species] || "0");
+      return volume > 0;
+    });
   };
 
   return (
@@ -198,8 +207,24 @@ export default function Comparisons() {
                   <ClearAllIcon />
                 </IconButton>
               </Box>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Select Species</InputLabel>
+              <FormControl
+                fullWidth
+                sx={{
+                  mb: 2,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    backgroundColor: "#fafafa",
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "farmOrange.main",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "farmGreen.main",
+                      borderWidth: 2,
+                    },
+                  },
+                }}
+              >
+                <InputLabel sx={{ fontWeight: 500 }}>Select Species</InputLabel>
                 <Select
                   multiple
                   value={scenarioASpecies}
@@ -355,7 +380,31 @@ export default function Comparisons() {
                       [species]: e.target.value,
                     }))
                   }
-                  sx={{ mb: 2 }}
+                  sx={{
+                    mb: 2,
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      backgroundColor: "#fafafa",
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "farmOrange.main",
+                        borderWidth: 2,
+                      },
+                      "&.Mui-focused": {
+                        backgroundColor: "#fff",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "farmGreen.main",
+                        borderWidth: 2,
+                      },
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontWeight: 500,
+                      "&.Mui-focused": {
+                        color: "farmGreen.main",
+                        fontWeight: 600,
+                      },
+                    },
+                  }}
                   slotProps={{
                     htmlInput: { min: 0 },
                   }}
@@ -406,8 +455,24 @@ export default function Comparisons() {
                   <ClearAllIcon />
                 </IconButton>
               </Box>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Select Species</InputLabel>
+              <FormControl
+                fullWidth
+                sx={{
+                  mb: 2,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    backgroundColor: "#fafafa",
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "farmOrange.main",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "farmGreen.main",
+                      borderWidth: 2,
+                    },
+                  },
+                }}
+              >
+                <InputLabel sx={{ fontWeight: 500 }}>Select Species</InputLabel>
                 <Select
                   multiple
                   value={scenarioBSpecies}
@@ -563,7 +628,31 @@ export default function Comparisons() {
                       [species]: e.target.value,
                     }))
                   }
-                  sx={{ mb: 2 }}
+                  sx={{
+                    mb: 2,
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                      backgroundColor: "#fafafa",
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "farmOrange.main",
+                        borderWidth: 2,
+                      },
+                      "&.Mui-focused": {
+                        backgroundColor: "#fff",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "farmGreen.main",
+                        borderWidth: 2,
+                      },
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontWeight: 500,
+                      "&.Mui-focused": {
+                        color: "farmGreen.main",
+                        fontWeight: 600,
+                      },
+                    },
+                  }}
                   slotProps={{
                     htmlInput: { min: 0 },
                   }}
@@ -593,10 +682,10 @@ export default function Comparisons() {
       )}
 
       {comparisonType === "beforeAfter" &&
-        (selectedSpecies.length === 0 ? (
+        (selectedSpecies.length === 0 || !hasVolumeData() ? (
           <Empty
             heading="No comparisons to display"
-            description="In order for you to see the comparisons, please head to the Calculator page and select atleast one species."
+            description="In order for you to see the comparisons, please head to the Calculator page and select at least one species and enter volume data."
             btnLink="calculator"
             btnText="Calculator Page"
           />
@@ -715,8 +804,8 @@ export default function Comparisons() {
       <Dialog
         open={clearDialogOpen}
         onClose={() => setClearDialogOpen(false)}
-        PaperProps={{
-          sx: {
+        sx={{
+          "& .MuiPaper-root": {
             borderRadius: 3,
           },
         }}

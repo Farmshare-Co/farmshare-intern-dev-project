@@ -32,6 +32,14 @@ export default function Charts() {
     return viewMode === "monthly" ? annual / 12 : annual;
   };
 
+  // Check if user has entered any volume data
+  const hasVolumeData = () => {
+    return selectedSpecies.some((species) => {
+      const volume = parseFloat(volumes[species] || "0");
+      return volume > 0;
+    });
+  };
+
   return (
     <Box sx={{ p: { xs: 2, sm: 3 } }}>
       <Box
@@ -92,10 +100,10 @@ export default function Charts() {
         </Box>
       </Box>
 
-      {selectedSpecies.length === 0 ? (
+      {selectedSpecies.length === 0 || !hasVolumeData() ? (
         <Empty
           heading="No charts to display"
-          description="In order for you to see the charts, please select at least one species from the Calculator page."
+          description="In order for you to see the charts, please select at least one species and enter volume data from the Calculator page."
           btnLink="calculator"
           btnText="Value Calculator"
         />
