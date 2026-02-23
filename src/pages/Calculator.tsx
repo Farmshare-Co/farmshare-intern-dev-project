@@ -747,11 +747,17 @@ export default function Calculator() {
                 setPresetMenuAnchor(null);
               }}
               sx={{
+                py: 1.5,
+                px: 2,
                 fontStyle: "italic",
                 color: "text.secondary",
                 fontSize: "0.875rem",
+                transition: "all 0.2s ease",
+                borderLeft: "3px solid transparent",
                 "&:hover": {
                   backgroundColor: "rgba(1, 111, 53, 0.08)",
+                  transform: "translateX(4px)",
+                  borderLeftColor: "farmOrange.main",
                 },
               }}
             >
@@ -779,7 +785,15 @@ export default function Calculator() {
                 setPresetMenuAnchor(null);
               }}
               sx={{
-                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+                py: 1.5,
+                px: 2,
+                transition: "all 0.2s ease",
+                borderLeft: "3px solid transparent",
+                "&:hover": {
+                  backgroundColor: "rgba(1, 111, 53, 0.08)",
+                  transform: "translateX(4px)",
+                  borderLeftColor: "farmGreen.main",
+                },
               }}
             >
               <ListItemIcon>
@@ -788,7 +802,15 @@ export default function Calculator() {
                   sx={{ color: "farmGreen.main" }}
                 />
               </ListItemIcon>
-              <ListItemText>Beef-Focused Processor</ListItemText>
+              <ListItemText
+                slotProps={{
+                  primary: {
+                    sx: { fontSize: "14px", fontWeight: 500 },
+                  },
+                }}
+              >
+                Beef-Focused Processor
+              </ListItemText>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -798,7 +820,15 @@ export default function Calculator() {
                 setPresetMenuAnchor(null);
               }}
               sx={{
-                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+                py: 1.5,
+                px: 2,
+                transition: "all 0.2s ease",
+                borderLeft: "3px solid transparent",
+                "&:hover": {
+                  backgroundColor: "rgba(1, 111, 53, 0.08)",
+                  transform: "translateX(4px)",
+                  borderLeftColor: "farmGreen.main",
+                },
               }}
             >
               <ListItemIcon>
@@ -807,7 +837,15 @@ export default function Calculator() {
                   sx={{ color: "farmGreen.main" }}
                 />
               </ListItemIcon>
-              <ListItemText>Mixed Operation</ListItemText>
+              <ListItemText
+                slotProps={{
+                  primary: {
+                    sx: { fontSize: "14px", fontWeight: 500 },
+                  },
+                }}
+              >
+                Mixed Operation
+              </ListItemText>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -817,7 +855,15 @@ export default function Calculator() {
                 setPresetMenuAnchor(null);
               }}
               sx={{
-                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+                py: 1.5,
+                px: 2,
+                transition: "all 0.2s ease",
+                borderLeft: "3px solid transparent",
+                "&:hover": {
+                  backgroundColor: "rgba(1, 111, 53, 0.08)",
+                  transform: "translateX(4px)",
+                  borderLeftColor: "farmGreen.main",
+                },
               }}
             >
               <ListItemIcon>
@@ -826,7 +872,15 @@ export default function Calculator() {
                   sx={{ color: "farmGreen.main" }}
                 />
               </ListItemIcon>
-              <ListItemText>Small Farm Processor</ListItemText>
+              <ListItemText
+                slotProps={{
+                  primary: {
+                    sx: { fontSize: "14px", fontWeight: 500 },
+                  },
+                }}
+              >
+                Small Farm Processor
+              </ListItemText>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -836,7 +890,15 @@ export default function Calculator() {
                 setPresetMenuAnchor(null);
               }}
               sx={{
-                "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+                py: 1.5,
+                px: 2,
+                transition: "all 0.2s ease",
+                borderLeft: "3px solid transparent",
+                "&:hover": {
+                  backgroundColor: "rgba(1, 111, 53, 0.08)",
+                  transform: "translateX(4px)",
+                  borderLeftColor: "farmGreen.main",
+                },
               }}
             >
               <ListItemIcon>
@@ -845,7 +907,15 @@ export default function Calculator() {
                   sx={{ color: "farmGreen.main" }}
                 />
               </ListItemIcon>
-              <ListItemText>Large Commercial</ListItemText>
+              <ListItemText
+                slotProps={{
+                  primary: {
+                    sx: { fontSize: "14px", fontWeight: 500 },
+                  },
+                }}
+              >
+                Large Commercial
+              </ListItemText>
             </MenuItem>
 
             {customPresets.length > 0 && (
@@ -874,16 +944,32 @@ export default function Calculator() {
                       setPresetMenuAnchor(null);
                     }}
                     sx={{
-                      "&:hover": { backgroundColor: "rgba(1, 111, 53, 0.08)" },
+                      py: 1.5,
+                      px: 2,
+                      transition: "all 0.2s ease",
+                      borderLeft: "3px solid transparent",
+                      "&:hover": {
+                        backgroundColor: "rgba(1, 111, 53, 0.08)",
+                        transform: "translateX(4px)",
+                        borderLeftColor: "farmOrange.main",
+                      },
                     }}
                   >
                     <ListItemIcon>
-                      <CheckIcon
+                      <BookmarkBorderIcon
                         fontSize="small"
                         sx={{ color: "farmOrange.main" }}
                       />
                     </ListItemIcon>
-                    <ListItemText>{preset.name}</ListItemText>
+                    <ListItemText
+                      slotProps={{
+                        primary: {
+                          sx: { fontSize: "14px", fontWeight: 500 },
+                        },
+                      }}
+                    >
+                      {preset.name}
+                    </ListItemText>
                     <IconButton
                       size="small"
                       onClick={(e) => {
@@ -1376,10 +1462,17 @@ export default function Calculator() {
       <Dialog
         open={savePresetDialogOpen}
         onClose={() => setSavePresetDialogOpen(false)}
+        sx={{
+          "& .MuiPaper-root": {
+            borderRadius: 3,
+          },
+        }}
       >
-        <DialogTitle>Save Custom Preset</DialogTitle>
+        <DialogTitle sx={{ fontFamily: "roca" }}>
+          Save Custom Preset
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ mb: 2 }}>
+          <DialogContentText sx={{ mb: 2, fontSize: "14px", fontWeight: 500 }}>
             Save your current calculator settings as a custom preset for quick
             access later.
           </DialogContentText>
@@ -1395,6 +1488,30 @@ export default function Calculator() {
                 handleSavePreset();
               }
             }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                backgroundColor: "#fafafa",
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "farmOrange.main",
+                  borderWidth: 2,
+                },
+                "&.Mui-focused": {
+                  backgroundColor: "#fff",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "farmGreen.main",
+                  borderWidth: 2,
+                },
+              },
+              "& .MuiInputLabel-root": {
+                fontWeight: 500,
+                "&.Mui-focused": {
+                  color: "farmGreen.main",
+                  fontWeight: 600,
+                },
+              },
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -1403,13 +1520,35 @@ export default function Calculator() {
               setSavePresetDialogOpen(false);
               setPresetName("");
             }}
+            sx={{
+              color: "farmGreen.main",
+              paddingX: { xs: 2, sm: 3 },
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: "0.875rem",
+            }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleSavePreset}
             variant="contained"
-            startIcon={<SaveIcon />}
+            sx={{
+              color: "#fff",
+              bgcolor: "farmOrange.main",
+              paddingX: { xs: 2, sm: 3 },
+              paddingY: 1,
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+              boxShadow: "none",
+              width: { xs: "100%", sm: "auto" },
+              fontSize: "0.875rem",
+            }}
           >
             Save Preset
           </Button>

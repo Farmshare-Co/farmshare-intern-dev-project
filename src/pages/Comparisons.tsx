@@ -20,10 +20,7 @@ import {
 import CheckIcon from "@mui/icons-material/Check";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import {
-  EAnimalSpecies as AnimalSpecies,
-  SPECIES_EMOJIS,
-} from "../types";
+import { EAnimalSpecies as AnimalSpecies, SPECIES_EMOJIS } from "../types";
 import type { EAnimalSpecies } from "../types";
 import { FarmContext } from "../context/FarmContext";
 import SpeciesMixComparison from "../components/SpeciesMixComparison";
@@ -37,7 +34,6 @@ export default function Comparisons() {
     hourlyWage,
     setHourlyWage,
     selectedSpecies,
-    volumes,
     calculateTotalAnnualSavings,
     calculateTotalAnnualCost,
   } = useContext(FarmContext);
@@ -254,11 +250,17 @@ export default function Comparisons() {
                           key={value}
                           label={value.charAt(0).toUpperCase() + value.slice(1)}
                           onDelete={() => {
-                            const newSpecies = selected.filter((spec) => spec !== value);
+                            const newSpecies = selected.filter(
+                              (spec) => spec !== value
+                            );
                             if (selected === scenarioASpecies) {
-                              setScenarioASpecies(newSpecies as EAnimalSpecies[]);
+                              setScenarioASpecies(
+                                newSpecies as EAnimalSpecies[]
+                              );
                             } else {
-                              setScenarioBSpecies(newSpecies as EAnimalSpecies[]);
+                              setScenarioBSpecies(
+                                newSpecies as EAnimalSpecies[]
+                              );
                             }
                           }}
                           deleteIcon={
@@ -340,7 +342,9 @@ export default function Comparisons() {
                         >
                           {SPECIES_EMOJIS[s]}
                         </Box>
-                        <Box sx={{ flex: 1, fontWeight: isSelected ? 600 : 400 }}>
+                        <Box
+                          sx={{ flex: 1, fontWeight: isSelected ? 600 : 400 }}
+                        >
                           {s.charAt(0).toUpperCase() + s.slice(1)}
                         </Box>
                         {isSelected && (
@@ -454,11 +458,17 @@ export default function Comparisons() {
                           key={value}
                           label={value.charAt(0).toUpperCase() + value.slice(1)}
                           onDelete={() => {
-                            const newSpecies = selected.filter((spec) => spec !== value);
+                            const newSpecies = selected.filter(
+                              (spec) => spec !== value
+                            );
                             if (selected === scenarioASpecies) {
-                              setScenarioASpecies(newSpecies as EAnimalSpecies[]);
+                              setScenarioASpecies(
+                                newSpecies as EAnimalSpecies[]
+                              );
                             } else {
-                              setScenarioBSpecies(newSpecies as EAnimalSpecies[]);
+                              setScenarioBSpecies(
+                                newSpecies as EAnimalSpecies[]
+                              );
                             }
                           }}
                           deleteIcon={
@@ -540,7 +550,9 @@ export default function Comparisons() {
                         >
                           {SPECIES_EMOJIS[s]}
                         </Box>
-                        <Box sx={{ flex: 1, fontWeight: isSelected ? 600 : 400 }}>
+                        <Box
+                          sx={{ flex: 1, fontWeight: isSelected ? 600 : 400 }}
+                        >
                           {s.charAt(0).toUpperCase() + s.slice(1)}
                         </Box>
                         {isSelected && (

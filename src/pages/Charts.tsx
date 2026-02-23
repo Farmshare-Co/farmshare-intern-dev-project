@@ -1,9 +1,7 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button } from "@mui/material";
 import { FarmContext } from "../context/FarmContext";
 import SavingsChart from "../components/SavingsChart";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
 import Empty from "../components/Empty";
 
 export default function Charts() {
@@ -16,7 +14,6 @@ export default function Charts() {
     calculateTotalAnnualCost,
   } = useContext(FarmContext);
 
-  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"annual" | "monthly">("annual");
 
   const getDisplaySavings = () => {

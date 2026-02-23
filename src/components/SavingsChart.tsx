@@ -161,9 +161,7 @@ export default function SavingsChart({
             height={300}
             slotProps={{
               legend: {
-                direction: "row" as const,
                 position: { vertical: "bottom", horizontal: "center" },
-                padding: 0,
               },
             }}
           />
@@ -192,9 +190,7 @@ export default function SavingsChart({
             height={300}
             slotProps={{
               legend: {
-                direction: "row" as const,
                 position: { vertical: "bottom", horizontal: "center" },
-                padding: 0,
               },
             }}
           />
