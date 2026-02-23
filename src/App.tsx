@@ -7,8 +7,9 @@ import Charts from "./pages/Charts";
 import "./App.css";
 
 function App() {
+  // Use GitHub Pages base path only for GitHub Pages, not Vercel
   const basename =
-    import.meta.env.MODE === "production"
+    import.meta.env.MODE === "production" && !import.meta.env.VITE_VERCEL
       ? "/farmshare-intern-dev-project"
       : "";
 
