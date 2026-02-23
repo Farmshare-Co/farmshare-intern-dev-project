@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { EAnimalSpecies, type BreakdownRow } from "./../types";
+import { fmt, fmtInt, capitalize } from "./../utils/formatters";
+import { exportCSV, exportPDF, exportComparisonCSV, exportComparisonPDF, type ExportRow } from "./../utils/export";
+
+function toExportRows(rows: BreakdownRow[]): ExportRow[] {
+  return rows.map((r) => ({ ...r, net: r.savings - r.cost }));
+}
 
 interface AnnualSummaryProps {
   totalVolume: number;
@@ -14,12 +20,6 @@ interface AnnualSummaryProps {
   labelA?: string;
   labelB?: string;
 }
-
-const fmt = (n: number) =>
-  n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-const fmtInt = (n: number) =>
-  n.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
 function BreakdownTable({
   rows,
@@ -55,7 +55,7 @@ function BreakdownTable({
 
       {rows.map((r) => (
         <div key={r.species} className={rowClass}>
-          <span className="summary__bd-cell--label">{EAnimalSpecies[r.species].charAt(0).toUpperCase() + EAnimalSpecies[r.species].slice(1)}</span>
+          <span className="summary__bd-cell--label">{capitalize(EAnimalSpecies[r.species])}</span>
           {!compact && <span>{fmtInt(r.volume * m)} lbs</span>}
           <span className="summary__bd-cell--heads">{fmtInt(r.heads * m)} hd</span>
           <span className="summary__bd-cell--savings">+${fmt(r.savings * m)}</span>
@@ -192,6 +192,11 @@ export default function AnnualSummary({
             </div>
           </div>
         </div>
+
+        <div className="summary__export-actions">
+          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => exportComparisonCSV(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB)}>Export CSV</button>
+          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => exportComparisonPDF(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB)}>Export PDF</button>
+        </div>
       </div>
     );
   }
@@ -235,6 +240,11 @@ export default function AnnualSummary({
           <BreakdownTable rows={breakdown} period={tab} />
         </div>
       )}
+
+      <div className="summary__export-actions">
+        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => exportCSV(toExportRows(breakdown), labelA)}>Export CSV</button>
+        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => exportPDF(toExportRows(breakdown), labelA)}>Export PDF</button>
+      </div>
     </div>
   );
 }

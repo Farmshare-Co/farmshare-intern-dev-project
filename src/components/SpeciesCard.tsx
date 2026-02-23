@@ -2,6 +2,7 @@ import { TextField } from "@mui/material";
 import type { EAnimalSpecies } from "../types";
 import { AVG_HANGING_WEIGHTS } from "../types";
 import { calculateHeads } from "../utils/calculations";
+import { capitalize } from "../utils/formatters";
 
 interface SpeciesCardProps {
   label: string;
@@ -49,7 +50,7 @@ export default function SpeciesCard({
                 >
                   ×
                 </button>
-                <p className="species-card__name">{species.charAt(0).toUpperCase() + species.slice(1)}</p>
+                <p className="species-card__name">{capitalize(species)}</p>
                 <p className="species-card__meta">Avg hanging weight: {avgWeight} lbs / animal</p>
                 <TextField
                   fullWidth

@@ -10,6 +10,7 @@ import {
 import type { SelectChangeEvent } from "@mui/material";
 import type { EAnimalSpecies } from "../types";
 import { EAnimalSpecies as AnimalSpecies } from "../types";
+import { capitalize } from "../utils/formatters";
 
 interface SpeciesSelectProps {
   label?: string;
@@ -69,7 +70,7 @@ export default function SpeciesSelect({
                 {selected.map((value) => (
                   <Chip
                     key={value}
-                    label={value.charAt(0).toUpperCase() + value.slice(1)}
+                    label={capitalize(value)}
                     onDelete={(e) => {
                       e.stopPropagation();
                       onRemove(value);
@@ -91,7 +92,7 @@ export default function SpeciesSelect({
           >
             {Object.values(AnimalSpecies).map((s) => (
               <MenuItem key={s} value={s}>
-                {s.charAt(0).toUpperCase() + s.slice(1)}
+                {capitalize(s)}
               </MenuItem>
             ))}
           </Select>

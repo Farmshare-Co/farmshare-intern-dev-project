@@ -17,8 +17,7 @@
   --fs-shadow:    0 1px 3px rgba(29, 61, 42, 0.08), 0 4px 12px rgba(29, 61, 42, 0.06);
   --fs-shadow-md: 0 4px 16px rgba(29, 61, 42, 0.12), 0 1px 4px rgba(29, 61, 42, 0.08);
 
-  /* ---- Dark card / glass UI tokens (shared by .summary and .preview) ---- */
-  --fs-cost:                #ff9a8b;                   /* cost / negative value */
+  --fs-cost:                #ff9a8b;                  
   --fs-green-orb:           rgba(82, 183, 136, 0.12);  /* decorative circle */
   --fs-green-orb-faint:     rgba(82, 183, 136, 0.07);  /* second, larger orb */
   --fs-savings-bg:          rgba(82, 183, 136, 0.15);  /* savings stat fill */
