@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { SnackbarProvider, useSnackbar } from "./contexts/SnackbarContext";
 
 import farmshareTheme from "./utils/theme";
 import Navbar from "./components/Navbar";
@@ -26,7 +27,7 @@ import "./styles/responsive.css";
 
 const COST_PER_LB = 0.02;
 
-function App() {
+function AppContent() {
   const [scenarioA, setScenarioA] = useLocalStorage<Scenario>(SCENARIO_A.storageKey, DEFAULT_SCENARIO);
   const [scenarioB, setScenarioB] = useLocalStorage<Scenario>(SCENARIO_B.storageKey, DEFAULT_SCENARIO);
   const [summaryFullyVisible, setSummaryFullyVisible] = useState(false);
@@ -38,6 +39,16 @@ function App() {
     "comparison",
     false,
   );
+
+  const { showSnackbar } = useSnackbar();
+
+  const handleComparisonToggle = (value: boolean) => {
+    setComparisonMode(value);
+    showSnackbar(
+      value ? "Comparison mode enabled" : "Comparison mode disabled",
+      "info",
+    );
+  };
 
   useEffect(() => {
     const el = summaryRef.current;
@@ -106,11 +117,10 @@ function App() {
   const { savings: totalSavingsB, cost: totalCostB, volume: totalVolumeB, breakdown: breakdownB } = computeTotals(scenarioB);
 
   return (
-    <ThemeProvider theme={farmshareTheme}>
-      <CssBaseline />
+    <>
       <Navbar
         comparisonMode={comparisonMode}
-        setComparisonMode={setComparisonMode}
+        setComparisonMode={handleComparisonToggle}
       />
 
       <div className="page-wrap">
@@ -185,8 +195,17 @@ function App() {
       </div>
 
       <Footer />
-    </ThemeProvider>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ThemeProvider theme={farmshareTheme}>
+      <CssBaseline />
+      <SnackbarProvider>
+        <AppContent />
+      </SnackbarProvider>
+    </ThemeProvider>
+  );
+}

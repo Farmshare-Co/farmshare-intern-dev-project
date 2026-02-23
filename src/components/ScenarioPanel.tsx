@@ -8,6 +8,7 @@ import SpeciesPresets from "./SpeciesPresets";
 
 import type { EAnimalSpecies, PresetConfig, Scenario } from "../utils/types";
 import { MAX_VOLUME_LBS } from "../utils/types";
+import { useSnackbar } from "../contexts/SnackbarContext";
 
 interface ScenarioPanelProps {
     label?: string;
@@ -34,6 +35,8 @@ export default function ScenarioPanel({
 }: ScenarioPanelProps) {
     const [selectOpen, setSelectOpen] = useState(false);
 
+    const { showSnackbar } = useSnackbar();
+
     const { selectedSpecies, volumes, timePerAnimal, hourlyWage } = scenario;
 
     const handleSpeciesChange = (event: SelectChangeEvent<EAnimalSpecies[]>) => {
@@ -45,8 +48,12 @@ export default function ScenarioPanel({
 
     const handleVolumeChange = (species: EAnimalSpecies, raw: string) => {
         const numeric = raw.replace(/\D/g, "");
+        const numericVal = numeric === "" ? 0 : Number(numeric);
         const clamped =
-            numeric === "" ? "" : String(Math.min(Number(numeric), MAX_VOLUME_LBS));
+            numeric === "" ? "" : String(Math.min(numericVal, MAX_VOLUME_LBS));
+        if (numericVal > MAX_VOLUME_LBS) {
+            showSnackbar(`Volume capped at ${MAX_VOLUME_LBS.toLocaleString()} lbs maximum`, "warning");
+        }
         onVolumeChange(species, clamped);
     };
 
@@ -56,6 +63,13 @@ export default function ScenarioPanel({
             onVolumeChange(sp as EAnimalSpecies, vol ?? "");
         }
         setSelectOpen(false);
+        showSnackbar(`"${preset.label}" preset applied`, "success");
+    };
+
+    const handleClearAll = () => {
+        if (selectedSpecies.length === 0) return;
+        onClearAll();
+        showSnackbar("All species cleared", "info");
     };
 
     return (
@@ -70,7 +84,7 @@ export default function ScenarioPanel({
                 onClose={() => setSelectOpen(false)}
                 onChange={handleSpeciesChange}
                 onRemove={onRemoveSpecies}
-                onClear={onClearAll}
+                onClear={handleClearAll}
                 stepNumber={1 + stepOffset}
             />
 

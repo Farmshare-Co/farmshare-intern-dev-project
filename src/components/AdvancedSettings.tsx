@@ -49,18 +49,22 @@ export default function AdvancedSettings({
                             label="Time Savings per Animal (minutes)"
                             type="number"
                             value={timePerAnimal}
-                            onChange={(e) => onTimeChange(e.target.value)}
+                            onChange={(e) => onTimeChange(e.target.value.replace(/\D/g, ""))}
+                            onKeyDown={(e) => (e.key === "-" || e.key === "+") && e.preventDefault()}
                             size="small"
                             helperText="Time saved per animal using Farmshare"
+                            slotProps={{ htmlInput: { min: 0 } }}
                         />
                         <TextField
                             fullWidth
                             label="Average Hourly Wage ($)"
                             type="number"
                             value={hourlyWage}
-                            onChange={(e) => onWageChange(e.target.value)}
+                            onChange={(e) => onWageChange(e.target.value.replace(/\D/g, ""))}
+                            onKeyDown={(e) => (e.key === "-" || e.key === "+") && e.preventDefault()}
                             size="small"
                             helperText="Staff hourly wage at your facility"
+                            slotProps={{ htmlInput: { min: 0 } }}
                         />
                     </Box>
                 </Collapse>

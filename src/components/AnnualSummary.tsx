@@ -2,6 +2,7 @@ import { useState } from "react";
 import { EAnimalSpecies, type BreakdownRow } from "../utils/types";
 import { fmt, fmtInt, capitalize } from "../utils/formatters";
 import { exportCSV, exportPDF, exportComparisonCSV, exportComparisonPDF, type ExportRow } from "../utils/export";
+import { useSnackbar } from "../contexts/SnackbarContext";
 
 function toExportRows(rows: BreakdownRow[]): ExportRow[] {
   return rows.map((r) => ({ ...r, net: r.savings - r.cost }));
@@ -91,6 +92,17 @@ export default function AnnualSummary({
 }: AnnualSummaryProps) {
   const [tab, setTab] = useState<"annual" | "monthly">("annual");
   const m = tab === "monthly" ? 1 / 12 : 1;
+
+  const { showSnackbar } = useSnackbar();
+
+  const handleExport = (fn: () => void, label: string) => {
+    try {
+      fn();
+      showSnackbar(`${label} exported successfully`, "success");
+    } catch {
+      showSnackbar(`Failed to export ${label}. Please try again.`, "error");
+    }
+  };
 
   const netA = (totalSavings - totalCost) * m;
   const netB = (totalSavingsB - totalCostB) * m;
@@ -194,8 +206,8 @@ export default function AnnualSummary({
         </div>
 
         <div className="summary__export-actions">
-          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => exportComparisonCSV(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB)}>Export CSV</button>
-          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => exportComparisonPDF(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB)}>Export PDF</button>
+          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => handleExport(() => exportComparisonCSV(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB), "CSV")}>Export CSV</button>
+          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => handleExport(() => exportComparisonPDF(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB), "PDF")}>Export PDF</button>
         </div>
       </div>
     );
@@ -242,8 +254,8 @@ export default function AnnualSummary({
       )}
 
       <div className="summary__export-actions">
-        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => exportCSV(toExportRows(breakdown), labelA)}>Export CSV</button>
-        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => exportPDF(toExportRows(breakdown), labelA)}>Export PDF</button>
+        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => handleExport(() => exportCSV(toExportRows(breakdown), labelA), "CSV")}>Export CSV</button>
+        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => handleExport(() => exportPDF(toExportRows(breakdown), labelA), "PDF")}>Export PDF</button>
       </div>
     </div>
   );
