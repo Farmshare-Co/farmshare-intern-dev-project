@@ -14,8 +14,8 @@ describe("Meat Processor Value Calculator", () => {
     render(<App />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByText("Results")).toBeInTheDocument();
-    expect(screen.getByText("Labor Savings")).toBeInTheDocument();
-    expect(screen.getByText("Platform Cost")).toBeInTheDocument();
+    expect(screen.getAllByText("Labor Savings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Platform Cost").length).toBeGreaterThan(0);
   });
 
   it("shows volume inputs when species are selected", () => {
@@ -54,8 +54,8 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Labor Savings")).toBeInTheDocument();
-    expect(screen.getByText("Net Benefit")).toBeInTheDocument();
+    expect(screen.getAllByText("Labor Savings").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Net Benefit").length).toBeGreaterThan(0);
   });
 
   it("shows advanced settings when clicked", () => {

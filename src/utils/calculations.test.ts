@@ -5,8 +5,8 @@ import {
   calculateTotalHeads,
   calculateTotalLaborValue,
 } from "./calculations";
-import type { AnimalData } from "../types";
-import { EAnimalSpecies } from "../types";
+import type { AnimalData } from "./types";
+import { EAnimalSpecies } from "./types";
 
 describe("calculations utils", () => {
   describe("calculateHeads", () => {
