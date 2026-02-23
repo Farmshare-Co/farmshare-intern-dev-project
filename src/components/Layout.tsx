@@ -297,6 +297,9 @@ export default function Layout({ children }: LayoutProps) {
               height: "30px",
               cursor: "pointer",
             }}
+            onClick={() =>
+              window.open("https://lucidjoy.vercel.app/", "_blank")
+            }
           >
             J
           </Avatar>
