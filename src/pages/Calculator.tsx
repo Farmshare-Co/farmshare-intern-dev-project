@@ -442,10 +442,18 @@ export default function Calculator() {
             flexDirection: { xs: "column", sm: "row" },
           }}
         >
-          <CustomButton variant="outlined" onClick={handleExportCSV} size="small">
+          <CustomButton
+            variant="outlined"
+            onClick={handleExportCSV}
+            size="small"
+          >
             Export CSV
           </CustomButton>
-          <CustomButton variant="outlined" onClick={handleExportPDF} size="small">
+          <CustomButton
+            variant="outlined"
+            onClick={handleExportPDF}
+            size="small"
+          >
             Export PDF
           </CustomButton>
         </Box>
@@ -503,7 +511,11 @@ export default function Calculator() {
               Save
             </CustomButton>
 
-            <CustomButton variant="outlined" onClick={handleClearAll} size="small">
+            <CustomButton
+              variant="outlined"
+              onClick={handleClearAll}
+              size="small"
+            >
               Clear All
             </CustomButton>
           </Box>
@@ -1350,6 +1362,7 @@ export default function Calculator() {
               color: "farmGreen.main",
               textTransform: "none",
               fontWeight: 600,
+              borderRadius: "8px",
             }}
           >
             Cancel
@@ -1362,6 +1375,7 @@ export default function Calculator() {
               textTransform: "none",
               fontWeight: 600,
               boxShadow: "none",
+              borderRadius: "8px",
             }}
           >
             Clear All

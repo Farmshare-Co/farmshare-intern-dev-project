@@ -616,10 +616,13 @@ export default function Comparisons() {
         onClose={() => setAdvancedSettingsOpen(false)}
         maxWidth="sm"
         fullWidth
+        sx={{
+          "& .MuiPaper-root": {
+            borderRadius: 3,
+          },
+        }}
       >
-        <DialogTitle sx={{ fontFamily: "roca" }} variant="h5">
-          Advanced Settings
-        </DialogTitle>
+        <DialogTitle sx={{ fontFamily: "roca" }}>Advanced Settings</DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", gap: 2, mt: 2, flexDirection: "row" }}>
             <TextField
@@ -631,6 +634,30 @@ export default function Comparisons() {
               slotProps={{
                 htmlInput: { min: 1, max: 480 },
               }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "#fafafa",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmOrange.main",
+                    borderWidth: 2,
+                  },
+                  "&.Mui-focused": {
+                    backgroundColor: "#fff",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmGreen.main",
+                    borderWidth: 2,
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  fontWeight: 500,
+                  "&.Mui-focused": {
+                    color: "farmGreen.main",
+                    fontWeight: 600,
+                  },
+                },
+              }}
             />
             <TextField
               fullWidth
@@ -641,11 +668,47 @@ export default function Comparisons() {
               slotProps={{
                 htmlInput: { min: 1, max: 200 },
               }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  backgroundColor: "#fafafa",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmOrange.main",
+                    borderWidth: 2,
+                  },
+                  "&.Mui-focused": {
+                    backgroundColor: "#fff",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "farmGreen.main",
+                    borderWidth: 2,
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  fontWeight: 500,
+                  "&.Mui-focused": {
+                    color: "farmGreen.main",
+                    fontWeight: 600,
+                  },
+                },
+              }}
             />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setAdvancedSettingsOpen(false)}>Close</Button>
+          <Button
+            onClick={() => setAdvancedSettingsOpen(false)}
+            color="error"
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              boxShadow: "none",
+              borderRadius: "8px",
+            }}
+          >
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
 
