@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_VERCEL": "true"
+  },
+  "build": {
+    "env": {
+      "VITE_VERCEL": "true"
+    }
+  }
+}

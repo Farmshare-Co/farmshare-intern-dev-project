@@ -7,7 +7,7 @@ import type { AnimalData } from "../types";
  * @returns Number of animal heads (floored to whole number)
  */
 export function calculateHeads(totalWeight: number, avgWeight: number): number {
-  return Math.floor(totalWeight / avgWeight) - 1;
+  return Math.floor(totalWeight / avgWeight);
 }
 
 /**
@@ -20,7 +20,7 @@ export function calculateHeads(totalWeight: number, avgWeight: number): number {
 export function calculateLaborValue(
   heads: number,
   timePerAnimal: number,
-  hourlyWage: number,
+  hourlyWage: number
 ): number {
   const timeInHours = (heads * timePerAnimal) / 60;
   return timeInHours * hourlyWage;
@@ -49,12 +49,12 @@ export function calculateTotalHeads(animals: AnimalData[]): number {
 export function calculateTotalLaborValue(
   animals: AnimalData[],
   timePerAnimal: number,
-  hourlyWage: number,
+  hourlyWage: number
 ): number {
   return animals.reduce((total, animal) => {
     const heads = calculateHeads(
       animal.totalHangingWeight,
-      animal.avgHangingWeight,
+      animal.avgHangingWeight
     );
     return total + calculateLaborValue(heads, timePerAnimal, hourlyWage);
   }, 0);
