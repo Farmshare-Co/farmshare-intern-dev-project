@@ -26,6 +26,7 @@ import { FarmContext } from "../context/FarmContext";
 import SpeciesMixComparison from "../components/SpeciesMixComparison";
 import BeforeAfterComparison from "../components/BeforeAfterComparison";
 import Empty from "../components/Empty";
+import CustomButton from "../components/ui/CustomButton";
 
 export default function Comparisons() {
   const {
@@ -128,54 +129,20 @@ export default function Comparisons() {
             width: { xs: "100%", sm: "auto" },
           }}
         >
-          <Button
-            variant="contained"
+          <CustomButton
+            variant="green"
             onClick={() => setComparisonType("speciesMix")}
-            sx={{
-              backgroundColor: "farmGreen.main",
-              color: "#fff",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
-              textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: { xs: "0.875rem", sm: "1rem" },
-              opacity: comparisonType === "speciesMix" ? 1 : 0.6,
-              "&:hover": {
-                backgroundColor: "farmGreen.main",
-                boxShadow: "none",
-                opacity: 1,
-              },
-            }}
+            active={comparisonType === "speciesMix"}
           >
             Species Mix
-          </Button>
-          <Button
-            variant="contained"
+          </CustomButton>
+          <CustomButton
+            variant="orange"
             onClick={() => setComparisonType("beforeAfter")}
-            sx={{
-              backgroundColor: "farmOrange.main",
-              color: "#fff",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
-              textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: { xs: "0.875rem", sm: "1rem" },
-              opacity: comparisonType === "beforeAfter" ? 1 : 0.6,
-              "&:hover": {
-                backgroundColor: "farmOrange.main",
-                boxShadow: "none",
-                opacity: 1,
-              },
-            }}
+            active={comparisonType === "beforeAfter"}
           >
             Before/After
-          </Button>
+          </CustomButton>
         </Box>
       </Box>
 
@@ -705,14 +672,8 @@ export default function Comparisons() {
             onClick={() => setClearDialogOpen(false)}
             sx={{
               color: "farmGreen.main",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
               textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: "0.875rem",
+              fontWeight: 600,
             }}
           >
             Cancel
@@ -722,15 +683,9 @@ export default function Comparisons() {
             color="error"
             variant="contained"
             sx={{
-              color: "#fff",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
               textTransform: "none",
+              fontWeight: 600,
               boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: "0.875rem",
             }}
           >
             Clear All

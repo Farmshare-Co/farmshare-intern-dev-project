@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
+import CustomButton from "./ui/CustomButton";
 
 interface EmptyProps {
   heading: string;
@@ -69,30 +70,11 @@ const Empty = ({ heading, description, btnLink, btnText }: EmptyProps) => {
           {description}
         </Typography>
 
-        <Button
-          variant="contained"
-          onClick={() => navigate(`/${btnLink}`)}
-          sx={{
-            backgroundColor: "farmOrange.main",
-            color: "#fff",
-            paddingX: { xs: 2, sm: 3 },
-            paddingY: 1,
-            borderRadius: 2,
-            fontWeight: 600,
-            textTransform: "none",
-            boxShadow: "none",
-            mt: 3,
-            width: { xs: "100%", sm: "auto" },
-            fontSize: { xs: "0.875rem", sm: "1rem" },
-            "&:hover": {
-              backgroundColor: "farmOrange.main",
-              boxShadow: "none",
-              opacity: 1,
-            },
-          }}
-        >
-          {btnText}
-        </Button>
+        <Box sx={{ mt: 3, width: { xs: "100%", sm: "auto" } }}>
+          <CustomButton variant="orange" onClick={() => navigate(`/${btnLink}`)}>
+            {btnText}
+          </CustomButton>
+        </Box>
       </Box>
     </Box>
   );

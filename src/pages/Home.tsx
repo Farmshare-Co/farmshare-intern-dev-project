@@ -1,8 +1,9 @@
-import { Box, Typography, Card, CardContent, Button } from "@mui/material";
+import { Box, Typography, Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import CustomButton from "../components/ui/CustomButton";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -136,23 +137,13 @@ export default function Home() {
                   {feature.description}
                 </Typography>
               </Box>
-              <Button
-                variant="contained"
+              <CustomButton
+                variant="orange"
                 fullWidth
-                color="farmGreen"
-                sx={{
-                  boxShadow: "none",
-                  backgroundColor: "farmOrange.main",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  py: { xs: 1, sm: 1.25 },
-                  fontSize: { xs: "0.875rem", sm: "1rem" },
-                }}
                 onClick={() => navigate(feature.path)}
               >
                 Get Started
-              </Button>
+              </CustomButton>
             </CardContent>
           </Card>
         ))}

@@ -44,6 +44,7 @@ import {
 import { exportCSV } from "../utils/exportCSV";
 import { exportPDF } from "../utils/exportPDF";
 import { FarmContext } from "../context/FarmContext";
+import CustomButton from "../components/ui/CustomButton";
 // import BeforeAfterComparison from "../components/BeforeAfterComparison";
 
 export default function Calculator() {
@@ -441,30 +442,12 @@ export default function Calculator() {
             flexDirection: { xs: "column", sm: "row" },
           }}
         >
-          <Button
-            variant="outlined"
-            onClick={handleExportCSV}
-            sx={{
-              textTransform: "none",
-              borderRadius: 2,
-              fontWeight: 600,
-              width: { xs: "100%", sm: "auto" },
-            }}
-          >
+          <CustomButton variant="outlined" onClick={handleExportCSV} size="small">
             Export CSV
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleExportPDF}
-            sx={{
-              textTransform: "none",
-              borderRadius: 2,
-              fontWeight: 600,
-              width: { xs: "100%", sm: "auto" },
-            }}
-          >
+          </CustomButton>
+          <CustomButton variant="outlined" onClick={handleExportPDF} size="small">
             Export PDF
-          </Button>
+          </CustomButton>
         </Box>
       </Box>
 
@@ -511,45 +494,18 @@ export default function Calculator() {
               border: { xs: "1px dashed #e0e0e0", lg: "none" },
             }}
           >
-            <Button
-              variant="contained"
+            <CustomButton
+              variant="green"
               startIcon={<SaveIcon />}
               onClick={() => setSavePresetDialogOpen(true)}
-              sx={{
-                textTransform: "none",
-                borderRadius: 2,
-                fontWeight: 600,
-                backgroundColor: "farmGreen.main",
-                boxShadow: "none",
-                width: { xs: "100%", sm: "auto" },
-                "&:hover": {
-                  backgroundColor: "farmGreen.main",
-                  boxShadow: "none",
-                  opacity: 0.9,
-                },
-              }}
+              size="small"
             >
               Save
-            </Button>
+            </CustomButton>
 
-            <Button
-              variant="outlined"
-              onClick={handleClearAll}
-              sx={{
-                textTransform: "none",
-                borderRadius: 2,
-                fontWeight: 600,
-                borderColor: "#e0e0e0",
-                color: "text.secondary",
-                width: { xs: "100%", sm: "auto" },
-                "&:hover": {
-                  borderColor: "farmOrange.main",
-                  backgroundColor: "rgba(255, 124, 1, 0.05)",
-                },
-              }}
-            >
+            <CustomButton variant="outlined" onClick={handleClearAll} size="small">
               Clear All
-            </Button>
+            </CustomButton>
           </Box>
         </Box>
 
@@ -1240,54 +1196,20 @@ export default function Calculator() {
               width: { xs: "100%", sm: "auto" },
             }}
           >
-            <Button
-              variant="contained"
+            <CustomButton
+              variant="green"
               onClick={() => setViewMode("annual")}
-              sx={{
-                backgroundColor: "farmGreen.main",
-                color: "#fff",
-                paddingX: { xs: 2, sm: 3 },
-                paddingY: 1,
-                borderRadius: 2,
-                fontWeight: 600,
-                textTransform: "none",
-                boxShadow: "none",
-                fontSize: { xs: "0.875rem", sm: "1rem" },
-                width: { xs: "100%", sm: "auto" },
-                opacity: viewMode === "annual" ? 1 : 0.6,
-                "&:hover": {
-                  backgroundColor: "farmGreen.main",
-                  boxShadow: "none",
-                  opacity: 1,
-                },
-              }}
+              active={viewMode === "annual"}
             >
               Annual
-            </Button>
-            <Button
-              variant="contained"
+            </CustomButton>
+            <CustomButton
+              variant="orange"
               onClick={() => setViewMode("monthly")}
-              sx={{
-                backgroundColor: "farmOrange.main",
-                color: "#fff",
-                paddingX: { xs: 2, sm: 3 },
-                paddingY: 1,
-                borderRadius: 2,
-                fontWeight: 600,
-                textTransform: "none",
-                boxShadow: "none",
-                fontSize: { xs: "0.875rem", sm: "1rem" },
-                width: { xs: "100%", sm: "auto" },
-                opacity: viewMode === "monthly" ? 1 : 0.6,
-                "&:hover": {
-                  backgroundColor: "farmOrange.main",
-                  boxShadow: "none",
-                  opacity: 1,
-                },
-              }}
+              active={viewMode === "monthly"}
             >
               Monthly
-            </Button>
+            </CustomButton>
           </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
@@ -1426,14 +1348,8 @@ export default function Calculator() {
             onClick={() => setClearDialogOpen(false)}
             sx={{
               color: "farmGreen.main",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
               textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: "0.875rem",
+              fontWeight: 600,
             }}
           >
             Cancel
@@ -1443,15 +1359,9 @@ export default function Calculator() {
             color="error"
             variant="contained"
             sx={{
-              color: "#fff",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
               textTransform: "none",
+              fontWeight: 600,
               boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: "0.875rem",
             }}
           >
             Clear All
@@ -1522,36 +1432,15 @@ export default function Calculator() {
             }}
             sx={{
               color: "farmGreen.main",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
               textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: "0.875rem",
+              fontWeight: 600,
             }}
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSavePreset}
-            variant="contained"
-            sx={{
-              color: "#fff",
-              bgcolor: "farmOrange.main",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
-              textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: "0.875rem",
-            }}
-          >
+          <CustomButton variant="orange" onClick={handleSavePreset}>
             Save Preset
-          </Button>
+          </CustomButton>
         </DialogActions>
       </Dialog>
 

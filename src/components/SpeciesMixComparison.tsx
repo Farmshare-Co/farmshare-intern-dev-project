@@ -8,12 +8,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
 } from "@mui/material";
 import type { EAnimalSpecies } from "../types";
 import { AVG_HANGING_WEIGHTS } from "../types";
 import { calculateHeads, calculateLaborValue } from "../utils/calculations";
 import { COST_PER_LB } from "../utils/statics";
+import CustomButton from "./ui/CustomButton";
 
 interface ScenarioData {
   name: string;
@@ -107,29 +107,9 @@ export default function SpeciesMixComparison({
         </Typography>
 
         {onSettingsClick && (
-          <Button
-            variant="contained"
-            onClick={onSettingsClick}
-            sx={{
-              backgroundColor: "farmGreen.main",
-              color: "#fff",
-              paddingX: { xs: 2, sm: 3 },
-              paddingY: 1,
-              borderRadius: 2,
-              fontWeight: 600,
-              textTransform: "none",
-              boxShadow: "none",
-              width: { xs: "100%", sm: "auto" },
-              fontSize: { xs: "0.875rem", sm: "1rem" },
-              "&:hover": {
-                backgroundColor: "farmGreen.main",
-                boxShadow: "none",
-                opacity: 1,
-              },
-            }}
-          >
+          <CustomButton variant="green" onClick={onSettingsClick}>
             Settings
-          </Button>
+          </CustomButton>
         )}
       </Box>
 
