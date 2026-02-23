@@ -470,6 +470,7 @@
 .chart-card .recharts-cartesian-grid line {
   stroke: rgba(255, 255, 255, 0.1);
 }
+
 .summary__cmp-charts {
   display: flex;
   flex-direction: column;
