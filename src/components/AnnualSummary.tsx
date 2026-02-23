@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { EAnimalSpecies, type BreakdownRow } from "../utils/types";
 import { fmt, fmtInt, capitalize } from "../utils/formatters";
 import { exportCSV, exportPDF, exportComparisonCSV, exportComparisonPDF, type ExportRow } from "../utils/export";
 import { useSnackbar } from "../contexts/SnackbarContext";
+import { SummaryCharts } from "./Charts";
+import { captureChartsFromContainer } from "../utils/chartCapture";
 
 function toExportRows(rows: BreakdownRow[]): ExportRow[] {
   return rows.map((r) => ({ ...r, net: r.savings - r.cost }));
@@ -93,11 +95,14 @@ export default function AnnualSummary({
   const [tab, setTab] = useState<"annual" | "monthly">("annual");
   const m = tab === "monthly" ? 1 / 12 : 1;
 
+  const chartsRefA = useRef<HTMLDivElement>(null);
+  const chartsRefB = useRef<HTMLDivElement>(null);
+
   const { showSnackbar } = useSnackbar();
 
-  const handleExport = (fn: () => void, label: string) => {
+  const handleExport = async (fn: () => Promise<void>, label: string) => {
     try {
-      fn();
+      await fn();
       showSnackbar(`${label} exported successfully`, "success");
     } catch {
       showSnackbar(`Failed to export ${label}. Please try again.`, "error");
@@ -205,9 +210,18 @@ export default function AnnualSummary({
           </div>
         </div>
 
+        <div className="summary__cmp-charts">
+          <SummaryCharts ref={chartsRefA} rows={toExportRows(breakdown)} label={labelA} />
+          <SummaryCharts ref={chartsRefB} rows={toExportRows(breakdownB)} label={labelB} />
+        </div>
+
         <div className="summary__export-actions">
-          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => handleExport(() => exportComparisonCSV(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB), "CSV")}>Export CSV</button>
-          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => handleExport(() => exportComparisonPDF(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB), "PDF")}>Export PDF</button>
+          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => handleExport(async () => { exportComparisonCSV(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB); }, "CSV")}>Export CSV</button>
+          <button className="summary__export-btn" disabled={!hasDataA && !hasDataB} onClick={() => handleExport(async () => {
+            const imgsA = chartsRefA.current ? await captureChartsFromContainer(chartsRefA.current) : [];
+            const imgsB = chartsRefB.current ? await captureChartsFromContainer(chartsRefB.current) : [];
+            exportComparisonPDF(toExportRows(breakdown), labelA, toExportRows(breakdownB), labelB, [...imgsA, ...imgsB]);
+          }, "PDF")}>Export PDF</button>
         </div>
       </div>
     );
@@ -253,9 +267,14 @@ export default function AnnualSummary({
         </div>
       )}
 
+      <SummaryCharts ref={chartsRefA} rows={toExportRows(breakdown)} />
+
       <div className="summary__export-actions">
-        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => handleExport(() => exportCSV(toExportRows(breakdown), labelA), "CSV")}>Export CSV</button>
-        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => handleExport(() => exportPDF(toExportRows(breakdown), labelA), "PDF")}>Export PDF</button>
+        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => handleExport(async () => { exportCSV(toExportRows(breakdown), labelA); }, "CSV")}>Export CSV</button>
+        <button className="summary__export-btn" disabled={!hasDataA} onClick={() => handleExport(async () => {
+          const imgs = chartsRefA.current ? await captureChartsFromContainer(chartsRefA.current) : [];
+          exportPDF(toExportRows(breakdown), labelA, imgs);
+        }, "PDF")}>Export PDF</button>
       </div>
     </div>
   );

@@ -53,9 +53,10 @@ function AppContent() {
   useEffect(() => {
     const el = summaryRef.current;
     if (!el) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => setSummaryFullyVisible(entry.intersectionRatio >= 0.5),
-      { threshold: [0, 0.5] },
+      ([entry]) => setSummaryFullyVisible(entry.intersectionRatio >= 0.2),
+      { threshold: [0,0.2] },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -65,8 +66,8 @@ function AppContent() {
     const el = scenarioBRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setScenarioBVisible(entry.intersectionRatio >= 0.3),
-      { threshold: [0, 0.3] },
+      ([entry]) => setScenarioBVisible(entry.intersectionRatio >= 0.2),
+      { threshold: [0, 0.2] },
     );
     observer.observe(el);
     return () => observer.disconnect();

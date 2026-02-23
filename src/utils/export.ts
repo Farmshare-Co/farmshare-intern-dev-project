@@ -87,6 +87,7 @@ export function exportCSV(
 export function exportPDF(
   rows: ExportRow[],
   scenarioName = "Farmshare Calculator",
+  chartImages?: string[],
 ): void {
   const doc = new jsPDF();
 
@@ -169,7 +170,32 @@ export function exportPDF(
     x += colWidths[i];
   });
 
+  if (chartImages && chartImages.length > 0) {
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.setTextColor(27, 61, 42);
+    doc.text("Charts", 14, 16);
+    renderChartImages(doc, chartImages, 24);
+  }
+
   doc.save(`${scenarioName.replace(/\s+/g, "_")}_projections.pdf`);
+}
+
+function renderChartImages(doc: jsPDF, images: string[], startY: number): void {
+  const imgW = 88;
+  const imgH = 72;
+  const gap = 6;
+  let cx = 14;
+  let cy = startY;
+  images.forEach((img, i) => {
+    doc.addImage(img, "PNG", cx, cy, imgW, imgH);
+    if (i % 2 === 0) {
+      cx += imgW + gap;
+    } else {
+      cx = 14;
+      cy += imgH + gap;
+    }
+  });
 }
 
 function renderScenarioTable(
@@ -244,6 +270,7 @@ export function exportComparisonCSV(
 export function exportComparisonPDF(
   rowsA: ExportRow[], labelA: string,
   rowsB: ExportRow[], labelB: string,
+  chartImages?: string[],
 ): void {
   const doc = new jsPDF();
   const cols = ["Species", "Volume (lbs)", "Heads", "Savings", "Cost", "Net"];
@@ -261,6 +288,14 @@ export function exportComparisonPDF(
   y = renderScenarioTable(doc, rowsA, labelA, y, cols, colWidths);
   if (y > 240) { doc.addPage(); y = 20; }
   renderScenarioTable(doc, rowsB, labelB, y, cols, colWidths);
+
+  if (chartImages && chartImages.length > 0) {
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.setTextColor(27, 61, 42);
+    doc.text("Charts", 14, 16);
+    renderChartImages(doc, chartImages, 24);
+  }
 
   doc.save(`${labelA}_vs_${labelB}_comparison.pdf`.replace(/\s+/g, "_"));
 }

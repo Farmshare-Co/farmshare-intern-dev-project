@@ -436,3 +436,43 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+
+/* Charts */
+.chart-section {
+  margin-top: 24px;
+}
+
+.chart-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px 12px 8px;
+  overflow: visible;
+}
+
+.chart-card__title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: black;
+  margin: 0 0 8px 4px;
+}
+
+.chart-card text,
+.chart-card .recharts-cartesian-axis-tick text,
+.chart-card .recharts-legend-item-text,
+.chart-card .recharts-label,
+.chart-card .recharts-text {
+  fill: #000 !important;
+  color: #000 !important;
+}
+
+.chart-card .recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.summary__cmp-charts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
