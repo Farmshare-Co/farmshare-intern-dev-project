@@ -1,4 +1,4 @@
-import type { AnimalData } from "../types";
+import type { AnimalData } from "./types";
 
 /**
  * Calculate the number of animal heads from total and average hanging weight
