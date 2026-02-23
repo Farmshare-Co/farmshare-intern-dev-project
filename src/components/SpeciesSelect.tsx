@@ -8,8 +8,8 @@ import {
   Select,
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import type { EAnimalSpecies } from "../types";
-import { EAnimalSpecies as AnimalSpecies } from "../types";
+import type { EAnimalSpecies } from "../utils/types";
+import { EAnimalSpecies as AnimalSpecies } from "../utils/types";
 import { capitalize } from "../utils/formatters";
 
 interface SpeciesSelectProps {

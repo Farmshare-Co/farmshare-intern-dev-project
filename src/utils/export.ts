@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
-import type { EAnimalSpecies } from "../types";
-import { AVG_HANGING_WEIGHTS } from "../types";
+import type { EAnimalSpecies } from "./types";
+import { AVG_HANGING_WEIGHTS } from "./types";
 import { calculateHeads, calculateLaborValue } from "./calculations";
 import {fmt, capitalize} from "./formatters";
 

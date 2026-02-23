@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
-import type { EAnimalSpecies } from "../types";
-import { AVG_HANGING_WEIGHTS } from "../types";
+import type { EAnimalSpecies } from "../utils/types";
+import { AVG_HANGING_WEIGHTS } from "../utils/types";
 import { calculateHeads } from "../utils/calculations";
 import { capitalize } from "../utils/formatters";
 

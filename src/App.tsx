@@ -3,15 +3,15 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
-import farmshareTheme from "./theme";
+import farmshareTheme from "./utils/theme";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScenarioPanel from "./components/ScenarioPanel";
 import AnnualSummary from "./components/AnnualSummary";
 import SummaryPreview from "./components/SummaryPreview";
 
-import type { Scenario, ScenarioKey, KeyedSpeciesChangeHandler, KeyedRemoveSpeciesHandler, KeyedVolumeChangeHandler, KeyedClearHandler, BreakdownRow } from "./types";
-import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO, SCENARIO_A, SCENARIO_B } from "./types";
+import type { Scenario, ScenarioKey, KeyedSpeciesChangeHandler, KeyedRemoveSpeciesHandler, KeyedVolumeChangeHandler, KeyedClearHandler, BreakdownRow } from "./utils/types";
+import { AVG_HANGING_WEIGHTS, DEFAULT_SCENARIO, SCENARIO_A, SCENARIO_B } from "./utils/types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
 
 import "./styles/App.css";

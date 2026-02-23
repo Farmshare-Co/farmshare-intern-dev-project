@@ -1,5 +1,5 @@
-import { SPECIES_PRESETS } from "../types";
-import type { PresetConfig } from "../types";
+import { SPECIES_PRESETS } from "../utils/types";
+import type { PresetConfig } from "../utils/types";
 
 interface SpeciesPresetsProps {
   onApply: (preset: PresetConfig) => void;

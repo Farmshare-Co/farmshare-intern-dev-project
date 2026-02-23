@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { EAnimalSpecies, type BreakdownRow } from "./../types";
-import { fmt, fmtInt, capitalize } from "./../utils/formatters";
-import { exportCSV, exportPDF, exportComparisonCSV, exportComparisonPDF, type ExportRow } from "./../utils/export";
+import { EAnimalSpecies, type BreakdownRow } from "../utils/types";
+import { fmt, fmtInt, capitalize } from "../utils/formatters";
+import { exportCSV, exportPDF, exportComparisonCSV, exportComparisonPDF, type ExportRow } from "../utils/export";
 
 function toExportRows(rows: BreakdownRow[]): ExportRow[] {
   return rows.map((r) => ({ ...r, net: r.savings - r.cost }));

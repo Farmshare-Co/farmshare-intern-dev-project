@@ -6,8 +6,8 @@ import SpeciesCard from "./SpeciesCard";
 import AdvancedSettings from "./AdvancedSettings";
 import SpeciesPresets from "./SpeciesPresets";
 
-import type { EAnimalSpecies, PresetConfig, Scenario } from "../types";
-import { MAX_VOLUME_LBS } from "../types";
+import type { EAnimalSpecies, PresetConfig, Scenario } from "../utils/types";
+import { MAX_VOLUME_LBS } from "../utils/types";
 
 interface ScenarioPanelProps {
     label?: string;
