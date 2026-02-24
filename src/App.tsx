@@ -87,10 +87,8 @@ function ScenarioPanel(props: {
   state: ScenarioState;
   setState: React.Dispatch<React.SetStateAction<ScenarioState>>;
   toast: (message: string, severity?: Toast["severity"]) => void;
-  // NOTE: we keep open/close control per panel to avoid double-combobox issues
   speciesOpen: boolean;
   setSpeciesOpen: (open: boolean) => void;
-  // IMPORTANT: keep the Expand IconButton with empty accessible name (tests expect this)
   keepUnnamedExpandButton?: boolean;
 }) {
   const {
@@ -167,7 +165,9 @@ function ScenarioPanel(props: {
 
   const handleRemoveSpecies = (speciesToRemove: EAnimalSpecies) => {
     setState((prev) => {
-      const nextSelected = prev.selectedSpecies.filter((s) => s !== speciesToRemove);
+      const nextSelected = prev.selectedSpecies.filter(
+        (s) => s !== speciesToRemove,
+      );
       const nextVolumes = { ...prev.volumes };
       delete nextVolumes[speciesToRemove];
       return { ...prev, selectedSpecies: nextSelected, volumes: nextVolumes };
@@ -209,7 +209,11 @@ function ScenarioPanel(props: {
     rows.push(["Selected Species Volumes (annual hanging weight lbs)"]);
     rows.push(["Species", "Volume (lbs)", "Avg Hanging Weight (lbs/animal)"]);
     selectedSpecies.forEach((s) => {
-      rows.push([speciesLabel(s), String(volumes[s] ?? ""), String(AVG_HANGING_WEIGHTS[s])]);
+      rows.push([
+        speciesLabel(s),
+        String(volumes[s] ?? ""),
+        String(AVG_HANGING_WEIGHTS[s]),
+      ]);
     });
     rows.push([]);
 
@@ -280,7 +284,11 @@ function ScenarioPanel(props: {
                 variant="contained"
                 onClick={() => applyPreset("beef")}
                 aria-label={`Apply beef-focused preset scenario ${id}`}
-                sx={{ borderRadius: 999, textTransform: "none", fontWeight: 700 }}
+                sx={{
+                  borderRadius: 999,
+                  textTransform: "none",
+                  fontWeight: 700,
+                }}
               >
                 Beef-focused
               </Button>
@@ -289,7 +297,11 @@ function ScenarioPanel(props: {
               variant="contained"
               onClick={() => applyPreset("mixed")}
               aria-label={`Apply mixed preset scenario ${id}`}
-              sx={{ borderRadius: 999, textTransform: "none", fontWeight: 700 }}
+              sx={{
+                borderRadius: 999,
+                textTransform: "none",
+                fontWeight: 700,
+              }}
             >
               Mixed
             </Button>
@@ -297,7 +309,11 @@ function ScenarioPanel(props: {
               variant="contained"
               onClick={() => applyPreset("small-ruminants")}
               aria-label={`Apply small ruminants preset scenario ${id}`}
-              sx={{ borderRadius: 999, textTransform: "none", fontWeight: 700 }}
+              sx={{
+                borderRadius: 999,
+                textTransform: "none",
+                fontWeight: 700,
+              }}
             >
               Lamb + Goat
             </Button>
@@ -310,7 +326,11 @@ function ScenarioPanel(props: {
               variant="outlined"
               onClick={exportCsv}
               aria-label={`Export CSV scenario ${id}`}
-              sx={{ borderRadius: 999, textTransform: "none", fontWeight: 700 }}
+              sx={{
+                borderRadius: 999,
+                textTransform: "none",
+                fontWeight: 700,
+              }}
             >
               Export CSV
             </Button>
@@ -389,7 +409,10 @@ function ScenarioPanel(props: {
                   }}
                 >
                   <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 1 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: 800, mb: 1 }}
+                    >
                       {speciesLabel(species)}
                       <Typography
                         component="span"
@@ -403,10 +426,12 @@ function ScenarioPanel(props: {
 
                     <TextField
                       fullWidth
-                      label="Total Annual Hanging Weight (lbs)"
+                      label="Total Annual Hanging Weight (lbs)" // IMPORTANT: tests rely on this label
                       type="number"
                       value={volumes[species] || ""}
-                      onChange={(e) => handleVolumeChange(species, e.target.value)}
+                      onChange={(e) =>
+                        handleVolumeChange(species, e.target.value)
+                      }
                       inputProps={{ min: 0, max: MAX_LBS_PER_SPECIES }}
                       helperText="Enter your annual hanging weight in pounds."
                     />
@@ -438,7 +463,9 @@ function ScenarioPanel(props: {
             onClick={() =>
               setState((prev) => ({ ...prev, showAdvanced: !prev.showAdvanced }))
             }
-            aria-label={keepUnnamedExpandButton ? undefined : `Toggle advanced ${id}`}
+            aria-label={
+              keepUnnamedExpandButton ? undefined : `Toggle advanced ${id}`
+            }
             sx={{
               transform: state.showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
               transition: "transform 0.3s",
@@ -477,7 +504,11 @@ function ScenarioPanel(props: {
               onChange={(e) =>
                 setState((prev) => ({
                   ...prev,
-                  hourlyWage: clampNumberString(e.target.value, 0, MAX_HOURLY_WAGE),
+                  hourlyWage: clampNumberString(
+                    e.target.value,
+                    0,
+                    MAX_HOURLY_WAGE,
+                  ),
                 }))
               }
               sx={{ mb: 1 }}
@@ -532,7 +563,11 @@ function ScenarioPanel(props: {
               borderColor: "divider",
             }}
           >
-            <Typography variant="body1" color="success.main" sx={{ fontWeight: 800 }}>
+            <Typography
+              variant="body1"
+              color="success.main"
+              sx={{ fontWeight: 800 }}
+            >
               Total Annual Savings:
             </Typography>
             <Typography variant="h6" fontWeight="bold" color="success.main">
@@ -545,7 +580,11 @@ function ScenarioPanel(props: {
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-            <Typography variant="body1" color="error.main" sx={{ fontWeight: 800 }}>
+            <Typography
+              variant="body1"
+              color="error.main"
+              sx={{ fontWeight: 800 }}
+            >
               Total Annual Cost:
             </Typography>
             <Typography variant="h6" fontWeight="bold" color="error.main">
@@ -753,7 +792,11 @@ function ScenarioPanel(props: {
                   })}
                 </Typography>
 
-                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.75 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ mt: 0.75 }}
+                >
                   {annualNet >= 0
                     ? "You’re ahead after platform cost."
                     : "Cost exceeds savings."}
@@ -767,22 +810,59 @@ function ScenarioPanel(props: {
   );
 }
 
-function App({ disablePersistence }: { disablePersistence?: boolean } = {}) {
-  const isTestMode =
-    typeof import.meta !== "undefined" &&
-    (import.meta as any).env &&
-    (import.meta as any).env.MODE === "test";
+function App(
+  { disablePersistence = false }: { disablePersistence?: boolean } = {},
+) {
+  // Auto-disable persistence during tests so localStorage cannot break label/flow tests.
+  const IS_TEST =
+  (import.meta as any)?.env?.MODE === "test" ||
+  (import.meta as any)?.env?.VITEST === true;
 
-  // default: disable persistence in test mode (keeps current tests stable)
-  const persistenceDisabled = disablePersistence ?? isTestMode;
+  const persistenceOff = disablePersistence || IS_TEST;
 
-  const hasHydratedRef = useRef(false);
-  const [comparisonEnabled, setComparisonEnabled] = useState(false);
+  // Synchronous hydration to avoid “everything becomes 0 on refresh”
+  const readPersisted = () => {
+    const base = {
+      comparisonEnabled: false,
+      scenarioA: defaultScenarioState(),
+      scenarioB: defaultScenarioState(),
+    };
 
-  const [scenarioA, setScenarioA] = useState<ScenarioState>(defaultScenarioState);
-  const [scenarioB, setScenarioB] = useState<ScenarioState>(defaultScenarioState);
+    if (persistenceOff) return base;
 
-  // Keep each dropdown controlled independently
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return base;
+
+      const parsed = JSON.parse(raw);
+
+      return {
+        comparisonEnabled:
+          typeof parsed?.comparisonEnabled === "boolean"
+            ? parsed.comparisonEnabled
+            : base.comparisonEnabled,
+        scenarioA: parsed?.scenarioA
+          ? ({ ...base.scenarioA, ...parsed.scenarioA } as ScenarioState)
+          : base.scenarioA,
+        scenarioB: parsed?.scenarioB
+          ? ({ ...base.scenarioB, ...parsed.scenarioB } as ScenarioState)
+          : base.scenarioB,
+      };
+    } catch {
+      return base;
+    }
+  };
+
+  const initial = useMemo(readPersisted, [persistenceOff]);
+
+  const hasHydratedRef = useRef(true);
+
+  const [comparisonEnabled, setComparisonEnabled] = useState<boolean>(
+    initial.comparisonEnabled,
+  );
+  const [scenarioA, setScenarioA] = useState<ScenarioState>(initial.scenarioA);
+  const [scenarioB, setScenarioB] = useState<ScenarioState>(initial.scenarioB);
+
   const [speciesOpenA, setSpeciesOpenA] = useState(false);
   const [speciesOpenB, setSpeciesOpenB] = useState(false);
 
@@ -803,37 +883,9 @@ function App({ disablePersistence }: { disablePersistence?: boolean } = {}) {
     showToast("Cleared all selections and reset inputs.", "success");
   };
 
-  // LOAD from localStorage (runs once on mount)
+  // SAVE to localStorage
   useEffect(() => {
-    if (persistenceDisabled) return;
-
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-
-        if (typeof parsed.comparisonEnabled === "boolean") {
-          setComparisonEnabled(parsed.comparisonEnabled);
-        }
-
-        if (parsed.scenarioA) {
-          setScenarioA((prev) => ({ ...prev, ...parsed.scenarioA }));
-        }
-
-        if (parsed.scenarioB) {
-          setScenarioB((prev) => ({ ...prev, ...parsed.scenarioB }));
-        }
-      } catch {
-        // ignore corrupted storage
-      }
-    }
-
-    hasHydratedRef.current = true;
-  }, [persistenceDisabled]);
-
-  // SAVE to localStorage (only AFTER hydration)
-  useEffect(() => {
-    if (persistenceDisabled) return;
+    if (persistenceOff) return;
     if (!hasHydratedRef.current) return;
 
     localStorage.setItem(
@@ -844,7 +896,7 @@ function App({ disablePersistence }: { disablePersistence?: boolean } = {}) {
         scenarioB,
       }),
     );
-  }, [persistenceDisabled, comparisonEnabled, scenarioA, scenarioB]);
+  }, [persistenceOff, comparisonEnabled, scenarioA, scenarioB]);
 
   const pageSx = useMemo(
     () => ({
@@ -874,8 +926,9 @@ function App({ disablePersistence }: { disablePersistence?: boolean } = {}) {
         </Typography>
 
         <Typography variant="body2" sx={{ mb: 2, opacity: 0.85, maxWidth: 760 }}>
-          Pick species, enter annual hanging weight, and see savings vs platform cost.
-          Now includes charts, monthly breakdown, comparison mode, and autosave.
+          Pick species, enter annual hanging weight, and see savings vs platform
+          cost. Now includes charts, monthly breakdown, comparison mode, and
+          autosave.
         </Typography>
 
         <Stack
