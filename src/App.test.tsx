@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import App from "./App";
 
 describe("Meat Processor Value Calculator", () => {
@@ -14,7 +14,7 @@ describe("Meat Processor Value Calculator", () => {
     render(<App />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByText("Annual Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Monthly Savings:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
   });
 
@@ -33,7 +33,7 @@ describe("Meat Processor Value Calculator", () => {
 
     // Check if volume input appears
     expect(
-      screen.getByText(/Monthly Processing Volume by Species/i), // Wrong text!
+      screen.getByText(/Annual Processing Volume by Species/i), // Wrong text!
     ).toBeInTheDocument();
   });
 
@@ -54,7 +54,7 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Total Processing Volume:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Volume:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Net Annual Benefit:")).toBeInTheDocument();
   });
 
@@ -118,5 +118,105 @@ describe("Meat Processor Value Calculator", () => {
     expect(
       screen.queryByText("Beef", { selector: ".MuiChip-label" }),
     ).not.toBeInTheDocument();
+  });
+});
+
+function openAndSelectSpecies(label: RegExp) {
+  const selectElement = screen.getByRole("combobox");
+  fireEvent.mouseDown(selectElement);
+  const option = screen.getByRole("option", { name: label });
+  fireEvent.click(option);
+}
+
+describe("Additional behavior tests", () => {
+  beforeEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it("Clear all resets selected species and volumes", () => {
+    render(<App />);
+
+    // select beef
+    openAndSelectSpecies(/Beef/i);
+
+    // volume input should exist now
+    const volumeInput = screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i);
+    fireEvent.change(volumeInput, { target: { value: "1000" } });
+
+    // Clear all
+    const clearAll = screen.getByRole("button", { name: /clear all/i });
+    fireEvent.click(clearAll);
+
+    // chip should be gone
+    expect(
+      screen.queryByText("Beef", { selector: ".MuiChip-label" }),
+    ).not.toBeInTheDocument();
+
+    // annual volume should be 0 lbs
+    expect(screen.getByText(/0 lbs/i)).toBeInTheDocument();
+  });
+
+  it("removes an individual species via chip delete button", () => {
+    render(<App />);
+
+    openAndSelectSpecies(/Beef/i);
+
+    // There should be a delete icon button for the chip
+    const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+    expect(deleteButtons.length).toBeGreaterThan(0);
+
+    fireEvent.click(deleteButtons[0]);
+
+    expect(
+      screen.queryByText("Beef", { selector: ".MuiChip-label" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("clamps negative volume input to 0 (input validation)", () => {
+    render(<App />);
+    openAndSelectSpecies(/Beef/i);
+
+    const volumeInput = screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i);
+    fireEvent.change(volumeInput, { target: { value: "-50" } });
+
+    // If you clamp, it should become "0"
+    expect(volumeInput).toHaveValue(0);
+  });
+
+  it("allows toggling comparison mode on/off", () => {
+    render(<App />);
+
+    const toggle = screen.getByRole("button", { name: /toggle comparison mode/i });
+
+    // start off
+    expect(screen.getByText(/Comparison: OFF/i)).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.getByText(/Comparison: ON/i)).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.getByText(/Comparison: OFF/i)).toBeInTheDocument();
+  });
+
+  it("exports CSV when clicking Export CSV (creates download link)", () => {
+    const createElementSpy = vi.spyOn(document, "createElement");
+    const appendSpy = vi.spyOn(document.body, "appendChild");
+    const removeSpy = vi.spyOn(HTMLElement.prototype, "remove");
+
+    // mock click so it doesn't actually try to navigate
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    render(<App />);
+
+    // In single scenario mode, there should be an Export CSV button (Scenario A)
+    const exportBtn = screen.getByRole("button", { name: /export csv scenario a/i });
+    fireEvent.click(exportBtn);
+
+    expect(createElementSpy).toHaveBeenCalledWith("a");
+    expect(appendSpy).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    expect(removeSpy).toHaveBeenCalled();
   });
 });
