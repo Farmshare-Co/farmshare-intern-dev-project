@@ -426,7 +426,7 @@ function ScenarioPanel(props: {
 
                     <TextField
                       fullWidth
-                      label="Total Annual Hanging Weight (lbs)" // IMPORTANT: tests rely on this label
+                      label="Total Annual Hanging Weight (lbs)" 
                       type="number"
                       value={volumes[species] || ""}
                       onChange={(e) =>
