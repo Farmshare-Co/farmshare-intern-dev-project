@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import App from "./App";
 
 describe("Meat Processor Value Calculator", () => {
@@ -118,5 +118,159 @@ describe("Meat Processor Value Calculator", () => {
     expect(
       screen.queryByText("Beef", { selector: ".MuiChip-label" }),
     ).not.toBeInTheDocument();
+  });
+});
+
+function openAndSelectSpecies(label: RegExp) {
+  const selectElement = screen.getByRole("combobox");
+  fireEvent.mouseDown(selectElement);
+  const option = screen.getByRole("option", { name: label });
+  fireEvent.click(option);
+}
+
+describe("Additional behavior tests", () => {
+  beforeEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it("Clear all resets selected species and volumes", () => {
+    render(<App />);
+
+    // select beef
+    openAndSelectSpecies(/Beef/i);
+
+    // volume input should exist now
+    const volumeInput = screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i);
+    fireEvent.change(volumeInput, { target: { value: "1000" } });
+
+    // Clear all
+    const clearAll = screen.getByRole("button", { name: /clear all/i });
+    fireEvent.click(clearAll);
+
+    // chip should be gone
+    expect(
+      screen.queryByText("Beef", { selector: ".MuiChip-label" }),
+    ).not.toBeInTheDocument();
+
+    // annual volume should be 0 lbs
+    expect(screen.getByText(/0 lbs/i)).toBeInTheDocument();
+  });
+
+  it("removes an individual species via chip delete button", () => {
+    render(<App />);
+
+    openAndSelectSpecies(/Beef/i);
+
+    // There should be a delete icon button for the chip
+    const deleteButtons = screen.getAllByRole("button", { name: /delete/i });
+    expect(deleteButtons.length).toBeGreaterThan(0);
+
+    fireEvent.click(deleteButtons[0]);
+
+    expect(
+      screen.queryByText("Beef", { selector: ".MuiChip-label" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("clamps negative volume input to 0 (input validation)", () => {
+    render(<App />);
+    openAndSelectSpecies(/Beef/i);
+
+    const volumeInput = screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i);
+    fireEvent.change(volumeInput, { target: { value: "-50" } });
+
+    // If you clamp, it should become "0"
+    expect(volumeInput).toHaveValue(0);
+  });
+
+  it("allows toggling comparison mode on/off", () => {
+    render(<App />);
+
+    const toggle = screen.getByRole("button", { name: /toggle comparison mode/i });
+
+    // start off
+    expect(screen.getByText(/Comparison: OFF/i)).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.getByText(/Comparison: ON/i)).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+    expect(screen.getByText(/Comparison: OFF/i)).toBeInTheDocument();
+  });
+
+  it("exports CSV when clicking Export CSV (creates download link)", () => {
+    const createElementSpy = vi.spyOn(document, "createElement");
+    const appendSpy = vi.spyOn(document.body, "appendChild");
+    const removeSpy = vi.spyOn(HTMLElement.prototype, "remove");
+
+    // mock click so it doesn't actually try to navigate
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    render(<App />);
+
+    // In single scenario mode, there should be an Export CSV button (Scenario A)
+    const exportBtn = screen.getByRole("button", { name: /export csv scenario a/i });
+    fireEvent.click(exportBtn);
+
+    expect(createElementSpy).toHaveBeenCalledWith("a");
+    expect(appendSpy).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    expect(removeSpy).toHaveBeenCalled();
+  });
+});
+
+
+describe("Persistence (localStorage)", () => {
+  beforeEach(() => {
+    cleanup();
+    localStorage.clear();
+  });
+
+  it("saves and restores Scenario A state after remount (acts like refresh)", () => {
+    // 1) Mount with persistence ENABLED (override)
+    const first = render(<App disablePersistence={false} />);
+
+    // select beef
+    openAndSelectSpecies(/Beef/i);
+
+    // set volume
+    const volumeInput = screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i);
+    fireEvent.change(volumeInput, { target: { value: "1000" } });
+
+    // sanity check on first mount
+    expect(screen.getByText("Beef", { selector: ".MuiChip-label" })).toBeInTheDocument();
+    expect(volumeInput).toHaveValue(1000);
+
+    // 2) Unmount (simulate refresh)
+    first.unmount();
+
+    // 3) Remount with persistence enabled
+    render(<App disablePersistence={false} />);
+
+    // chip should still exist
+    expect(screen.getByText("Beef", { selector: ".MuiChip-label" })).toBeInTheDocument();
+
+    // volume input should still be there and still be 1000
+    const restoredVolumeInput = screen.getByLabelText(/Total Annual Hanging Weight \(lbs\)/i);
+    expect(restoredVolumeInput).toHaveValue(1000);
+  });
+
+  it("persists comparison mode enabled across remount", () => {
+    const first = render(<App disablePersistence={false} />);
+
+    const toggle = screen.getByRole("button", { name: /toggle comparison mode/i });
+    fireEvent.click(toggle);
+
+    // it should now show ON
+    expect(screen.getByText(/Comparison: ON/i)).toBeInTheDocument();
+
+    first.unmount();
+
+    render(<App disablePersistence={false} />);
+
+    // should restore ON after remount
+    expect(screen.getByText(/Comparison: ON/i)).toBeInTheDocument();
   });
 });

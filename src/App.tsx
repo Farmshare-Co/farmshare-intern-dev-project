@@ -767,15 +767,18 @@ function ScenarioPanel(props: {
   );
 }
 
-function App() {
-  const IS_TEST =
+function App({ disablePersistence }: { disablePersistence?: boolean } = {}) {
+  const isTestMode =
     typeof import.meta !== "undefined" &&
     (import.meta as any).env &&
     (import.meta as any).env.MODE === "test";
 
+  // default: disable persistence in test mode (keeps current tests stable)
+  const persistenceDisabled = disablePersistence ?? isTestMode;
+
   const hasHydratedRef = useRef(false);
   const [comparisonEnabled, setComparisonEnabled] = useState(false);
-  const skipNextSaveRef = useRef(true);
+
   const [scenarioA, setScenarioA] = useState<ScenarioState>(defaultScenarioState);
   const [scenarioB, setScenarioB] = useState<ScenarioState>(defaultScenarioState);
 
@@ -801,56 +804,47 @@ function App() {
   };
 
   // LOAD from localStorage (runs once on mount)
-useEffect(() => {
-  if (IS_TEST) return;
+  useEffect(() => {
+    if (persistenceDisabled) return;
 
-  skipNextSaveRef.current = true; // IMPORTANT: prevent initial overwrite
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
 
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw);
+        if (typeof parsed.comparisonEnabled === "boolean") {
+          setComparisonEnabled(parsed.comparisonEnabled);
+        }
 
-      if (typeof parsed.comparisonEnabled === "boolean") {
-        setComparisonEnabled(parsed.comparisonEnabled);
+        if (parsed.scenarioA) {
+          setScenarioA((prev) => ({ ...prev, ...parsed.scenarioA }));
+        }
+
+        if (parsed.scenarioB) {
+          setScenarioB((prev) => ({ ...prev, ...parsed.scenarioB }));
+        }
+      } catch {
+        // ignore corrupted storage
       }
-
-      if (parsed.scenarioA && typeof parsed.scenarioA === "object") {
-        setScenarioA((prev) => ({ ...prev, ...parsed.scenarioA }));
-      }
-
-      if (parsed.scenarioB && typeof parsed.scenarioB === "object") {
-        setScenarioB((prev) => ({ ...prev, ...parsed.scenarioB }));
-      }
-    } catch {
-      // If storage is corrupted, don't overwrite it immediately with defaults.
-      // We'll simply stop here and only save after user interaction.
     }
-  }
 
-  hasHydratedRef.current = true;
-}, [IS_TEST]);
+    hasHydratedRef.current = true;
+  }, [persistenceDisabled]);
 
-// SAVE to localStorage (only AFTER hydration, and skip the first save)
-useEffect(() => {
-  if (IS_TEST) return;
-  if (!hasHydratedRef.current) return;
+  // SAVE to localStorage (only AFTER hydration)
+  useEffect(() => {
+    if (persistenceDisabled) return;
+    if (!hasHydratedRef.current) return;
 
-  // IMPORTANT: this prevents the "refresh -> everything becomes 0" bug
-  if (skipNextSaveRef.current) {
-    skipNextSaveRef.current = false;
-    return;
-  }
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      comparisonEnabled,
-      scenarioA,
-      scenarioB,
-    }),
-  );
-}, [IS_TEST, comparisonEnabled, scenarioA, scenarioB]);
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        comparisonEnabled,
+        scenarioA,
+        scenarioB,
+      }),
+    );
+  }, [persistenceDisabled, comparisonEnabled, scenarioA, scenarioB]);
 
   const pageSx = useMemo(
     () => ({
