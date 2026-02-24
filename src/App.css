@@ -1,9 +1,207 @@
-/* Minimal styling - interns should improve this */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+:root {
+  --bg: #fff7ed;          /* warm cream */
+  --panel: #ffffff;       /* card base */
+  --ink: #1f2937;         /* slate-ish */
+  --muted: #6b7280;       /* gray */
+  --sage: #2f6f5e;        /* green */
+  --sage-2: #3b8a75;
+  --wheat: #f2c879;       /* warm accent */
+  --barn: #c2410c;        /* orange/red */
+  --shadow: 0 14px 35px rgba(31, 41, 55, 0.12);
+  --shadow-soft: 0 8px 18px rgba(31, 41, 55, 0.10);
+  --radius: 16px;
 }
 
-#root {
-  padding: 20px;
+body {
+  background: radial-gradient(1200px 600px at 20% 10%, #fff0d6 0%, transparent 60%),
+              radial-gradient(1200px 600px at 90% 30%, #e8fff3 0%, transparent 60%),
+              var(--bg);
+}
+
+/* Main container */
+.MuiContainer-root {
+  max-width: 980px !important;
+}
+
+/* Title */
+h1.MuiTypography-h4 {
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  font-weight: 900 !important;
+  position: relative;
+  margin-bottom: 18px !important;
+}
+h1.MuiTypography-h4::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 6px;
+  border-radius: 999px;
+  margin-top: 10px;
+  background: linear-gradient(90deg, var(--sage), var(--wheat));
+  box-shadow: 0 8px 18px rgba(47, 111, 94, 0.22);
+}
+
+/* Paper sections */
+.MuiPaper-root {
+  border-radius: var(--radius) !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-soft) !important;
+  border: 1px solid rgba(31, 41, 55, 0.06);
+}
+
+/* Inputs */
+.MuiOutlinedInput-root {
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.92);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.MuiOutlinedInput-root:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(31, 41, 55, 0.10);
+}
+.MuiOutlinedInput-notchedOutline {
+  border-color: rgba(31, 41, 55, 0.14) !important;
+}
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(47, 111, 94, 0.55) !important;
+  box-shadow: 0 0 0 4px rgba(47, 111, 94, 0.14);
+}
+
+.MuiInputLabel-root {
+  color: rgba(31, 41, 55, 0.75) !important;
+  font-weight: 600 !important;
+}
+
+/* Multi-select chips */
+.MuiChip-root {
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+  background: linear-gradient(180deg, rgba(242, 200, 121, 0.55), rgba(47, 111, 94, 0.12)) !important;
+  border: 1px solid rgba(47, 111, 94, 0.18) !important;
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+}
+.MuiChip-root:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(47, 111, 94, 0.16);
+  filter: saturate(1.05);
+}
+.MuiChip-label {
+  color: var(--ink) !important;
+}
+.MuiChip-deleteIcon {
+  opacity: 0.85;
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+.MuiChip-root:hover .MuiChip-deleteIcon {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* Dropdown menu */
+.MuiMenu-paper {
+  border-radius: 16px !important;
+  box-shadow: var(--shadow) !important;
+  border: 1px solid rgba(31, 41, 55, 0.06);
+  overflow: hidden;
+}
+.MuiMenuItem-root {
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+.MuiMenuItem-root:hover {
+  background-color: rgba(242, 200, 121, 0.22) !important;
+  transform: translateX(2px);
+}
+.MuiMenuItem-root.Mui-selected {
+  background-color: rgba(47, 111, 94, 0.18) !important;
+}
+.MuiMenuItem-root.Mui-selected:hover {
+  background-color: rgba(47, 111, 94, 0.22) !important;
+}
+
+/* Volume cards (MUI Card) */
+.MuiCard-root {
+  border-radius: 18px !important;
+  box-shadow: 0 10px 24px rgba(31, 41, 55, 0.10) !important;
+  border: 1px solid rgba(31, 41, 55, 0.06);
+  position: relative;
+  overflow: hidden;
+  transition: transform 170ms ease, box-shadow 170ms ease;
+}
+.MuiCard-root::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: linear-gradient(180deg, var(--sage), var(--wheat));
+}
+.MuiCard-root:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(31, 41, 55, 0.14) !important;
+}
+.MuiCardContent-root {
+  padding-left: 18px !important;
+}
+
+/* Advanced settings header row */
+.MuiIconButton-root {
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+.MuiIconButton-root:hover {
+  background-color: rgba(47, 111, 94, 0.10) !important;
+}
+
+/* Make the advanced section feel like a drawer */
+.MuiCollapse-root {
+  margin-top: 10px;
+}
+.MuiCollapse-wrapperInner {
+  border-radius: 16px;
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(47, 111, 94, 0.08), rgba(242, 200, 121, 0.10));
+  border: 1px dashed rgba(47, 111, 94, 0.25);
+}
+
+/* Annual Summary styling */
+.MuiTypography-h5 {
+  font-weight: 900 !important;
+  color: var(--ink);
+}
+.MuiPaper-root:last-of-type {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(242, 200, 121, 0.10)) !important;
+}
+.MuiPaper-root:last-of-type .MuiTypography-body1 {
+  color: rgba(31, 41, 55, 0.88);
+}
+.MuiPaper-root:last-of-type .MuiTypography-h6,
+.MuiPaper-root:last-of-type .MuiTypography-h5 {
+  text-shadow: 0 10px 30px rgba(31, 41, 55, 0.10);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .MuiContainer-root {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  h1.MuiTypography-h4 {
+    font-size: 1.8rem !important;
+  }
+
+  /* Let summary rows wrap nicely */
+  .MuiPaper-root:last-of-type .MuiBox-root > .MuiBox-root {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px;
+  }
+
+  /* Chips wrap better */
+  .MuiChip-root {
+    max-width: 100%;
+  }
 }
