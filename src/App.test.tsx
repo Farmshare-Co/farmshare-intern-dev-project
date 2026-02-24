@@ -14,7 +14,7 @@ describe("Meat Processor Value Calculator", () => {
     render(<App />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
     expect(screen.getByText("Annual Summary")).toBeInTheDocument();
-    expect(screen.getByText("Total Monthly Savings:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Savings:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Total Annual Cost:")).toBeInTheDocument();
   });
 
@@ -33,7 +33,7 @@ describe("Meat Processor Value Calculator", () => {
 
     // Check if volume input appears
     expect(
-      screen.getByText(/Monthly Processing Volume by Species/i), // Wrong text!
+      screen.getByText(/Annual Processing Volume by Species/i), // Wrong text!
     ).toBeInTheDocument();
   });
 
@@ -54,7 +54,7 @@ describe("Meat Processor Value Calculator", () => {
     fireEvent.change(volumeInput, { target: { value: "1000" } });
 
     // Check that calculations are displayed (values will depend on the calculation logic)
-    expect(screen.getByText("Total Processing Volume:")).toBeInTheDocument(); // Wrong text!
+    expect(screen.getByText("Total Annual Volume:")).toBeInTheDocument(); // Wrong text!
     expect(screen.getByText("Net Annual Benefit:")).toBeInTheDocument();
   });
 

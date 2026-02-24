@@ -22,16 +22,17 @@ import type { EAnimalSpecies } from "./types";
 import { EAnimalSpecies as AnimalSpecies, AVG_HANGING_WEIGHTS } from "./types";
 import { calculateHeads, calculateLaborValue } from "./utils/calculations";
 import "./App.css";
+import IconButton from "@mui/material/IconButton";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const COST_PER_LB = 0.02;
 
 function App() {
-  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([
-    "beef",
-  ]);
+  const [selectedSpecies, setSelectedSpecies] = useState<EAnimalSpecies[]>([]);
   const [volumes, setVolumes] = useState<Record<EAnimalSpecies, string>>(
     {} as Record<EAnimalSpecies, string>,
   );
+  const [speciesOpen, setSpeciesOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [timePerAnimal, setTimePerAnimal] = useState("45"); // minutes
   const [hourlyWage, setHourlyWage] = useState("25"); // dollars
@@ -76,6 +77,17 @@ function App() {
     }, 0);
   };
 
+  const handleRemoveSpecies = (speciesToRemove: EAnimalSpecies) => {
+    setSelectedSpecies((prev) => prev.filter((s) => s !== speciesToRemove));
+  
+    // clear the volume for that species too
+    setVolumes((prev) => {
+      const next = { ...prev };
+      delete next[speciesToRemove];
+      return next;
+    });
+  };
+
   return (
     <Container>
       <Box sx={{ my: 4 }}>
@@ -87,16 +99,35 @@ function App() {
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Animal Species</InputLabel>
             <Select
-              multiple
-              value={selectedSpecies}
-              onChange={handleSpeciesChange}
+                multiple
+                open={speciesOpen}
+                onOpen={() => setSpeciesOpen(true)}
+                onClose={() => setSpeciesOpen(false)}
+                value={selectedSpecies}
+                onChange={(event) => {
+                  handleSpeciesChange(event);
+                  setSpeciesOpen(false); 
+                }}
               input={<OutlinedInput label="Select Animal Species" />}
               renderValue={(selected) => (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
+                  {(selected as EAnimalSpecies[]).map((value) => (
                     <Chip
                       key={value}
-                      label={value.charAt(0).toUpperCase() + value.slice(1)}
+                      label={value.charAt(0).toUpperCase() + value.slice(1)} // IMPORTANT: plain text in .MuiChip-label
+                      onDelete={() => handleRemoveSpecies(value)}
+                      deleteIcon={
+                        <IconButton
+                          aria-label="Delete"
+                          size="small"
+                          // prevent Select from toggling/closing weirdly
+                          onMouseDown={(e) => e.stopPropagation()}
+                        >
+                          <CancelIcon fontSize="small" />
+                        </IconButton>
+                      }
+                      // Also stop propagation on the chip itself when interacting with delete
+                      onMouseDown={(e) => e.stopPropagation()}
                     />
                   ))}
                 </Box>
